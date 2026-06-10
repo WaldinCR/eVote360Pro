@@ -12,9 +12,6 @@ namespace eVote360Pro.Infrastructure.Persistence.Contexts
         public DbSet<Vote> Votes { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<CitizenVote> CitizenVotes { get; set; }
-        public DbSet<ElectivePosition> ElectivePositions { get; set; }
-        public DbSet<Election> Elections { get; set; }
-        public DbSet<CandidatePosition> CandidatePositions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

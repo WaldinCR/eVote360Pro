@@ -41,4 +41,3 @@ namespace eVote360Pro.Infrastructure.Persistence.EntitiesConfigurations
         }
     }
 }
-}

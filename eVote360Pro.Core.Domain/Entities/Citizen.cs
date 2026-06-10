@@ -2,8 +2,8 @@
 
 namespace eVote360Pro.Core.Domain.Entities
 {
-    public class Citizen : BaseEntity
-    {
+        public class Citizen : BaseEntity
+        {
         public required string IdentificationNumber { get; set; }
         public required string Name { get; set; }
         public required string LastName { get; set; }
@@ -13,6 +13,6 @@ namespace eVote360Pro.Core.Domain.Entities
         // Navigation Properties
         //public ICollection<CitizenVote>? CitizenVotes { get; set; }
         //public ICollection<VerificationCode>? VerificationCodes { get; set; }
-    }
+        }
 }
 

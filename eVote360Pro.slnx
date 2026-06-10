@@ -5,6 +5,7 @@
   </Folder>
   <Folder Name="/Infrastructure/">
     <Project Path="eVote360Pro.Infrastructure.Persistence/eVote360Pro.Infrastructure.Persistence.csproj" />
+    <Project Path="eVote360Pro.Infrastructure.Shared/eVote360Pro.Infrastructure.Shared.csproj" Id="ff1b0734-2f42-41d4-a6bb-221087b12656" />
   </Folder>
   <Folder Name="/Presentation/">
     <Project Path="eVote360Pro.App/eVote360Pro.App.csproj" />

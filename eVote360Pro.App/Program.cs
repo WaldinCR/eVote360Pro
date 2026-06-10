@@ -1,5 +1,6 @@
 using eVote360Pro.Infrastructure.Persistence;
 using eVote360Pro.Core.Application;
+using eVote360Pro.Infrastructure.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,8 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddPersistenceLayerIoc(builder.Configuration);
 builder.Services.AddApplicationLayerIoc();
+builder.Services.AddSharedLayerIoc(builder.Configuration);
+
 
 var app = builder.Build();
 

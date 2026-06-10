@@ -1,0 +1,84 @@
+@model IEnumerable<eVote360Pro.Core.Application.ViewModels.ElectivePosition.ElectivePositionViewModel>
+@{
+    ViewData["Title"] = "Puestos Electivos";
+}
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2 class="fw-bold"><i class="bi bi-list-task text-primary me-2"></i> Puestos Electivos</h2>
+        <p class="text-muted">Gestión de los cargos a los que pueden aspirar los candidatos en las elecciones.</p>
+    </div>
+    <div class="col-md-4 text-md-end align-self-center">
+        <a asp-action="Create" class="btn btn-primary shadow-sm">
+            <i class="bi bi-plus-circle me-1"></i> Nuevo Puesto
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0 table-responsive">
+        <table class="table table-hover table-striped mb-0 align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th class="ps-3">Nombre</th>
+                    <th>Descripción</th>
+                    <th class="text-center">Estado</th>
+                    <th class="text-center pe-3">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-5">
+                            <i class="bi bi-inbox fs-1 d-block mb-2 text-secondary"></i>
+                            <p class="mb-0 fs-5">No hay puestos electivos registrados en el sistema.</p>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-3 fw-semibold">@item.Name</td>
+                            <td>@(string.IsNullOrWhiteSpace(item.Description) ? "Sin descripción" : item.Description)</td>
+                            <td class="text-center">
+                                @if (item.IsActive)
+                                {
+                                    <span class="badge bg-success rounded-pill px-3 py-2"><i class="bi bi-check-circle-fill me-1"></i> Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger rounded-pill px-3 py-2"><i class="bi bi-x-circle-fill me-1"></i> Inactivo</span>
+                                }
+                            </td>
+                            <td class="text-center pe-3">
+                                <div class="btn-group shadow-sm" role="group">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Editar">
+                                        <i class="bi bi-pencil-square"></i> Editar
+                                    </a>
+                                    
+                                    <form asp-action="ToggleStatus" asp-route-id="@item.Id" method="post" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas @(item.IsActive ? "inactivar" : "activar") este puesto?');">
+                                        @if (item.IsActive)
+                                        {
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Inactivar (Eliminación lógica)">
+                                                <i class="bi bi-trash-fill"></i> Inactivar
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Reactivar">
+                                                <i class="bi bi-arrow-counterclockwise"></i> Activar
+                                            </button>
+                                        }
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

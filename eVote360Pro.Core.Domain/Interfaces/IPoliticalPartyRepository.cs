@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace eVote360Pro.Core.Domain.Interfaces
+using eVote360Pro.Core.Domain.Entities;
+
+namespace eVote360Pro.Core.Domain.Interfaces.Repositories
 {
-    internal class IPoliticalPartyRepository
-    {
-    }
+    public interface IPoliticalPartyRepository : IGenericRepository<PoliticalParty> { }
 }

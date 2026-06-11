@@ -12,7 +12,12 @@ namespace eVote360Pro.Infrastructure.Persistence.Contexts
         public DbSet<Vote> Votes { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<CitizenVote> CitizenVotes { get; set; }
-
+        public DbSet<PoliticalParty> PoliticalParties { get; set; }
+        public DbSet<Candidate> Candidates { get; set; }
+        public DbSet<PoliticalLeader> PoliticalLeaders { get; set; }
+        public DbSet<AllianceRequest> AllianceRequests { get; set; }
+        public DbSet<Alliance> Alliances {  get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

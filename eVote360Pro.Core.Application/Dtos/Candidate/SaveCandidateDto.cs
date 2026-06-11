@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace eVote360Pro.Core.Application.Dtos.Candidate
 {
-    internal class SaveCandidateDto
+    public class SaveCandidateDto
     {
+        public int Id { get; set; }
+        public string Name { get; set; } = null!;
+        public string LastName { get; set; } = null!;
+        public string? PhotoUrl { get; set; }
+        public bool IsActive { get; set; } = true;
+        public int PoliticalPartyId { get; set; }
     }
 }

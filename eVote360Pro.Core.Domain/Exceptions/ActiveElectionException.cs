@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace eVote360Pro.Core.Domain.Exceptions
 {
-    internal class ActiveElectionException
+    public class ActiveElectionException : DomainValidationException
     {
+        public ActiveElectionException(string message = "No se puede realizar esta acción mientras exista una elección activa.")
+            : base(message) { }
     }
 }

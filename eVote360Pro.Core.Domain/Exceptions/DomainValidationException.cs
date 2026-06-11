@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace eVote360Pro.Core.Domain.Exceptions
 {
-    internal class DomainValidationException
+    public class DomainValidationException : Exception
     {
+        public DomainValidationException(string message) : base(message) { }
     }
 }

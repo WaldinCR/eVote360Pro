@@ -3,7 +3,9 @@ using eVote360Pro.Core.Domain.Interfaces.Repositories;
 using eVote360Pro.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+
 
 namespace eVote360Pro.Infrastructure.Persistence.Repositories
 {
@@ -44,6 +46,26 @@ namespace eVote360Pro.Infrastructure.Persistence.Repositories
         public virtual async Task<T?> GetByIdAsync(int id)
         {
             return await _dbContext.Set<T>().FindAsync(id);
+        }
+
+
+        public async Task<IReadOnlyList<T>> GetAllListWithIncludeAsync(params Expression<Func<T, object>>[] includes)
+        {
+            var query = _dbContext.Set<T>().AsQueryable();
+            foreach (var include in includes) query = query.Include(include);
+            return await query.ToListAsync();
+        }
+
+        public IQueryable<T> GetAllQuery()
+        {
+            return _dbContext.Set<T>().AsQueryable();
+        }
+
+        public IQueryable<T> GetAllQueryWithInclude(params Expression<Func<T, object>>[] includes)
+        {
+            var query = _dbContext.Set<T>().AsQueryable();
+            foreach (var include in includes) query = query.Include(include);
+            return query;
         }
     }
 }

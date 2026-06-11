@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace eVote360Pro.Core.Domain.Exceptions
 {
-    internal class InvalidAllianceRequestException
+    public class InvalidAllianceRequestException : DomainValidationException
     {
+        public InvalidAllianceRequestException(string message = "La solicitud de alianza no es válida.")
+            : base(message) { }
     }
 }

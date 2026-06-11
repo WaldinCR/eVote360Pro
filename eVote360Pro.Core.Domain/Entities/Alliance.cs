@@ -1,12 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using eVote360Pro.Core.Domain.Common;
 
 namespace eVote360Pro.Core.Domain.Entities
 {
-    internal class Alliance
+    public class Alliance : BaseEntity
     {
+        public required int Party1Id { get; set; }
+        public required int Party2Id { get; set; }
+        public required DateTime CreationDate { get; set; } = DateTime.Now;
+
+        // Navigation Properties
+        public PoliticalParty? Party1 { get; set; }
+        public PoliticalParty? Party2 { get; set; }
     }
 }

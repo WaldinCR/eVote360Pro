@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace eVote360Pro.Core.Domain.Common.Enums
 {
-    internal class AllianceRequestStatus
+    public enum AllianceRequestStatus
     {
+        Pending = 1,
+        Accepted = 2,
+        Rejected = 3    
     }
 }

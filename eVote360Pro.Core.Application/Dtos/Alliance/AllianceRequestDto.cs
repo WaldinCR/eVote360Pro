@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace eVote360Pro.Core.Application.Dtos.Alliance
 {
-    internal class AllianceRequestDto
+    public class AllianceRequestDto
     {
+        public int Id { get; set; }
+        public int ApplicantPartyId { get; set; }
+        public string ApplicantPartyName { get; set; } = null!;
+        public int ReceiverPartyId { get; set; }
+        public string ReceiverPartyName { get; set; } = null!;
+        public int Status { get; set; }
+        public string RequestDate { get; set; } = null!;
     }
 }

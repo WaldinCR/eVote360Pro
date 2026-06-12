@@ -9,5 +9,6 @@ namespace eVote360Pro.Core.Domain.Interfaces
         Task<bool> ExistsUserNameAsync(string username);
         Task<bool> ExistsEmailAsync(string email);
         Task<bool> IsTheOnlyActiveAdminAsync(int userId);
+        Task<User?> LoginAsync(string userName, string password);
     }
 }

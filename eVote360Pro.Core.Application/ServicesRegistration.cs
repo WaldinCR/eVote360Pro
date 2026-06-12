@@ -4,17 +4,19 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace eVote360Pro.Core.Application
 {
-   public static class ServicesRegistration
+    public static class ServicesRegistration
     {
         //extension method - decorator pattern
         public static void AddApplicationLayerIoc(this IServiceCollection services)
         {
-         #region Services IOC
-         services.AddScoped<IElectionService, ElectionService>();
-         services.AddScoped<ICitizenService, CitizenService>();
-         services.AddScoped<IElectivePositionService, ElectivePositionService>();
-         services.AddScoped<ICandidatePositionService, CandidatePositionService>();
-         #endregion
+            #region Services IOC
+            services.AddTransient<IUserService, UserService>();
+            //services.AddTransient<IElectorService, ElectorService>();
+            #endregion
+
+            #region AutoMapper
+            //services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            #endregion
 
         }
 

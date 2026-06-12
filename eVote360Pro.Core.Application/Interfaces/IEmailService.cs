@@ -4,6 +4,6 @@ namespace eVote360Pro.Core.Application.Interfaces
 {
     public interface IEmailService
     {
-        Task SendAsync(EmailRequestDto emailRequestDto);
+        Task<bool> SendAsync(EmailRequestDto emailRequestDto);
     }
 }

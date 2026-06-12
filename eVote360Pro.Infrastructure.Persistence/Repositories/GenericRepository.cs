@@ -1,9 +1,7 @@
 using eVote360Pro.Core.Domain.Interfaces;
 using eVote360Pro.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 
 namespace eVote360Pro.Infrastructure.Persistence.Repositories

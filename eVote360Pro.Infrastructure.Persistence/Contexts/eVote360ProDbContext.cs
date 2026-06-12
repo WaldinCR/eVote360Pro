@@ -21,6 +21,7 @@ namespace eVote360Pro.Infrastructure.Persistence.Contexts
         public DbSet<AllianceRequest> AllianceRequests { get; set; }
         public DbSet<Alliance> Alliances { get; set; }
         
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

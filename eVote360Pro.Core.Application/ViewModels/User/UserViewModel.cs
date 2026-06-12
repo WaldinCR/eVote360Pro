@@ -1,7 +1,7 @@
 ﻿
-namespace eVote360Pro.Core.Application.Dtos.User
+namespace eVote360Pro.Core.Application.ViewModels.User
 {
-    public class UserDto
+    public class UserViewModel
     {
         public int Id { get; set; }
         public required string Name { get; set; } 

@@ -16,12 +16,13 @@ namespace eVote360Pro.Infrastructure.Shared.Services
             _mailSettings = mailSettings.Value;
             _logger = logger;
         }
-        public async Task SendAsync(EmailRequestDto emailRequestDto)
+        
+        public async Task<bool> SendAsync(EmailRequestDto emailRequestDto)
         {
             try
             {
-                emailRequestDto.ToRange?.Add(emailRequestDto.To ?? "");
-
+                if (!string.IsNullOrWhiteSpace(emailRequestDto.To))
+                    emailRequestDto.ToRange?.Add(emailRequestDto.To);
 
                 MimeMessage email = new()
                 {
@@ -30,14 +31,9 @@ namespace eVote360Pro.Infrastructure.Shared.Services
                 };
 
                 foreach (var toItem in emailRequestDto.ToRange ?? [])
-                {
                     email.To.Add(MailboxAddress.Parse(toItem));
-                }
 
-                BodyBuilder builder = new()
-                {
-                    HtmlBody = emailRequestDto.HtmlBody
-                };
+                BodyBuilder builder = new() { HtmlBody = emailRequestDto.HtmlBody };
                 email.Body = builder.ToMessageBody();
 
                 using MailKit.Net.Smtp.SmtpClient smtpClient = new();
@@ -45,16 +41,19 @@ namespace eVote360Pro.Infrastructure.Shared.Services
                 await smtpClient.AuthenticateAsync(_mailSettings.SmtpUser, _mailSettings.SmtpPass);
                 await smtpClient.SendAsync(email);
                 await smtpClient.DisconnectAsync(true);
+                return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An exception occured {Exception}.", ex);
+                _logger.LogError(ex, "Error enviando correo: {Exception}", ex.Message);
+                return false;
             }
-
         }
-
 
     }
 
 
 }
+
+
+

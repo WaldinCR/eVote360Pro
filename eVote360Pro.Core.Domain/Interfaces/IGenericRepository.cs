@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace eVote360Pro.Core.Domain.Interfaces
 {

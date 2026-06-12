@@ -12,5 +12,6 @@ namespace eVote360Pro.Core.Application.Interfaces
         Task<string?> AddAsync(SaveCitizenViewModel viewModel);
         Task<string?> UpdateAsync(SaveCitizenViewModel viewModel);
         Task<string?> DeleteLogicalAsync(int id);
+        Task<bool> IsElectionActiveAsync(); 
     }
 }

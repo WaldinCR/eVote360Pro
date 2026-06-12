@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using eVote360Pro.Core.Domain.Entities;
 
 namespace eVote360Pro.Infrastructure.Persistence.Contexts
@@ -12,11 +12,14 @@ namespace eVote360Pro.Infrastructure.Persistence.Contexts
         public DbSet<Vote> Votes { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<CitizenVote> CitizenVotes { get; set; }
+        public DbSet<Election> Elections { get; set; }
+        public DbSet<ElectivePosition> ElectivePositions { get; set; }
+        public DbSet<CandidatePosition> CandidatePositions { get; set; }
         public DbSet<PoliticalParty> PoliticalParties { get; set; }
         public DbSet<Candidate> Candidates { get; set; }
         public DbSet<PoliticalLeader> PoliticalLeaders { get; set; }
         public DbSet<AllianceRequest> AllianceRequests { get; set; }
-        public DbSet<Alliance> Alliances {  get; set; }
+        public DbSet<Alliance> Alliances { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

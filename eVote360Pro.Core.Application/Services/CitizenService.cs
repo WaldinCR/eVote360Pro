@@ -32,8 +32,8 @@ namespace eVote360Pro.Core.Application.Services
             return citizens.Select(c => new CitizenDto
             {
                 Id = c.Id,
-                Document = c.IdentificationNumber, // Mapeo corregido
-                FirstName = c.Name,                // Mapeo corregido
+                Document = c.IdentificationNumber, 
+                FirstName = c.Name,               
                 LastName = c.LastName,
                 Email = c.Email,
                 IsActive = c.IsActive
@@ -51,8 +51,8 @@ namespace eVote360Pro.Core.Application.Services
             return new SaveCitizenViewModel
             {
                 Id = entity.Id,
-                Document = entity.IdentificationNumber, // Mapeo corregido
-                FirstName = entity.Name,                // Mapeo corregido
+                Document = entity.IdentificationNumber, 
+                FirstName = entity.Name,               
                 LastName = entity.LastName,
                 Email = entity.Email,
                 IsActive = entity.IsActive,
@@ -69,11 +69,11 @@ namespace eVote360Pro.Core.Application.Services
 
             var entity = new Citizen
             {
-                IdentificationNumber = viewModel.Document, // Mapeo corregido
-                Name = viewModel.FirstName,                // Mapeo corregido
+                IdentificationNumber = viewModel.Document.Trim(),
+                Name = viewModel.FirstName,
                 LastName = viewModel.LastName,
                 Email = viewModel.Email,
-                IsActive = true
+                IsActive = viewModel.IsActive
             };
 
             await _citizenRepository.AddAsync(entity);
@@ -84,25 +84,26 @@ namespace eVote360Pro.Core.Application.Services
         {
             if (await IsElectionActiveAsync()) return "No se pueden modificar ciudadanos porque hay una elección activa.";
 
-            if (await IsDocumentDuplicatedAsync(viewModel.Document, viewModel.Id)) return "El número de documento ya está registrado.";
-            if (await IsEmailDuplicatedAsync(viewModel.Email, viewModel.Id)) return "El correo electrónico ya está registrado.";
-
             var entity = await _citizenRepository.GetByIdAsync(viewModel.Id);
             if (entity == null) return "El ciudadano no existe.";
 
-            var allVotes = await _citizenVoteRepository.GetAllAsync();
-            bool hasVoted = allVotes.Any(v => v.CitizenId == viewModel.Id);
+            // Verificación de si el ciudadano ya votó
+            bool hasVoted = await HasCitizenVotedAsync(entity.Id); 
 
-            if (hasVoted && entity.IdentificationNumber != viewModel.Document) // Mapeo corregido
+            if (hasVoted && entity.IdentificationNumber.Trim() != viewModel.Document.Trim())
             {
                 return "No se puede modificar el número de documento de un ciudadano que ya ha votado.";
             }
 
-            entity.IdentificationNumber = hasVoted ? entity.IdentificationNumber : viewModel.Document; // Mapeo corregido
-            entity.Name = viewModel.FirstName; // Mapeo corregido
+            if (await IsDocumentDuplicatedAsync(viewModel.Document, viewModel.Id)) return "El número de documento ya está registrado por otro ciudadano.";
+            if (await IsEmailDuplicatedAsync(viewModel.Email, viewModel.Id)) return "El correo electrónico ya está registrado por otro ciudadano.";
+
+            entity.Name = viewModel.FirstName;
             entity.LastName = viewModel.LastName;
             entity.Email = viewModel.Email;
             entity.IsActive = viewModel.IsActive;
+            
+            entity.IdentificationNumber = hasVoted ? entity.IdentificationNumber : viewModel.Document.Trim();
 
             await _citizenRepository.UpdateAsync(entity);
             return null;
@@ -120,8 +121,7 @@ namespace eVote360Pro.Core.Application.Services
             return null;
         }
 
-        // --- MÉTODOS PRIVADOS DE VALIDACIÓN ---
-        private async Task<bool> IsElectionActiveAsync()
+        public async Task<bool> IsElectionActiveAsync()
         {
             var activeElections = await _electionRepository.GetAllAsync();
             return activeElections.Any(e => e.Status == ElectionStatus.Active);
@@ -129,14 +129,21 @@ namespace eVote360Pro.Core.Application.Services
 
         private async Task<bool> IsDocumentDuplicatedAsync(string document, int excludeId)
         {
+            var trimmedDocument = document.Trim(); 
             var all = await _citizenRepository.GetAllAsync();
-            return all.Any(c => c.Id != excludeId && c.IdentificationNumber == document); // Mapeo corregido
+            return all.Any(c => c.Id != excludeId && c.IdentificationNumber.Trim() == trimmedDocument);
         }
 
         private async Task<bool> IsEmailDuplicatedAsync(string email, int excludeId)
         {
             var all = await _citizenRepository.GetAllAsync();
             return all.Any(c => c.Id != excludeId && c.Email.ToLower() == email.ToLower());
+        }
+
+        private async Task<bool> HasCitizenVotedAsync(int citizenId)
+        {
+            var votes = await _citizenVoteRepository.GetAllAsync();
+            return votes.Any(v => v.CitizenId == citizenId);
         }
     }
 }

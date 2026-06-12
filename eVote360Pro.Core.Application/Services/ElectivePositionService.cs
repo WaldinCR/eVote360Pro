@@ -65,11 +65,11 @@ namespace eVote360Pro.Core.Application.Services
             {
                 Name = viewModel.Name!,
                 Description = viewModel.Description!,
-                IsActive = true
+                IsActive = viewModel.IsActive
             };
 
             await _positionRepository.AddAsync(entity);
-            return null; // Éxito (retorna null si no hay error)
+            return null; // retorna null si no hay error
         }
 
         public async Task<string?> UpdateAsync(SaveElectivePositionViewModel viewModel)
@@ -84,7 +84,7 @@ namespace eVote360Pro.Core.Application.Services
             bool hasParticipated = allVotes.Any(v => v.ElectivePositionId == viewModel.Id);
 
             // Bloqueo de modificación de nombre si ya participó
-            if (hasParticipated && entity.Name != viewModel.Name)
+            if (hasParticipated && entity.Name.Trim() != viewModel.Name!.Trim())
             {
                 return "No se puede modificar el nombre de un puesto que ya ha participado en una elección.";
             }
@@ -104,7 +104,19 @@ namespace eVote360Pro.Core.Application.Services
             var entity = await _positionRepository.GetByIdAsync(id);
             if (entity == null) return "El puesto no existe.";
 
-            entity.IsActive = !entity.IsActive; // Toggle lógico (Eliminación lógica / Activación)
+            if (entity.IsActive && await _positionRepository.HasAssociatedCandidatesAsync(id))
+            {
+                return "No se puede inactivar este puesto porque tiene candidatos activos asignados. Elimine las asignaciones primero.";
+            }
+
+            if (!entity.IsActive)
+            {
+                var allPositions = await _positionRepository.GetAllAsync();
+                bool nameTaken = allPositions.Any(p => p.Id != id && p.IsActive && p.Name.Trim().ToLower() == entity.Name.Trim().ToLower());
+                if (nameTaken) return "Ya existe otro puesto activo con el mismo nombre.";
+            }
+
+            entity.IsActive = !entity.IsActive;
             
             await _positionRepository.UpdateAsync(entity);
             return null;
@@ -119,12 +131,11 @@ namespace eVote360Pro.Core.Application.Services
 
         private async Task<bool> IsNameDuplicatedAsync(string name, int excludeId)
         {
-            var normalizedInput = name.Replace(" ", "").ToLower();
+            var normalizedInput = name.Trim().ToLower();
             var allPositions = await _positionRepository.GetAllAsync();
-            
             return allPositions.Any(p => 
                 p.Id != excludeId && 
-                p.Name.Replace(" ", "").ToLower() == normalizedInput);
+                p.Name.Trim().ToLower() == normalizedInput);
         }
     }
 }

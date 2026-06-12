@@ -1,16 +1,25 @@
-using eVote360Pro.Infrastructure.Persistence;
+using eVote360Pro.App.Middlewares;
 using eVote360Pro.Core.Application;
+using eVote360Pro.Core.Application.Interfaces;
+using eVote360Pro.Infrastructure.Persistence;
 using eVote360Pro.Infrastructure.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSession(opt =>
+{
+    opt.IdleTimeout = TimeSpan.FromMinutes(60);
+    opt.Cookie.HttpOnly = true;
+});
+
 
 builder.Services.AddPersistenceLayerIoc(builder.Configuration);
 builder.Services.AddApplicationLayerIoc();
 builder.Services.AddSharedLayerIoc(builder.Configuration);
-
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<IUserSession, UserSession>();
 
 var app = builder.Build();
 
@@ -23,7 +32,9 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseSession();
 app.UseRouting();
+
 
 app.UseAuthorization();
 
@@ -35,4 +46,4 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 
-app.Run();
+ await app.RunAsync();

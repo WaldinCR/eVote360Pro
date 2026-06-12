@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using eVote360Pro.Core.Application.Interfaces;
+using eVote360Pro.Core.Application.Services;
+using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace eVote360Pro.Core.Application
 {
@@ -7,8 +10,14 @@ namespace eVote360Pro.Core.Application
         //extension method - decorator pattern
         public static void AddApplicationLayerIoc(this IServiceCollection services)
         {
-         #region Services IOC
-         #endregion
+            #region Services IOC
+            services.AddTransient<IUserService, UserService>();
+            //services.AddTransient<IElectorService, ElectorService>();
+            #endregion
+
+            #region AutoMapper
+            //services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            #endregion
 
         }
 

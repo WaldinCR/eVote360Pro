@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-//using eVote360Pro.App.Filters;
 using eVote360Pro.Core.Application.Dtos.User;
 using eVote360Pro.Core.Application.Helpers;
 using eVote360Pro.Core.Application.Interfaces;
@@ -10,30 +9,41 @@ using Microsoft.AspNetCore.Mvc;
 namespace eVote360Pro.App.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    //[AuthorizeRole(UserRol.Administrador)]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IUserSession _userSession;
         private readonly IMapper _mapper;
 
-        public UserController(IUserService userService, IMapper mapper)
+        public UserController(IUserService userService, IUserSession userSession, IMapper mapper)
         {
             _userService = userService;
+            _userSession = userSession;
             _mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
             var users = await _userService.GetAllAsync();
             var viewModels = _mapper.Map<List<UserViewModel>>(users);
             // TODO: pasar si hay elección activa para deshabilitar botones
-            // ViewBag.HasActiveElection = await _electionService.HasActiveElectionAsync();
+            //ViewBag.HasActiveElection = await _electionService.HasActiveElectionAsync();
             ViewBag.HasActiveElection = false;
             return View(viewModels);
         }
 
         public async Task<IActionResult> Create()
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
             // TODO: bloquear si hay elección activa
             // if (await _electionService.HasActiveElectionAsync())
             // { TempData["Error"] = "No se puede crear un usuario mientras exista una elección activa."; return RedirectToAction(nameof(Index)); }
@@ -52,6 +62,12 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(SaveUserViewModel vm)
         {
+
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
             if (!ModelState.IsValid) return View(vm);
 
             if (await _userService.ExistsUserNameAsync(vm.UserName.Trim()))
@@ -73,6 +89,11 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
             var dto = await _userService.GetByIdSaveDtoAsync(id);
             if (dto == null) return NotFound();
 
@@ -85,7 +106,12 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(SaveUserViewModel vm)
         {
-            // Contraseña es opcional en edición
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
+
             if (string.IsNullOrEmpty(vm.Password))
             {
                 ModelState.Remove("Password");
@@ -115,6 +141,11 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> ToggleActive(int id)
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
             var sessionUser = HttpContext.Session.Get<UserViewModel>("User");
 
             // No puede desactivarse a sí mismo

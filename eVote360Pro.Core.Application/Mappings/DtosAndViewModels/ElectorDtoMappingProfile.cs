@@ -10,7 +10,7 @@ namespace eVote360Pro.Core.Application.Mappings.DtosAndViewModels
         {
             // SaveVoteDto / ElectivePositionVoteViewModel
             // (para armar la lista de votos desde la pantalla de votación)
-            CreateMap<ElectivePositionVoteViewModel, SaveVoteDto>()
+            CreateMap<VotingViewModel, SaveVoteDto>()
                 .ForMember(dest => dest.ElectivePositionId, opt => opt.MapFrom(src => src.ElectivePositionId))
                 .ForMember(dest => dest.CandidateId, opt => opt.MapFrom(src => src.SelectedCandidateId))
                 .ForMember(dest => dest.ElectionId, opt => opt.Ignore()); 

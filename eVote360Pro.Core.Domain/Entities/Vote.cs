@@ -8,9 +8,9 @@ namespace eVote360Pro.Core.Domain.Entities
         public int? CandidateId { get; set; }
 
         //navigation properties
-        // public Eleccion? Eleccion { get; set; }          
-        // public PuestoElectivo? PuestoElectivo { get; set; } 
-        // public Candidato? Candidato { get; set; }        
+        public Election? Election { get; set; }
+        public ElectivePosition? ElectivePosition { get; set; }
+        public Candidate? Candidate { get; set; }        
     }
 
 }

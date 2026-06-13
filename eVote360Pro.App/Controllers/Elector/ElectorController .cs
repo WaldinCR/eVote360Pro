@@ -3,6 +3,7 @@ using eVote360Pro.Core.Application.Helpers;
 using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.Elector;
 using eVote360Pro.Core.Domain.Common.Enums;
+using eVote360Pro.Core.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eVote360Pro.App.Areas.Elector.Controllers
@@ -12,56 +13,97 @@ namespace eVote360Pro.App.Areas.Elector.Controllers
     {
         private readonly IElectorService _electorService;
         private readonly IOcrService _ocrService;
+        private readonly IElectionService _electionService;
+        private readonly ICitizenService _citizenService;
+        private readonly ICitizenVoteRepository _citizenVoteRepository;
+        private readonly IElectivePositionService _electivePositionService;
 
-        public ElectorController(IElectorService electorService, IOcrService ocrService)
+        public ElectorController(
+            IElectorService electorService,
+            IOcrService ocrService,
+            IElectionService electionService,
+            ICitizenService citizenService,
+            ICitizenVoteRepository citizenVoteRepository,
+            IElectivePositionService electivePositionService)
         {
             _electorService = electorService;
             _ocrService = ocrService;
+            _electionService = electionService;
+            _citizenService = citizenService;
+            _citizenVoteRepository = citizenVoteRepository;
+            _electivePositionService = electivePositionService;
         }
 
-        // Ingresar documento 
-        public IActionResult Index()
+        // 1 Ingresar documento
+        public async Task<IActionResult> Index()
         {
-            // si hay elección activa, mostrar formulario. Si no, mostrar mensaje.
-            //bool hasActiveElection = await _electionService.HasActiveElectionAsync();
-            //if (!hasActiveElection) { ViewBag.Message = "No hay ningún proceso electoral en estos momentos."; }
+            var elections = await _electionService.GetAllAsync();
+            bool hasActiveElection = elections.Any(e => e.Status == ElectionStatus.Active);
+
+            if (!hasActiveElection)
+                ViewBag.Message = "No hay ningún proceso electoral en estos momentos.";
+
             return View(new AddDocumentViewModel { Document = string.Empty });
         }
 
+        //  2 Validar documento
         [HttpPost]
         public async Task<IActionResult> Index(AddDocumentViewModel vm)
         {
             if (!ModelState.IsValid) return View(vm);
 
-            // reemplazar con llamadas reales al servicio !!!!
-            //var activeElection = await _electionService.GetActiveElectionAsync();
-            //if (activeElection == null) { ModelState.AddModelError("", "No hay ningún proceso electoral en estos momentos."); return View(vm); }
+            // Verificar elección activa
+            var elections = await _electionService.GetAllAsync();
+            var activeElection = elections.FirstOrDefault(e => e.Status == ElectionStatus.Active);
 
-            //var citizen = await _citizenService.GetByDocumentAsync(vm.Document.Trim());
-            //if (citizen == null) { ModelState.AddModelError("Document", "No existe un ciudadano registrado con este número de documento."); return View(vm); }
-            //if (!citizen.IsActive) { ModelState.AddModelError("Document", "Este ciudadano se encuentra inactivo y no puede participar en el proceso de votación."); return View(vm); }
+            if (activeElection == null)
+            {
+                ModelState.AddModelError("", "No hay ningún proceso electoral en estos momentos.");
+                return View(vm);
+            }
 
-            //var alreadyVoted = await _citizenVote.HasAlreadyVotedAsync(citizen.Id, activeElection.Id);
-            //if (alreadyVoted) { ModelState.AddModelError("Document", "Ya ha ejercido su derecho al voto."); return View(vm); }
+            // Verificar ciudadano
+            var citizens = await _citizenService.GetAllAsync();
+            var citizen = citizens.FirstOrDefault(c => c.Document == vm.Document.Trim());
 
-            //if (string.IsNullOrWhiteSpace(citizen.Email)) { ModelState.AddModelError("", "Este ciudadano no tiene un correo electrónico registrado. No es posible continuar con la verificación de identidad."); return View(vm); }
+            if (citizen == null)
+            {
+                ModelState.AddModelError("Document", "No existe un ciudadano registrado con este número de documento.");
+                return View(vm);
+            }
 
-            // Valores de prueba mientras tanto (arreglar despues):
-            int citizenId = 1;
-            int electionId = 1;
-            string citizenName = "Ciudadano";
-            string citizenEmail = "test@test.com";
+            if (!citizen.IsActive)
+            {
+                ModelState.AddModelError("Document", "Este ciudadano se encuentra inactivo y no puede participar en el proceso de votación.");
+                return View(vm);
+            }
 
+            // Verificar si ya votó
+            bool alreadyVoted = await _citizenVoteRepository.HasAlreadyVotedAsync(citizen.Id, activeElection.Id);
+            if (alreadyVoted)
+            {
+                ModelState.AddModelError("Document", "Ya ha ejercido su derecho al voto.");
+                return View(vm);
+            }
+
+            // Verificar que tiene email
+            if (string.IsNullOrWhiteSpace(citizen.Email))
+            {
+                ModelState.AddModelError("", "Este ciudadano no tiene un correo electrónico registrado. No es posible continuar con la verificación de identidad.");
+                return View(vm);
+            }
+
+            // Guardar en sesión
             HttpContext.Session.Set("DocumentoIngresado", vm.Document.Trim());
-            HttpContext.Session.Set("ElectionId", electionId);
-            HttpContext.Session.Set("CitizenId", citizenId);
-            HttpContext.Session.Set("CitizenName", citizenName);
-            HttpContext.Session.Set("CitizenEmail", citizenEmail);
+            HttpContext.Session.Set("ElectionId", activeElection.Id);
+            HttpContext.Session.Set("CitizenId", citizen.Id);
+            HttpContext.Session.Set("CitizenName", $"{citizen.FirstName} {citizen.LastName}");
+            HttpContext.Session.Set("CitizenEmail", citizen.Email);
 
             return RedirectToAction(nameof(LoadCedula));
         }
 
-        // Cargar cédula 
+        // 3 Cargar cédula
         public IActionResult LoadCedula()
         {
             var document = HttpContext.Session.Get<string>("DocumentoIngresado");
@@ -71,12 +113,12 @@ namespace eVote360Pro.App.Areas.Elector.Controllers
             return View(new LoadCedulaViewModel { Document = document, CedulaImage = null });
         }
 
+        // 3 Procesar OCR
         [HttpPost]
         public async Task<IActionResult> LoadCedula(LoadCedulaViewModel vm)
         {
             if (!ModelState.IsValid) return View(vm);
 
-            // Validar formato
             if (!_ocrService.IsValidImageFormat(vm.CedulaImage!))
             {
                 ModelState.AddModelError("CedulaImage", "El archivo seleccionado no tiene un formato de imagen válido.");
@@ -89,7 +131,6 @@ namespace eVote360Pro.App.Areas.Elector.Controllers
             var citizenName = HttpContext.Session.Get<string>("CitizenName");
             var email = HttpContext.Session.Get<string>("CitizenEmail");
 
-            // Procesar OCR
             var extractedText = await _ocrService.ExtractDocumentNumberAsync(vm.CedulaImage!);
 
             if (string.IsNullOrWhiteSpace(extractedText))
@@ -98,7 +139,6 @@ namespace eVote360Pro.App.Areas.Elector.Controllers
                 return View(vm);
             }
 
-            // Comparar con documento ingresado
             var normalizedExtracted = extractedText.Replace("-", "").Replace(" ", "").Trim();
             var normalizedExpected = expectedDocument!.Replace("-", "").Replace(" ", "").Trim();
 
@@ -108,7 +148,6 @@ namespace eVote360Pro.App.Areas.Elector.Controllers
                 return View(vm);
             }
 
-            // OCR exitoso — generar y enviar OTP
             bool sent = await _electorService.GenerateAndSendOtpAsync(citizenId, electionId, citizenName!, email!);
             if (!sent)
             {
@@ -120,7 +159,7 @@ namespace eVote360Pro.App.Areas.Elector.Controllers
             return RedirectToAction(nameof(ValidateOtp));
         }
 
-        // Validar OTP 
+        // 4 Validar OTP
         public IActionResult ValidateOtp()
         {
             if (!HttpContext.Session.Get<bool>("OcrValidated"))
@@ -129,6 +168,7 @@ namespace eVote360Pro.App.Areas.Elector.Controllers
             return View(new ValidateOtpViewModel { Code = string.Empty });
         }
 
+        // 4 Verificar OTP
         [HttpPost]
         public async Task<IActionResult> ValidateOtp(ValidateOtpViewModel vm)
         {
@@ -157,25 +197,23 @@ namespace eVote360Pro.App.Areas.Elector.Controllers
             return RedirectToAction(nameof(Voting));
         }
 
-         //Pantalla de puestos electivos
-        public IActionResult Voting()
+        // 5  Pantalla de votación
+        public async Task<IActionResult> Voting()
         {
-           if (!HttpContext.Session.Get<bool>("OtpValidated"))
-               return RedirectToAction(nameof(Index));
+            if (!HttpContext.Session.Get<bool>("OtpValidated"))
+                return RedirectToAction(nameof(Index));
 
-            // cargar puestos activos de la elección con sus candidatos
-            // var positions = await _electionService.GetActivePositionsAsync(electionId);
+            // TODO: cargar puestos y candidatos cuando el compañero tenga el servicio
             return View(new VotingViewModel());
         }
 
-        // Guardar selección de un puesto
+        // 6 Guardar selección
         [HttpPost]
         public IActionResult SavePositionVote(int electivePositionId, int? candidateId, string positionName, string candidateName, string partyName)
         {
             if (!HttpContext.Session.Get<bool>("OtpValidated"))
                 return RedirectToAction(nameof(Index));
 
-            // Guardar selección en sesión
             var selections = HttpContext.Session.Get<Dictionary<int, SaveVoteDto>>("VoteSelections")
                              ?? new Dictionary<int, SaveVoteDto>();
 
@@ -192,7 +230,7 @@ namespace eVote360Pro.App.Areas.Elector.Controllers
             return RedirectToAction(nameof(Voting));
         }
 
-        //  Finalizar votación 
+        // 7 Finalizar votación
         [HttpPost]
         public async Task<IActionResult> FinishVoting()
         {
@@ -205,12 +243,9 @@ namespace eVote360Pro.App.Areas.Elector.Controllers
             var email = HttpContext.Session.Get<string>("CitizenEmail");
             var selections = HttpContext.Session.Get<Dictionary<int, SaveVoteDto>>("VoteSelections");
 
-            // validar que todos los puestos tienen selección
-            //var totalPositions = await _electionService.GetActivePositionsCountAsync(electionId);
-            //var missingPositions = ...
-            // if (missingPositions.Any()) { TempData["Error"] = $"Debe completar su selección para los siguientes puestos electivos: {string.Join(", ", missingPositions)}"; return RedirectToAction(nameof(Voting)); }
+            var totalPositions = (await _electivePositionService.GetAllAsync()).Count;
 
-            if (selections == null || !selections.Any())
+            if (selections == null || selections.Count != totalPositions)
             {
                 TempData["Error"] = "Debe completar su selección para todos los puestos electivos.";
                 return RedirectToAction(nameof(Voting));
@@ -226,19 +261,20 @@ namespace eVote360Pro.App.Areas.Elector.Controllers
                 PartyName = s.PartyName
             }).ToList();
 
-            //  obtener nombre y fecha de elección del servicio
-            string electionName = "Elección activa";
-            string electionDate = DateTime.Now.ToString("dd/MM/yyyy");
+            // Obtener nombre y fecha de elección
+            var elections = await _electionService.GetAllAsync();
+            var activeElection = elections.FirstOrDefault(e => e.Status == ElectionStatus.Active);
+            string electionName = activeElection?.Name ?? "Elección activa";
+            string electionDate = activeElection?.ActivationDate?.ToString("dd/MM/yyyy") ?? DateTime.Now.ToString("dd/MM/yyyy");
 
             bool success = await _electorService.ConfirmVoteAsync(citizenId, electionId, votes, citizenName!, electionName, electionDate, email!);
 
             if (!success)
             {
-               TempData["Error"] = "Ocurrió un error al registrar el voto. Intente nuevamente.";
+                TempData["Error"] = "Ocurrió un error al registrar el voto. Intente nuevamente.";
                 return RedirectToAction(nameof(Voting));
             }
 
-            // Limpiar toda la sesión del elector
             HttpContext.Session.Remove("DocumentoIngresado");
             HttpContext.Session.Remove("ElectionId");
             HttpContext.Session.Remove("CitizenId");

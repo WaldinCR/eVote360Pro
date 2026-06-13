@@ -12,6 +12,6 @@ namespace eVote360Pro.Core.Application.ViewModels.Elector
     public class VoteSelectionSummary
     {
         public string PositionName { get; set; } = null!;
-        public string CandidateName { get; set; } = null!; // "None" si aplica
+        public string CandidateName { get; set; } = null!; 
     }
 }

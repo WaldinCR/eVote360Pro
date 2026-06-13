@@ -13,13 +13,15 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
     {
         private readonly IUserService _userService;
         private readonly IUserSession _userSession;
+        private readonly IElectionService _electionService;
         private readonly IMapper _mapper;
 
-        public UserController(IUserService userService, IUserSession userSession, IMapper mapper)
+        public UserController(IUserService userService, IUserSession userSession, IMapper mapper, IElectionService electionService)
         {
             _userService = userService;
             _userSession = userSession;
             _mapper = mapper;
+            _electionService = electionService;
         }
 
         public async Task<IActionResult> Index()
@@ -31,9 +33,10 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
 
             var users = await _userService.GetAllAsync();
             var viewModels = _mapper.Map<List<UserViewModel>>(users);
-            // TODO: pasar si hay elección activa para deshabilitar botones
-            //ViewBag.HasActiveElection = await _electionService.HasActiveElectionAsync();
-            ViewBag.HasActiveElection = false;
+            
+            var elections = await _electionService.GetAllAsync();
+            ViewBag.HasActiveElection = elections.Any(e => e.Status == ElectionStatus.Active);
+
             return View(viewModels);
         }
 
@@ -44,9 +47,15 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             if (!_userSession.IsAdmin())
                 return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
-            // TODO: bloquear si hay elección activa
-            // if (await _electionService.HasActiveElectionAsync())
-            // { TempData["Error"] = "No se puede crear un usuario mientras exista una elección activa."; return RedirectToAction(nameof(Index)); }
+            // bloquear si hay elección activa
+            var elections = await _electionService.GetAllAsync();
+            bool hasActiveElection = elections.Any(e => e.Status == ElectionStatus.Active);
+
+            if (hasActiveElection)
+            {
+                TempData["Error"] = "No se puede crear un usuario mientras exista una elección activa.";
+                return RedirectToRoute(new { area = "Admin", controller = "User", action = "Index" });
+            }
             return View(new SaveUserViewModel
             {
                 Name = string.Empty,
@@ -95,7 +104,8 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
                 return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             var dto = await _userService.GetByIdSaveDtoAsync(id);
-            if (dto == null) return NotFound();
+            if (dto == null)
+                return RedirectToRoute(new { area = "Admin", controller = "User", action = "Index" });
 
             var vm = _mapper.Map<SaveUserViewModel>(dto);
             vm.Password = string.Empty;
@@ -135,7 +145,7 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
 
             var dto = _mapper.Map<SaveUserDto>(vm);
             await _userService.UpdateAsync(dto);
-            return RedirectToAction(nameof(Index));
+            return RedirectToRoute(new { area = "Admin", controller = "User", action = "Index" });
         }
 
         [HttpPost]

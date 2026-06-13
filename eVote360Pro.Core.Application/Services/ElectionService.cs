@@ -4,10 +4,7 @@ using eVote360Pro.Core.Application.Dtos.Election;
 using eVote360Pro.Core.Domain.Entities;
 using eVote360Pro.Core.Domain.Interfaces;
 using eVote360Pro.Core.Domain.Common.Enums;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System;
+using AutoMapper;
 
 namespace eVote360Pro.Core.Application.Services
 {
@@ -19,6 +16,7 @@ namespace eVote360Pro.Core.Application.Services
         private readonly IGenericRepository<CandidatePosition> _assignmentRepository;
         private readonly IGenericRepository<Vote> _voteRepository;
         private readonly IGenericRepository<Candidate> _candidateRepository;
+        private readonly IMapper _mapper;
 
         public ElectionService(
             IGenericRepository<Election> electionRepository,
@@ -26,7 +24,8 @@ namespace eVote360Pro.Core.Application.Services
             IGenericRepository<PoliticalParty> partyRepository,
             IGenericRepository<CandidatePosition> assignmentRepository,
             IGenericRepository<Vote> voteRepository,
-            IGenericRepository<Candidate> candidateRepository)
+            IGenericRepository<Candidate> candidateRepository,
+            IMapper mapper)
         {
             _electionRepository = electionRepository;
             _positionRepository = positionRepository;
@@ -34,30 +33,23 @@ namespace eVote360Pro.Core.Application.Services
             _assignmentRepository = assignmentRepository;
             _voteRepository = voteRepository;
             _candidateRepository = candidateRepository;
+            _mapper = mapper;
         }
 
         public async Task<IReadOnlyList<ElectionDto>> GetAllAsync()
         {
             var elections = await _electionRepository.GetAllAsync();
-            return elections
-                .OrderByDescending(e => e.Year)
-                .Select(e => new ElectionDto
-                {
-                    Id = e.Id,
-                    Name = e.Name,
-                    Year = e.Year,
-                    Status = e.Status
-                }).ToList().AsReadOnly();
+            var orderedElections = elections.OrderByDescending(e => e.Year).ToList();
+            
+            return _mapper.Map<List<ElectionDto>>(orderedElections).AsReadOnly();
         }
 
         public async Task<string?> AddAsync(SaveElectionViewModel viewModel)
         {
-            var entity = new Election
-            {
-                Name = viewModel.Name,
-                Year = viewModel.Year,
-                Status = ElectionStatus.Pending 
-            };
+            var entity = _mapper.Map<Election>(viewModel);
+            
+            // Regla de Negocio: Forzamos el estado a Pendiente al crear
+            entity.Status = ElectionStatus.Pending;
 
             await _electionRepository.AddAsync(entity);
             return null;

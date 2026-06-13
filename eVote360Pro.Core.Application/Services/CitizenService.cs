@@ -4,9 +4,7 @@ using eVote360Pro.Core.Application.Dtos.Citizen;
 using eVote360Pro.Core.Domain.Entities;
 using eVote360Pro.Core.Domain.Interfaces;
 using eVote360Pro.Core.Domain.Common.Enums;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AutoMapper;
 
 namespace eVote360Pro.Core.Application.Services
 {
@@ -15,49 +13,30 @@ namespace eVote360Pro.Core.Application.Services
         private readonly IGenericRepository<Citizen> _citizenRepository;
         private readonly IGenericRepository<Election> _electionRepository;
         private readonly IGenericRepository<CitizenVote> _citizenVoteRepository;
+        private readonly IMapper _mapper;
 
         public CitizenService(
             IGenericRepository<Citizen> citizenRepository,
             IGenericRepository<Election> electionRepository,
-            IGenericRepository<CitizenVote> citizenVoteRepository)
+            IGenericRepository<CitizenVote> citizenVoteRepository,
+            IMapper mapper)
         {
             _citizenRepository = citizenRepository;
             _electionRepository = electionRepository;
             _citizenVoteRepository = citizenVoteRepository;
+            _mapper = mapper;
         }
 
         public async Task<IReadOnlyList<CitizenDto>> GetAllAsync()
         {
             var citizens = await _citizenRepository.GetAllAsync();
-            return citizens.Select(c => new CitizenDto
-            {
-                Id = c.Id,
-                Document = c.IdentificationNumber, 
-                FirstName = c.Name,               
-                LastName = c.LastName,
-                Email = c.Email,
-                IsActive = c.IsActive
-            }).ToList().AsReadOnly();
+            return _mapper.Map<List<CitizenDto>>(citizens).AsReadOnly();
         }
 
         public async Task<SaveCitizenViewModel?> GetByIdSaveViewModelAsync(int id)
         {
             var entity = await _citizenRepository.GetByIdAsync(id);
-            if (entity == null) return null;
-
-            var allVotes = await _citizenVoteRepository.GetAllAsync();
-            bool hasVoted = allVotes.Any(v => v.CitizenId == id);
-
-            return new SaveCitizenViewModel
-            {
-                Id = entity.Id,
-                Document = entity.IdentificationNumber, 
-                FirstName = entity.Name,               
-                LastName = entity.LastName,
-                Email = entity.Email,
-                IsActive = entity.IsActive,
-                HasVoted = hasVoted
-            };
+            return _mapper.Map<SaveCitizenViewModel>(entity);
         }
 
         public async Task<string?> AddAsync(SaveCitizenViewModel viewModel)
@@ -67,14 +46,7 @@ namespace eVote360Pro.Core.Application.Services
             if (await IsDocumentDuplicatedAsync(viewModel.Document, 0)) return "El número de documento ya está registrado.";
             if (await IsEmailDuplicatedAsync(viewModel.Email, 0)) return "El correo electrónico ya está registrado.";
 
-            var entity = new Citizen
-            {
-                IdentificationNumber = viewModel.Document.Trim(),
-                Name = viewModel.FirstName,
-                LastName = viewModel.LastName,
-                Email = viewModel.Email,
-                IsActive = viewModel.IsActive
-            };
+            var entity = _mapper.Map<Citizen>(viewModel);
 
             await _citizenRepository.AddAsync(entity);
             return null;
@@ -98,12 +70,17 @@ namespace eVote360Pro.Core.Application.Services
             if (await IsDocumentDuplicatedAsync(viewModel.Document, viewModel.Id)) return "El número de documento ya está registrado por otro ciudadano.";
             if (await IsEmailDuplicatedAsync(viewModel.Email, viewModel.Id)) return "El correo electrónico ya está registrado por otro ciudadano.";
 
-            entity.Name = viewModel.FirstName;
-            entity.LastName = viewModel.LastName;
-            entity.Email = viewModel.Email;
-            entity.IsActive = viewModel.IsActive;
+            // Respaldamos el documento original por si ya votó
+            string originalDocument = entity.IdentificationNumber;
+
+            // Inyectamos los nuevos valores del viewModel a la entidad existente
+            _mapper.Map(viewModel, entity);
             
-            entity.IdentificationNumber = hasVoted ? entity.IdentificationNumber : viewModel.Document.Trim();
+            // Restauramos el documento si el ciudadano ya había votado
+            if (hasVoted) 
+            {
+                entity.IdentificationNumber = originalDocument;
+            }
 
             await _citizenRepository.UpdateAsync(entity);
             return null;

@@ -2,7 +2,7 @@ using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.ElectivePosition;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+using AutoMapper;
 
 namespace eVote360Pro.App.Controllers.Admin
 {
@@ -10,24 +10,19 @@ namespace eVote360Pro.App.Controllers.Admin
     public class ElectivePositionController : Controller
     {
         private readonly IElectivePositionService _positionService;
+        private readonly IMapper _mapper;
 
-        public ElectivePositionController(IElectivePositionService positionService)
+        public ElectivePositionController(IElectivePositionService positionService, IMapper mapper)
         {
             _positionService = positionService;
+            _mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
         {
             var dtos = await _positionService.GetAllAsync();
             
-            // Mapeo manual de DTO a ViewModel (para mantener las vistas limpias)
-            var list = dtos.Select(d => new ElectivePositionViewModel
-            {
-                Id = d.Id,
-                Name = d.Name,
-                Description = d.Description,
-                IsActive = d.IsActive
-            }).ToList();
+            var list = _mapper.Map<List<ElectivePositionViewModel>>(dtos);
 
             return View(list);
         }

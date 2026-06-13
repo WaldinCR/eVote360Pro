@@ -1,5 +1,4 @@
-﻿///using eVote360Pro.App.Filters;
-using eVote360Pro.Core.Application.Dtos.Vote;
+﻿using eVote360Pro.Core.Application.Dtos.Vote;
 using eVote360Pro.Core.Application.Helpers;
 using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.Elector;
@@ -24,8 +23,8 @@ namespace eVote360Pro.App.Areas.Elector.Controllers
         public IActionResult Index()
         {
             // si hay elección activa, mostrar formulario. Si no, mostrar mensaje.
-            // bool hasActiveElection = await _electionService.HasActiveElectionAsync();
-            // if (!hasActiveElection) { ViewBag.Message = "No hay ningún proceso electoral en estos momentos."; }
+            //bool hasActiveElection = await _electionService.HasActiveElectionAsync();
+            //if (!hasActiveElection) { ViewBag.Message = "No hay ningún proceso electoral en estos momentos."; }
             return View(new AddDocumentViewModel { Document = string.Empty });
         }
 
@@ -35,17 +34,17 @@ namespace eVote360Pro.App.Areas.Elector.Controllers
             if (!ModelState.IsValid) return View(vm);
 
             // reemplazar con llamadas reales al servicio !!!!
-            // var activeElection = await _electionService.GetActiveElectionAsync();
-            // if (activeElection == null) { ModelState.AddModelError("", "No hay ningún proceso electoral en estos momentos."); return View(vm); }
+            //var activeElection = await _electionService.GetActiveElectionAsync();
+            //if (activeElection == null) { ModelState.AddModelError("", "No hay ningún proceso electoral en estos momentos."); return View(vm); }
 
-            // var citizen = await _citizenService.GetByDocumentAsync(vm.Document.Trim());
-            // if (citizen == null) { ModelState.AddModelError("Document", "No existe un ciudadano registrado con este número de documento."); return View(vm); }
-            // if (!citizen.IsActive) { ModelState.AddModelError("Document", "Este ciudadano se encuentra inactivo y no puede participar en el proceso de votación."); return View(vm); }
+            //var citizen = await _citizenService.GetByDocumentAsync(vm.Document.Trim());
+            //if (citizen == null) { ModelState.AddModelError("Document", "No existe un ciudadano registrado con este número de documento."); return View(vm); }
+            //if (!citizen.IsActive) { ModelState.AddModelError("Document", "Este ciudadano se encuentra inactivo y no puede participar en el proceso de votación."); return View(vm); }
 
-            // var alreadyVoted = await _citizenVoteRepo.HasAlreadyVotedAsync(citizen.Id, activeElection.Id);
-            // if (alreadyVoted) { ModelState.AddModelError("Document", "Ya ha ejercido su derecho al voto."); return View(vm); }
+            //var alreadyVoted = await _citizenVote.HasAlreadyVotedAsync(citizen.Id, activeElection.Id);
+            //if (alreadyVoted) { ModelState.AddModelError("Document", "Ya ha ejercido su derecho al voto."); return View(vm); }
 
-            // if (string.IsNullOrWhiteSpace(citizen.Email)) { ModelState.AddModelError("", "Este ciudadano no tiene un correo electrónico registrado. No es posible continuar con la verificación de identidad."); return View(vm); }
+            //if (string.IsNullOrWhiteSpace(citizen.Email)) { ModelState.AddModelError("", "Este ciudadano no tiene un correo electrónico registrado. No es posible continuar con la verificación de identidad."); return View(vm); }
 
             // Valores de prueba mientras tanto (arreglar despues):
             int citizenId = 1;
@@ -131,67 +130,67 @@ namespace eVote360Pro.App.Areas.Elector.Controllers
         }
 
         [HttpPost]
-        //public async Task<IActionResult> ValidateOtp(ValidateOtpViewModel vm)
-        //{
-        //    if (!ModelState.IsValid) return View(vm);
+        public async Task<IActionResult> ValidateOtp(ValidateOtpViewModel vm)
+        {
+            if (!ModelState.IsValid) return View(vm);
 
-        //    var citizenId = HttpContext.Session.Get<int>("CitizenId");
-        //    var electionId = HttpContext.Session.Get<int>("ElectionId");
+            var citizenId = HttpContext.Session.Get<int>("CitizenId");
+            var electionId = HttpContext.Session.Get<int>("ElectionId");
 
-        //    var result = await _electorService.ValidateOtpAsync(citizenId, electionId, vm.Code);
+            var result = await _electorService.ValidateOtpAsync(citizenId, electionId, vm.Code);
 
-        //    switch (result)
-        //    {
-        //        case OtpValidationResult.Expired:
-        //            ModelState.AddModelError("Code", "El código de verificación ha expirado. Solicite un nuevo código para continuar.");
-        //            return View(vm);
-        //        case OtpValidationResult.AlreadyUsed:
-        //            ModelState.AddModelError("Code", "Este código de verificación ya fue utilizado.");
-        //            return View(vm);
-        //        case OtpValidationResult.Invalid:
-        //        case OtpValidationResult.NotFound:
-        //            ModelState.AddModelError("Code", "El código de verificación ingresado no es válido.");
-        //            return View(vm);
-        //    }
+            switch (result)
+            {
+                case OtpValidationResult.Expired:
+                    ModelState.AddModelError("Code", "El código de verificación ha expirado. Solicite un nuevo código para continuar.");
+                    return View(vm);
+                case OtpValidationResult.AlreadyUsed:
+                    ModelState.AddModelError("Code", "Este código de verificación ya fue utilizado.");
+                    return View(vm);
+                case OtpValidationResult.Invalid:
+                case OtpValidationResult.NotFound:
+                    ModelState.AddModelError("Code", "El código de verificación ingresado no es válido.");
+                    return View(vm);
+            }
 
-        //    HttpContext.Session.Set("OtpValidated", true);
-        //    return RedirectToAction(nameof(Voting));
-        //}
+            HttpContext.Session.Set("OtpValidated", true);
+            return RedirectToAction(nameof(Voting));
+        }
 
-        // Pantalla de puestos electivos 
-        //public IActionResult Voting()
-        ////{
-        //   if (!HttpContext.Session.Get<bool>("OtpValidated"))
-        //       return RedirectToAction(nameof(Index));
+         //Pantalla de puestos electivos
+        public IActionResult Voting()
+        {
+           if (!HttpContext.Session.Get<bool>("OtpValidated"))
+               return RedirectToAction(nameof(Index));
 
-        //    // cargar puestos activos de la elección con sus candidatos
-        //    // var positions = await _electionService.GetActivePositionsAsync(electionId);
-        //    return View(new VotingViewModel());
-        //}
+            // cargar puestos activos de la elección con sus candidatos
+            // var positions = await _electionService.GetActivePositionsAsync(electionId);
+            return View(new VotingViewModel());
+        }
 
         // Guardar selección de un puesto
         [HttpPost]
-        //public IActionResult SavePositionVote(int electivePositionId, int? candidateId, string positionName, string candidateName, string partyName)
-        //{
-        //    if (!HttpContext.Session.Get<bool>("OtpValidated"))
-        //        return RedirectToAction(nameof(Index));
+        public IActionResult SavePositionVote(int electivePositionId, int? candidateId, string positionName, string candidateName, string partyName)
+        {
+            if (!HttpContext.Session.Get<bool>("OtpValidated"))
+                return RedirectToAction(nameof(Index));
 
-        //    // Guardar selección en sesión
-        //    var selections = HttpContext.Session.Get<Dictionary<int, SaveVoteDto>>("VoteSelections")
-        //                     ?? new Dictionary<int, SaveVoteDto>();
+            // Guardar selección en sesión
+            var selections = HttpContext.Session.Get<Dictionary<int, SaveVoteDto>>("VoteSelections")
+                             ?? new Dictionary<int, SaveVoteDto>();
 
-        //    selections[electivePositionId] = new SaveVoteDto
-        //    {
-        //        ElectivePositionId = electivePositionId,
-        //        CandidateId = candidateId,
-        //        PositionName = positionName,
-        //        CandidateName = candidateName,
-        //        PartyName = partyName
-        //    };
+            selections[electivePositionId] = new SaveVoteDto
+            {
+                ElectivePositionId = electivePositionId,
+                CandidateId = candidateId,
+                PositionName = positionName,
+                CandidateName = candidateName,
+                PartyName = partyName
+            };
 
-        //    HttpContext.Session.Set("VoteSelections", selections);
-        //    return RedirectToAction(nameof(Voting));
-        //}
+            HttpContext.Session.Set("VoteSelections", selections);
+            return RedirectToAction(nameof(Voting));
+        }
 
         //  Finalizar votación 
         [HttpPost]
@@ -207,15 +206,15 @@ namespace eVote360Pro.App.Areas.Elector.Controllers
             var selections = HttpContext.Session.Get<Dictionary<int, SaveVoteDto>>("VoteSelections");
 
             // validar que todos los puestos tienen selección
-            // var totalPositions = await _electionService.GetActivePositionsCountAsync(electionId);
-            // var missingPositions = ...
+            //var totalPositions = await _electionService.GetActivePositionsCountAsync(electionId);
+            //var missingPositions = ...
             // if (missingPositions.Any()) { TempData["Error"] = $"Debe completar su selección para los siguientes puestos electivos: {string.Join(", ", missingPositions)}"; return RedirectToAction(nameof(Voting)); }
 
-            //if (selections == null || !selections.Any())
-            //{
-            //    TempData["Error"] = "Debe completar su selección para todos los puestos electivos.";
-            //    return RedirectToAction(nameof(Voting));
-            //}
+            if (selections == null || !selections.Any())
+            {
+                TempData["Error"] = "Debe completar su selección para todos los puestos electivos.";
+                return RedirectToAction(nameof(Voting));
+            }
 
             var votes = selections.Values.Select(s => new SaveVoteDto
             {
@@ -233,11 +232,11 @@ namespace eVote360Pro.App.Areas.Elector.Controllers
 
             bool success = await _electorService.ConfirmVoteAsync(citizenId, electionId, votes, citizenName!, electionName, electionDate, email!);
 
-            //if (!success)
-            //{
-            //    TempData["Error"] = "Ocurrió un error al registrar el voto. Intente nuevamente.";
-            //    return RedirectToAction(nameof(Voting));
-            //}
+            if (!success)
+            {
+               TempData["Error"] = "Ocurrió un error al registrar el voto. Intente nuevamente.";
+                return RedirectToAction(nameof(Voting));
+            }
 
             // Limpiar toda la sesión del elector
             HttpContext.Session.Remove("DocumentoIngresado");

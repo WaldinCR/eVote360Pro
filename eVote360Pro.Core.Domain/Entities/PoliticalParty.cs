@@ -14,7 +14,8 @@ namespace eVote360Pro.Core.Domain.Entities
       public bool IsActive { get; set; } = true;
       public string LogoUrl { get; set; } = null!;
       public string Acronym { get; set; } = null!;
-        
+        public PoliticalLeader? PoliticalLeader { get; set; } //fk
+
         //Relaci
       public ICollection<Candidate> Candidates { get; set; } = new List<Candidate>();
       public PoliticalLeader? PoliticalLeader { get; set; }

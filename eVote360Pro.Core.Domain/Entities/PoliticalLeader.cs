@@ -13,7 +13,7 @@ namespace eVote360Pro.Core.Domain.Entities
         public required int PoliticalPartyId { get; set; }
         
         //properiedades nav
-        //public user? User { get; set; } = null!;    
+        public User? User { get; set; } = null!;    
         public PoliticalParty? PoliticalParty { get; set; } = null!; 
     }
 }

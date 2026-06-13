@@ -11,11 +11,11 @@ namespace eVote360Pro.Core.Application
         {
             #region Services IOC
             services.AddTransient<IUserService, UserService>();
-            //services.AddTransient<IElectorService, ElectorService>();
+            services.AddTransient<IElectorService, ElectorService>();
             #endregion
 
             #region AutoMapper
-            //services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddAutoMapper(cfg => { }, Assembly.GetExecutingAssembly());
             #endregion
 
         }

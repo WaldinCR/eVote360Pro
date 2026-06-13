@@ -1,4 +1,5 @@
 using eVote360Pro.Core.Domain.Common;
+using eVote360Pro.Core.Domain.Common.Enums;
 
 namespace eVote360Pro.Core.Domain.Entities
 {
@@ -12,7 +13,7 @@ namespace eVote360Pro.Core.Domain.Entities
         public DateTime? FinishedDate { get; set; }
 
         // Navigation Properties
-        //public ICollection<Vote>? Votes { get; set; }
-        //public ICollection<CitizenVote>? CitizenVotes { get; set; }
+        public ICollection<Vote>? Votes { get; set; }
+        public ICollection<CitizenVote>? CitizenVotes { get; set; }
     }
 }

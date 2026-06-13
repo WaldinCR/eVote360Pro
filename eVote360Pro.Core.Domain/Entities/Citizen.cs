@@ -11,8 +11,8 @@ namespace eVote360Pro.Core.Domain.Entities
         public bool IsActive { get; set; } = true;
 
         // Navigation Properties
-        //public ICollection<CitizenVote>? CitizenVotes { get; set; }
-        //public ICollection<VerificationCode>? VerificationCodes { get; set; }
+        public ICollection<CitizenVote>? CitizenVotes { get; set; }
+        public ICollection<VerificationCode>? VerificationCodes { get; set; }
         }
 }
 

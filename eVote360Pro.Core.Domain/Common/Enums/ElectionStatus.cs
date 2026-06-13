@@ -1,6 +1,9 @@
-public enum ElectionStatus
+namespace eVote360Pro.Core.Domain.Common.Enums
 {
-    Pending = 1,
-    Active = 2,
-    Finished = 3
+    public enum ElectionStatus
+    {
+        Pending = 1,
+        Active = 2,
+        Finished = 3
+    }
 }

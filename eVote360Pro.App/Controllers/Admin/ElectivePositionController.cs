@@ -1,10 +1,12 @@
 using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.ElectivePosition;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace eVote360Pro.App.Controllers.Admin
 {
+    [Authorize(Roles = "Administrador")]
     public class ElectivePositionController : Controller
     {
         private readonly IElectivePositionService _positionService;

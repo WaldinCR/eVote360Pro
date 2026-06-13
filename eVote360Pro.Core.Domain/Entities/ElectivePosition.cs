@@ -14,7 +14,6 @@ namespace eVote360Pro.Core.Domain.Entities
         // Navigation Properties
         public ICollection<CandidatePosition>? CandidatePositions { get; set; }
         
-        // Nota: Cuando armen la entidad Vote
-        //public ICollection<Vote>? Votes { get; set; }
+        public ICollection<Vote>? Votes { get; set; }
     }
 }

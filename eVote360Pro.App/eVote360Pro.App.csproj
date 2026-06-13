@@ -21,4 +21,10 @@
     <ProjectReference Include="..\eVote360Pro.Infrastructure.Shared\eVote360Pro.Infrastructure.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="tessdata\spa.traineddata">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -121,7 +121,6 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             if (!_userSession.IsAdmin())
                 return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
-
             if (string.IsNullOrEmpty(vm.Password))
             {
                 ModelState.Remove("Password");
@@ -130,17 +129,31 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
 
             if (!ModelState.IsValid) return View(vm);
 
-            var sessionUser = HttpContext.Session.Get<UserViewModel>("User");
+            // Validar username unico excluyendo el usuario actual
+            var currentDto = await _userService.GetByIdSaveDtoAsync(vm.Id);
+            if (currentDto == null)
+                return RedirectToRoute(new { area = "Admin", controller = "User", action = "Index" });
 
-            // No puede modificar su propio rol ni desactivarse a sí mismo
-            if (sessionUser?.Id == vm.Id)
+            if (currentDto.UserName.Trim() != vm.UserName.Trim() &&
+                await _userService.ExistsUserNameAsync(vm.UserName.Trim()))
             {
-                var currentDto = await _userService.GetByIdSaveDtoAsync(vm.Id);
-                if (currentDto != null && currentDto.Role != vm.Role)
-                {
-                    ModelState.AddModelError("", "No puede cambiar su propio rol ni desactivar su propio usuario mientras está autenticado.");
-                    return View(vm);
-                }
+                ModelState.AddModelError("UserName", "Ya existe un usuario registrado con este nombre de usuario.");
+                return View(vm);
+            }
+
+            if (currentDto.Email.Trim() != vm.Email.Trim() &&
+                await _userService.ExistsEmailAsync(vm.Email.Trim()))
+            {
+                ModelState.AddModelError("Email", "Ya existe un usuario registrado con este correo electrónico.");
+                return View(vm);
+            }
+
+            // No puede modificar su propio rol
+            var sessionUser = HttpContext.Session.Get<UserViewModel>("User");
+            if (sessionUser?.Id == vm.Id && currentDto.Role != vm.Role)
+            {
+                ModelState.AddModelError("", "No puede cambiar su propio rol ni desactivar su propio usuario mientras está autenticado.");
+                return View(vm);
             }
 
             var dto = _mapper.Map<SaveUserDto>(vm);

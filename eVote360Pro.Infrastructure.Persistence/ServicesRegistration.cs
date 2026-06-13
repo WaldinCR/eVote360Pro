@@ -1,6 +1,7 @@
+using eVote360Pro.Core.Domain.Interfaces;
+using eVote360Pro.Core.Domain.Interfaces.Repositories;
 using eVote360Pro.Infrastructure.Persistence.Contexts;
 using eVote360Pro.Infrastructure.Persistence.Repositories;
-using eVote360Pro.Core.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,6 +34,7 @@ namespace eVote360Pro.Infrastructure.Persistence
             services.AddTransient<IVerificationCodeRepository, VerificationCodeRepository>();
             services.AddTransient<ICitizenVoteRepository, CitizenVoteRepository>();
             services.AddTransient<IVoteRepository, VoteRepository>();
+            services.AddTransient<IPoliticalLeaderRepository, PoliticalLeaderRepository>();
             #endregion
         }
 

@@ -1,0 +1,14 @@
+﻿namespace eVote360Pro.Core.Application.ViewModels.Alliance
+{
+    public class AllianceViewModel
+    {
+        public int Id { get; set; }
+        public int Party1Id { get; set; }
+        public string Party1Name { get; set; } = null!;
+
+        public int Party2Id { get; set; }
+        public string Party2Name { get; set; } = null!;
+
+        public DateTime CreationDate { get; set; }
+    }
+}

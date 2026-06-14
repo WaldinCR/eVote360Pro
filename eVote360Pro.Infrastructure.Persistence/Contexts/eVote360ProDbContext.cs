@@ -1,5 +1,6 @@
-using Microsoft.EntityFrameworkCore;
 using eVote360Pro.Core.Domain.Entities;
+using eVote360Pro.Infrastructure.Persistence.EntitiesConfigurations;
+using Microsoft.EntityFrameworkCore;
 
 namespace eVote360Pro.Infrastructure.Persistence.Contexts
 {
@@ -17,7 +18,8 @@ namespace eVote360Pro.Infrastructure.Persistence.Contexts
         public DbSet<CandidatePosition> CandidatePositions { get; set; }
         public DbSet<PoliticalParty> PoliticalParties { get; set; }
         public DbSet<Candidate> Candidates { get; set; }
-        public DbSet<PoliticalLeader> PoliticalLeaders { get; set; }
+        public DbSet<PoliticalLeaderAssignment> PoliticalLeaderAssignments { get; set; }
+        //public DbSet<PoliticalLeader> PoliticalLeaders { get; set; }
         public DbSet<AllianceRequest> AllianceRequests { get; set; }
         public DbSet<Alliance> Alliances { get; set; }
         
@@ -26,7 +28,14 @@ namespace eVote360Pro.Infrastructure.Persistence.Contexts
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(eVote360ProDbContext).Assembly);
+           modelBuilder.ApplyConfigurationsFromAssembly(typeof(eVote360ProDbContext).Assembly);
+            //waldin
+            modelBuilder.ApplyConfiguration(new PoliticalPartyEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new CandidateEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new PoliticalLeaderAssignmentEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new AllianceEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new AllianceRequestEntityConfiguration());
         }
+
     }
 }

@@ -1,12 +1,134 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using eVote360Pro.Core.Application.Helpers;
+using eVote360Pro.Core.Application.Interfaces;
+using eVote360Pro.Core.Application.ViewModels.PoliticalParty;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
-namespace eVote360Pro.App.Controllers
+namespace eVote360Pro.App.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class PoliticalPartyController : Controller
     {
-        public IActionResult Index()
+        private readonly IPoliticalPartyService _partyService;
+        private readonly IHttpContextAccessor _httpContext;
+
+        public PoliticalPartyController(IPoliticalPartyService partyService, IHttpContextAccessor httpContext)
         {
-            return View();
+            _partyService = partyService;
+            _httpContext = httpContext;
+        }
+
+        // Solo administradores
+        private bool IsAdmin() =>
+            _httpContext.HttpContext!.Session.GetString("UserRole") == "Administrador";
+
+        private IActionResult AccessDenied()
+        {
+            TempData["Error"] = "No tiene permisos para acceder a esta sección.";
+            return RedirectToAction("Index", "Home", new { area = "Admin" });
+        }
+
+        // GET: /Admin/PoliticalParty
+        public async Task<IActionResult> Index()
+        {
+            if (!IsAdmin()) return AccessDenied();
+
+            var parties = await _partyService.GetAllViewModel();
+            return View(parties);
+        }
+
+        // GET: /Admin/PoliticalParty/Create
+        public IActionResult Create()
+        {
+            if (!IsAdmin()) return AccessDenied();
+            return View(new SavePoliticalPartyViewModel());
+        }
+
+        // POST: /Admin/PoliticalParty/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(SavePoliticalPartyViewModel vm)
+        {
+            if (!IsAdmin()) return AccessDenied();
+
+            if (!ModelState.IsValid) return View(vm);
+
+            try
+            {
+                //  archivo de logo
+                if (vm.LogoFile != null && vm.LogoFile.Length > 0)
+                {
+                    //vm.LogoUrl = await FileManager.UploadAsync(vm.LogoFile, "logos");
+                }
+
+                await _partyService.AddAsync(vm);
+                TempData["Success"] = "Partido político creado correctamente.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(vm);
+            }
+        }
+
+        // GET: /Admin/PoliticalParty/Edit/5
+        public async Task<IActionResult> Edit(int id)
+        {
+            if (!IsAdmin()) return AccessDenied();
+
+            var vm = await _partyService.GetByIdSaveViewModel(id);
+            if (vm == null) return NotFound();
+            return View(vm);
+        }
+
+        // POST: /Admin/PoliticalParty/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(SavePoliticalPartyViewModel vm)
+        {
+            if (!IsAdmin()) return AccessDenied();
+
+            if (!ModelState.IsValid) return View(vm);
+
+            try
+            {
+                //  logo, reemplazar
+                if (vm.LogoFile != null && vm.LogoFile.Length > 0)
+                {
+                   // vm.LogoUrl = await FileManager.UploadAsync(vm.LogoFile, "logos");
+                }
+
+                await _partyService.UpdateAsync(vm);
+                TempData["Success"] = "Partido político actualizado correctamente.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(vm);
+            }
+        }
+
+        // POST: /Admin/PoliticalParty/ChangeStatus/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeStatus(int id)
+        {
+            if (!IsAdmin()) return AccessDenied();
+
+            try
+            {
+                await _partyService.ChangeStatusAsync(id);
+                TempData["Success"] = "Estado del partido actualizado correctamente.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

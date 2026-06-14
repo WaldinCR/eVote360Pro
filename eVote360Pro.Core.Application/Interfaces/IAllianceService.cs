@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using eVote360Pro.Core.Application.ViewModels.Alliance;
 
 namespace eVote360Pro.Core.Application.Interfaces
 {
-    internal class IAllianceService
+    public interface IAllianceService
     {
+        Task<List<AllianceViewModel>> GetAllViewModel();
+        Task DeleteAsync(int id);
+        Task<bool> HasActiveAllianceAsync(int party1Id, int party2Id);
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using eVote360Pro.Core.Domain.Common.Enums;
 
 namespace eVote360Pro.Core.Application.ViewModels.Alliance
 {
@@ -16,9 +12,8 @@ namespace eVote360Pro.Core.Application.ViewModels.Alliance
         public int ReceiverPartyId { get; set; }
         public string ReceiverPartyName { get; set; } = null!;
 
-        public int Status { get; set; }
-        public string StatusName { get; set; } = null!; 
-
-        public string RequestDate { get; set; } = null!;
+        public AllianceRequestStatus Status { get; set; }
+        public DateTime RequestDate { get; set; }
+        public DateTime? ResponseDate { get; set; }
     }
 }

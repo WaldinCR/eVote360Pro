@@ -1,5 +1,4 @@
-﻿using System;
-using eVote360Pro.Core.Domain.Common;
+﻿using eVote360Pro.Core.Domain.Common;
 
 namespace eVote360Pro.Core.Domain.Entities
 {
@@ -7,7 +6,7 @@ namespace eVote360Pro.Core.Domain.Entities
     {
         public required int Party1Id { get; set; }
         public required int Party2Id { get; set; }
-        public required DateTime CreationDate { get; set; } = DateTime.Now;
+        public DateTime CreationDate { get; set; } = DateTime.Now;
 
         // Navigation Properties
         public PoliticalParty? Party1 { get; set; }

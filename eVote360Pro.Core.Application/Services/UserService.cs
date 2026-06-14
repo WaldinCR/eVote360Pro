@@ -1,10 +1,11 @@
-﻿using eVote360Pro.Core.Application.Dtos.Email;
+﻿using AutoMapper;
+using eVote360Pro.Core.Application.Dtos.Email;
 using eVote360Pro.Core.Application.Dtos.User;
 using eVote360Pro.Core.Application.Helpers;
 using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Domain.Entities;
 using eVote360Pro.Core.Domain.Interfaces;
-using AutoMapper;
+using eVote360Pro.Core.Domain.Interfaces.Repositories;
 
 namespace eVote360Pro.Core.Application.Services
 {
@@ -13,12 +14,14 @@ namespace eVote360Pro.Core.Application.Services
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly IEmailService _emailService;
+        private readonly IPoliticalLeaderRepository _politicalLeaderRepository;
 
-        public UserService(IUserRepository userRepository, IMapper mapper, IEmailService emailService)
+        public UserService(IUserRepository userRepository, IMapper mapper, IEmailService emailService , IPoliticalLeaderRepository politicalLeaderRepository)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _emailService = emailService;
+            _politicalLeaderRepository = politicalLeaderRepository;
         }
         public async Task<List<UserDto>> GetAllAsync()
         {
@@ -57,7 +60,9 @@ namespace eVote360Pro.Core.Application.Services
             if (entityDb == null) return;
 
             _mapper.Map(dto, entityDb);
-            entityDb.Password = PasswordEncryptation.ComputeSha256Hash(dto.Password);
+
+            if (!string.IsNullOrWhiteSpace(dto.Password))
+                entityDb.Password = PasswordEncryptation.ComputeSha256Hash(dto.Password);
 
             await _userRepository.UpdateAsync(entityDb);
         }
@@ -109,9 +114,8 @@ namespace eVote360Pro.Core.Application.Services
         }
         public async Task<bool> HasPoliticalPartyAssignedAsync(int userId)
         {
-            // Depende de la entidad PoliticalLeader 
-            // Por ahora retorna true para no bloquear el desarrollo
-            return await Task.FromResult(true);
+            var leader = await _politicalLeaderRepository.GetByUserIdAsync(userId);
+            return leader != null && leader.PoliticalParty != null && leader.PoliticalParty.IsActive;
         }
     }
 }

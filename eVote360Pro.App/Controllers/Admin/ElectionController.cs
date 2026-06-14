@@ -2,8 +2,7 @@ using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.Election;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using System.Threading.Tasks;
+using AutoMapper;
 
 namespace eVote360Pro.App.Controllers.Admin
 {
@@ -11,23 +10,19 @@ namespace eVote360Pro.App.Controllers.Admin
     public class ElectionController : Controller
     {
         private readonly IElectionService _electionService;
+        private readonly IMapper _mapper;
 
-        public ElectionController(IElectionService electionService)
+        public ElectionController(IElectionService electionService, IMapper mapper)
         {
             _electionService = electionService;
+            _mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
         {
             var dtos = await _electionService.GetAllAsync();
             
-            var list = dtos.Select(d => new ElectionViewModel
-            {
-                Id = d.Id,
-                Name = d.Name,
-                Year = d.Year,
-                Status = d.Status
-            }).ToList();
+            var list = _mapper.Map<List<ElectionViewModel>>(dtos);
 
             return View(list);
         }
@@ -59,7 +54,7 @@ namespace eVote360Pro.App.Controllers.Admin
             var error = await _electionService.ActivateElectionAsync(id);
             if (!string.IsNullOrEmpty(error))
             {
-                TempData["Error"] = error; // Aquí se mostrará si falta configurar un candidato o puesto
+                TempData["Error"] = error; 
             }
             else
             {

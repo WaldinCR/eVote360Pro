@@ -12,9 +12,6 @@ namespace eVote360Pro.Core.Domain.Entities
         public required string Password { get; set; }
         public required UserRol Role { get; set; }
         public bool IsActive { get; set; } = true;
-
-        //navigation properties
-        //public DirigentePolitico? DirigentePolitico { get; set; }
     }
 
 }

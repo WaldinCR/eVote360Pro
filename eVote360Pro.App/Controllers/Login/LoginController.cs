@@ -11,17 +11,22 @@ namespace eVote360Pro.App.Controllers
     public class LoginController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IUserSession _userSession;
 
-        public LoginController(IUserService userService)
+        public LoginController(IUserService userService, IUserSession userSession)
         {
             _userService = userService;
+            _userSession = userSession;
         }
 
         public IActionResult Index()
         {
-            var sessionUser = HttpContext.Session.Get<UserViewModel>("User");
-            if (sessionUser != null)
-                return RedirectByRole(sessionUser.Role);
+            if (_userSession.HasUser()) 
+            {
+                UserViewModel? userSession = _userSession.GetUserSession();
+                if (userSession != null)
+                    return RedirectByRole(userSession.Role);
+            }
 
             return View(new LoginViewModel());
         }
@@ -77,8 +82,8 @@ namespace eVote360Pro.App.Controllers
 
         public IActionResult Logout()
         {
-            HttpContext.Session.Clear();
-            return RedirectToAction("Index");
+            HttpContext.Session.Remove("User"); 
+            return RedirectToRoute(new { controller = "Login", action = "Index" });
         }
 
         public IActionResult AccessDenied()

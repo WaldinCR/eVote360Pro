@@ -8,37 +8,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(opt =>
 {
     opt.IdleTimeout = TimeSpan.FromMinutes(60);
     opt.Cookie.HttpOnly = true;
 });
 
-
 builder.Services.AddPersistenceLayerIoc(builder.Configuration);
 builder.Services.AddApplicationLayerIoc();
 builder.Services.AddSharedLayerIoc(builder.Configuration);
-
-// Configuración de sesión (usada por el módulo de autenticación del equipo y CandidatePositionController)
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromHours(2);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
-
-// Configuración de autenticación por cookies (se activa cuando el módulo de Login esté integrado)
-builder.Services.AddAuthentication("Cookies")
-    .AddCookie("Cookies", options =>
-    {
-        options.LoginPath = "/Account/Login";
-        options.AccessDeniedPath = "/Account/AccessDenied";
-    });
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped<IUserSession, UserSession>();
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -52,7 +36,6 @@ app.UseHttpsRedirection();
 app.UseSession();
 app.UseRouting();
 
-app.UseSession();      
 app.UseAuthentication();  
 
 app.UseAuthorization();
@@ -61,7 +44,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Login}/{action=Index}/{id?}") 
     .WithStaticAssets();
 
 

@@ -8,5 +8,6 @@ namespace eVote360Pro.Core.Application.Dtos.Election
         public string Name { get; set; } = null!;
         public int Year { get; set; } 
         public ElectionStatus Status { get; set; }
+        public DateTime? ActivationDate { get; set; }
     }
 }

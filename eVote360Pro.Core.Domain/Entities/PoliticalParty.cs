@@ -1,23 +1,21 @@
-﻿using eVote360Pro.Core.Domain.Common;
+using eVote360Pro.Core.Domain.Common;
 
 namespace eVote360Pro.Core.Domain.Entities
 {
     public class PoliticalParty : BaseEntity
     {
-      public  string? Description { get; set; }= null;
-      public required string Name { get; set; }
-      public bool IsActive { get; set; } = true;
-      public string LogoUrl { get; set; } = null!;
-      public string Acronym { get; set; } = null!;
-      public PoliticalLeader? PoliticalLeader { get; set; } //fk
+        public required string Name { get; set; }
+        public string? Description { get; set; }
+        public required string Acronym { get; set; }
+        public required string LogoUrl { get; set; }
+        public bool IsActive { get; set; } = true;
 
-        //Relaci
-      public ICollection<Candidate> Candidates { get; set; } = new List<Candidate>();
-      public ICollection<PoliticalLeader> PoliticalLeaders { get; set; } = new List<PoliticalLeader>();
-      public ICollection<AllianceRequest> SentAllianceRequests { get; set; } = new List<AllianceRequest>();
-      public ICollection<AllianceRequest> ReceivedAllianceRequests { get; set; } = new List<AllianceRequest>();
-      public ICollection<Alliance> AlliancesAsParty1 { get; set; } = new List<Alliance>();
-      public ICollection<Alliance> AlliancesAsParty2 { get; set; } = new List<Alliance>();
-
+        // Navigation Properties
+        public PoliticalLeaderAssignment? PoliticalLeaderAssignment { get; set; }
+        public ICollection<Candidate> Candidates { get; set; } = new List<Candidate>();
+        public ICollection<AllianceRequest> SentAllianceRequests { get; set; } = new List<AllianceRequest>();
+        public ICollection<AllianceRequest> ReceivedAllianceRequests { get; set; } = new List<AllianceRequest>();
+        public ICollection<Alliance> AlliancesAsParty1 { get; set; } = new List<Alliance>();
+        public ICollection<Alliance> AlliancesAsParty2 { get; set; } = new List<Alliance>();
     }
 }

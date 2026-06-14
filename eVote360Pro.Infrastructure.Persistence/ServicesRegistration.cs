@@ -35,8 +35,11 @@ namespace eVote360Pro.Infrastructure.Persistence
             services.AddTransient<IVerificationCodeRepository, VerificationCodeRepository>();
             services.AddTransient<ICitizenVoteRepository, CitizenVoteRepository>();
             services.AddTransient<IVoteRepository, VoteRepository>();
-            services.AddTransient<IPoliticalLeaderRepository, PoliticalLeaderRepository>();
-            services.AddTransient<IElectivePositionRepository, ElectivePositionRepository>();
+            //waldin 
+            services.AddTransient<IPoliticalPartyRepository, PoliticalPartyRepository>();
+            services.AddTransient<ICandidateRepository, CandidateRepository>();
+            services.AddTransient<IPoliticalLeaderAssignmentRepository, PoliticalLeaderAssignmentRepository>();
+            services.AddTransient<IAllianceRepository, AllianceRepository>();
             #endregion
         }
 

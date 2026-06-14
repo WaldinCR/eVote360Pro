@@ -15,6 +15,6 @@ namespace eVote360Pro.Core.Application.ViewModels.Candidate
         public bool IsActive { get; set; }
 
         public int PoliticalPartyId { get; set; }
-        public string PoliticalPartyName { get; set; } = null!; 
+        public string? PoliticalPartyName { get; set; } = null!; 
     }
 }

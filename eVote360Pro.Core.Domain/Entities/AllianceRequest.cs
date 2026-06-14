@@ -1,5 +1,4 @@
-﻿using System;
-using eVote360Pro.Core.Domain.Common;
+﻿using eVote360Pro.Core.Domain.Common;
 using eVote360Pro.Core.Domain.Common.Enums;
 
 namespace eVote360Pro.Core.Domain.Entities
@@ -8,8 +7,8 @@ namespace eVote360Pro.Core.Domain.Entities
     {
         public required int ApplicantPartyId { get; set; }
         public required int ReceiverPartyId { get; set; }
-        public required AllianceRequestStatus Status { get; set; } = AllianceRequestStatus.Pending;
-        public required DateTime RequestDate { get; set; } = DateTime.Now;
+        public AllianceRequestStatus Status { get; set; } = AllianceRequestStatus.Pending;
+        public DateTime RequestDate { get; set; } = DateTime.Now;
         public DateTime? ResponseDate { get; set; }
 
         // Navigation Properties

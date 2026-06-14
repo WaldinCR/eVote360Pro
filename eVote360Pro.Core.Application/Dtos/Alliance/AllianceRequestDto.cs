@@ -1,4 +1,5 @@
-﻿using System;
+﻿using eVote360Pro.Core.Application.Dtos.PoliticalParty;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +16,8 @@ namespace eVote360Pro.Core.Application.Dtos.Alliance
         public string ReceiverPartyName { get; set; } = null!;
         public int Status { get; set; }
         public string RequestDate { get; set; } = null!;
+
+        public PoliticalPartyDto? ApplicantParty { get; set; }
+        public PoliticalPartyDto? ReceiverParty { get; set; }
     }
 }

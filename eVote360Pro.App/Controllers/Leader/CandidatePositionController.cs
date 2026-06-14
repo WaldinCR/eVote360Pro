@@ -13,17 +13,16 @@ namespace eVote360Pro.App.Controllers.Leader
     {
         private readonly ICandidatePositionService _candidatePositionService;
         private readonly IMapper _mapper;
-        private readonly IUserSession _userSession;
 
-        public CandidatePositionController(ICandidatePositionService candidatePositionService, IUserSession userSession, IMapper mapper)
+        public CandidatePositionController(ICandidatePositionService candidatePositionService, IMapper mapper)
         {
             _candidatePositionService = candidatePositionService;
             _mapper = mapper;
-            _userSession = userSession;
         }
 
         public async Task<IActionResult> Index()
         {
+            // ID temporal fijo. Al integrar el Login, se reemplaza por la sesión del dirigente
             int currentLeaderPartyId = 1; 
 
             var dtos = await _candidatePositionService.GetAllByPartyAsync(currentLeaderPartyId);
@@ -33,24 +32,26 @@ namespace eVote360Pro.App.Controllers.Leader
             return View(list);
         }
 
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View("Create", new SaveCandidatePositionViewModel());
+        }
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SaveCandidatePositionViewModel vm)
         {
             if (!ModelState.IsValid)
             {
-                await LoadDropdownsAsync();
-                return View(vm);
+                return View("Create", vm);
             }
 
-            // Asignamos el ID del partido en sesión al ViewModel
-            vm.PoliticalPartyId = HttpContext.Session.GetInt32("PartyId") ?? 1;
-
-            var error = await _assignmentService.AddAsync(vm);
+            var error = await _candidatePositionService.AddAsync(vm);
             if (!string.IsNullOrEmpty(error))
             {
                 TempData["Error"] = error;
-                await LoadDropdownsAsync();
-                return View(vm);
+                return View("Create", vm);
             }
 
             TempData["Success"] = "Candidato asignado al puesto exitosamente.";
@@ -58,9 +59,10 @@ namespace eVote360Pro.App.Controllers.Leader
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var error = await _assignmentService.DeleteAsync(id);
+            var error = await _candidatePositionService.DeleteAsync(id);
             if (!string.IsNullOrEmpty(error))
             {
                 TempData["Error"] = error;
@@ -69,15 +71,8 @@ namespace eVote360Pro.App.Controllers.Leader
             {
                 TempData["Success"] = "Asignación eliminada exitosamente.";
             }
+
             return RedirectToAction(nameof(Index));
-        }
-
-        private async Task LoadDropdownsAsync()
-        {
-            var positions = await _positionService.GetAllAsync();
-            ViewBag.Positions = positions.Where(p => p.IsActive).ToList();
-
-            ViewBag.Candidates = new List<object>();
         }
     }
 }

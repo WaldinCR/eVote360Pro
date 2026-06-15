@@ -8,7 +8,7 @@ using AutoMapper;
 
 namespace eVote360Pro.Core.Application.Services
 {
-    public class CitizenService : ICitizenService
+    public class CitizenService : GenericService<Citizen, CitizenDto>, ICitizenService
     {
         private readonly IGenericRepository<Citizen> _citizenRepository;
         private readonly IGenericRepository<Election> _electionRepository;
@@ -19,7 +19,7 @@ namespace eVote360Pro.Core.Application.Services
             IGenericRepository<Citizen> citizenRepository,
             IGenericRepository<Election> electionRepository,
             IGenericRepository<CitizenVote> citizenVoteRepository,
-            IMapper mapper)
+            IMapper mapper) : base(citizenRepository, mapper)
         {
             _citizenRepository = citizenRepository;
             _electionRepository = electionRepository;
@@ -27,10 +27,10 @@ namespace eVote360Pro.Core.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<IReadOnlyList<CitizenDto>> GetAllAsync()
+        public new async Task<IReadOnlyList<CitizenDto>> GetAllAsync()
         {
-            var citizens = await _citizenRepository.GetAllAsync();
-            return _mapper.Map<List<CitizenDto>>(citizens).AsReadOnly();
+            var citizens = await base.GetAllAsync();
+            return citizens.AsReadOnly();
         }
 
         public async Task<SaveCitizenViewModel?> GetByIdSaveViewModelAsync(int id)

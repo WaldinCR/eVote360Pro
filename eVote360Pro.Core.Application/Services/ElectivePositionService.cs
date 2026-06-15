@@ -9,7 +9,7 @@ using eVote360Pro.Core.Domain.Interfaces.Repositories;
 
 namespace eVote360Pro.Core.Application.Services
 {
-    public class ElectivePositionService : IElectivePositionService
+    public class ElectivePositionService : GenericService<ElectivePosition, ElectivePositionDto>, IElectivePositionService
     {
         private readonly IElectivePositionRepository _positionRepository;
         private readonly IGenericRepository<Election> _electionRepository;
@@ -26,7 +26,7 @@ namespace eVote360Pro.Core.Application.Services
             IGenericRepository<CandidatePosition> candidatePositionRepository,
             IGenericRepository<Candidate> candidateRepository,
             IGenericRepository<PoliticalParty> partyRepository,
-            IMapper mapper)
+            IMapper mapper) : base(positionRepository, mapper)
         {
             _positionRepository = positionRepository;
             _electionRepository = electionRepository;
@@ -37,10 +37,10 @@ namespace eVote360Pro.Core.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<IReadOnlyList<ElectivePositionDto>> GetAllAsync()
+        public new async Task<IReadOnlyList<ElectivePositionDto>> GetAllAsync()
         {
-            var positions = await _positionRepository.GetAllAsync();
-            return _mapper.Map<List<ElectivePositionDto>>(positions).AsReadOnly();
+            var positions = await base.GetAllAsync();
+            return positions.AsReadOnly();
         }
 
         public async Task<SaveElectivePositionViewModel?> GetByIdSaveViewModelAsync(int id)

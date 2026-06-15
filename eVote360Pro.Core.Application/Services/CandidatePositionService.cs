@@ -4,9 +4,7 @@ using eVote360Pro.Core.Application.Dtos.CandidatePosition;
 using eVote360Pro.Core.Domain.Entities;
 using eVote360Pro.Core.Domain.Interfaces;
 using eVote360Pro.Core.Domain.Common.Enums;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AutoMapper;
 
 namespace eVote360Pro.Core.Application.Services
 {
@@ -16,8 +14,9 @@ namespace eVote360Pro.Core.Application.Services
         private readonly IGenericRepository<Candidate> _candidateRepository;
         private readonly IGenericRepository<ElectivePosition> _positionRepository;
         private readonly IGenericRepository<Election> _electionRepository;
-        private readonly IGenericRepository<Alliance> _allianceRepository;       // Bug #8 fix
-        private readonly IGenericRepository<PoliticalParty> _partyRepository;    // Bug #7 fix
+        private readonly IGenericRepository<Alliance> _allianceRepository;    
+        private readonly IGenericRepository<PoliticalParty> _partyRepository;  
+        private readonly IMapper _mapper;
 
         public CandidatePositionService(
             IGenericRepository<CandidatePosition> candidatePositionRepository,
@@ -25,7 +24,8 @@ namespace eVote360Pro.Core.Application.Services
             IGenericRepository<ElectivePosition> positionRepository,
             IGenericRepository<Election> electionRepository,
             IGenericRepository<Alliance> allianceRepository,
-            IGenericRepository<PoliticalParty> partyRepository)
+            IGenericRepository<PoliticalParty> partyRepository,
+            IMapper mapper)
         {
             _candidatePositionRepository = candidatePositionRepository;
             _candidateRepository = candidateRepository;
@@ -33,6 +33,7 @@ namespace eVote360Pro.Core.Application.Services
             _electionRepository = electionRepository;
             _allianceRepository = allianceRepository;
             _partyRepository = partyRepository;
+            _mapper = mapper;
         }
 
         public async Task<IReadOnlyList<CandidatePositionDto>> GetAllByPartyAsync(int partyId)
@@ -80,15 +81,13 @@ namespace eVote360Pro.Core.Application.Services
             bool candidateAlreadyAssigned = allAssignments.Any(cp => cp.CandidateId == viewModel.CandidateId && cp.PoliticalPartyId == viewModel.PoliticalPartyId);
             if (candidateAlreadyAssigned) return "Este candidato ya está postulado a un puesto en este partido.";
 
-            // 3. Lógica compleja de ALIANZAS
+            // 3. Lógica de ALIANZAS
             if (candidate.PoliticalPartyId != viewModel.PoliticalPartyId)
             {
-                // Bug #7 fix: Validar que el partido de origen del candidato aliado esté activo
                 var originParty = await _partyRepository.GetByIdAsync(candidate.PoliticalPartyId);
                 if (originParty == null || !originParty.IsActive)
                     return "El partido de origen del candidato aliado está inactivo o no existe.";
 
-                // Bug #8 fix: Verificar que exista una alianza aceptada entre ambos partidos
                 var allAlliances = await _allianceRepository.GetAllAsync();
                 bool allianceExists = allAlliances.Any(a =>
                     (a.Party1Id == viewModel.PoliticalPartyId && a.Party2Id == candidate.PoliticalPartyId) ||
@@ -97,7 +96,6 @@ namespace eVote360Pro.Core.Application.Services
                 if (!allianceExists)
                     return $"No existe una alianza política vigente entre los partidos involucrados. Primero debe establecerse una alianza aceptada.";
 
-                // Es un candidato aliado. Buscamos su asignación en su partido de origen.
                 var originAssignment = allAssignments.FirstOrDefault(cp => cp.CandidateId == viewModel.CandidateId && cp.PoliticalPartyId == candidate.PoliticalPartyId);
 
                 if (originAssignment == null) 
@@ -107,15 +105,10 @@ namespace eVote360Pro.Core.Application.Services
                     return "El candidato aliado solo puede postularse al mismo puesto que tiene en su partido de origen.";
             }
 
-            var entity = new CandidatePosition
-            {
-                CandidateId = viewModel.CandidateId,
-                ElectivePositionId = viewModel.ElectivePositionId,
-                PoliticalPartyId = viewModel.PoliticalPartyId
-            };
+            var entity = _mapper.Map<CandidatePosition>(viewModel);
 
             await _candidatePositionRepository.AddAsync(entity);
-            return null; // Éxito
+            return null;
         }
 
         public async Task<string?> DeleteAsync(int id)
@@ -125,13 +118,11 @@ namespace eVote360Pro.Core.Application.Services
             var entity = await _candidatePositionRepository.GetByIdAsync(id);
             if (entity == null) return "La asignación no existe.";
 
-            // Validar que si eliminamos la asignación de origen, no dejemos asignaciones aliadas "huérfanas"
             var allAssignments = await _candidatePositionRepository.GetAllAsync();
             var candidate = await _candidateRepository.GetByIdAsync(entity.CandidateId);
 
             if (candidate != null && entity.PoliticalPartyId == candidate.PoliticalPartyId)
             {
-                // Es la asignación original del candidato en su partido propio
                 bool hasAlliedAssignments = allAssignments.Any(cp =>
                     cp.CandidateId == entity.CandidateId &&
                     cp.PoliticalPartyId != candidate.PoliticalPartyId);

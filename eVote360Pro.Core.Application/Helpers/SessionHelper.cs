@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Text;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 
 namespace eVote360Pro.Core.Application.Helpers
@@ -9,13 +9,13 @@ namespace eVote360Pro.Core.Application.Helpers
         {
             public static void Set<T>(this ISession session, string key, T value)
             {
-                session.SetString(key, JsonSerializer.Serialize(value));
+                session.SetString(key, JsonConvert.SerializeObject(value));
             }
 
             public static T? Get<T>(this ISession session, string key)
             {
                 var value = session.GetString(key);
-                return value == null ? default : JsonSerializer.Deserialize<T>(value);
+                return value != null ? JsonConvert.DeserializeObject<T>(value): default;
             }
         }
 }

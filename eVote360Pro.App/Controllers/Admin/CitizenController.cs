@@ -2,8 +2,7 @@ using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.Citizen;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using System.Threading.Tasks;
+using AutoMapper;
 
 namespace eVote360Pro.App.Controllers.Admin
 {
@@ -11,27 +10,20 @@ namespace eVote360Pro.App.Controllers.Admin
     public class CitizenController : Controller
     {
         private readonly ICitizenService _citizenService;
+        private readonly IMapper _mapper;
 
-        public CitizenController(ICitizenService citizenService)
+        public CitizenController(ICitizenService citizenService, IMapper mapper)
         {
             _citizenService = citizenService;
+            _mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
         {
-            // NUEVO: Bandera visual para la vista
             ViewBag.IsElectionActive = await _citizenService.IsElectionActiveAsync(); 
-
             var dtos = await _citizenService.GetAllAsync();
-            var list = dtos.Select(d => new CitizenViewModel
-            {
-                Id = d.Id,
-                Document = d.Document,
-                FirstName = d.FirstName,
-                LastName = d.LastName,
-                Email = d.Email,
-                IsActive = d.IsActive
-            }).ToList();
+
+            var list = _mapper.Map<List<CitizenViewModel>>(dtos);
 
             return View(list);
         }
@@ -40,7 +32,6 @@ namespace eVote360Pro.App.Controllers.Admin
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            // CORREGIDO: Bloqueo de acceso GET si hay elección activa
             if (await _citizenService.IsElectionActiveAsync())
             {
                 TempData["Error"] = "No se puede acceder al formulario de creación mientras exista una elección activa.";
@@ -54,7 +45,6 @@ namespace eVote360Pro.App.Controllers.Admin
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SaveCitizenViewModel vm)
         {
-            // Re-validación de seguridad en el POST si hay elección activa
             if (await _citizenService.IsElectionActiveAsync())
             {
                 TempData["Error"] = "No se puede crear un ciudadano mientras exista una elección activa.";
@@ -80,7 +70,6 @@ namespace eVote360Pro.App.Controllers.Admin
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            // CORREGIDO: Bloqueo de acceso GET si hay elección activa
             if (await _citizenService.IsElectionActiveAsync())
             {
                 TempData["Error"] = "No se pueden modificar ciudadanos mientras exista una elección activa.";

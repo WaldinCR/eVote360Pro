@@ -22,21 +22,20 @@ namespace eVote360Pro.Infrastructure.Persistence.EntitiesConfigurations
             #endregion
 
             #region Relationship Configuration
-            // FKs 
-            // builder.HasOne<Eleccion>()
-            //     .WithMany()
-            //     .HasForeignKey(v => v.EleccionId)
-            //     .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne<Election>()
+                .WithMany()
+               .HasForeignKey(v => v.ElectionId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // builder.HasOne<PuestoElectivo>()
-            //     .WithMany()
-            //     .HasForeignKey(v => v.PuestoElectivoId)
-            //     .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne<ElectivePosition>() 
+                 .WithMany()
+                 .HasForeignKey(v => v.ElectivePositionId)
+                  .OnDelete(DeleteBehavior.Restrict);
 
-            // builder.HasOne<Candidato>()
-            //     .WithMany()
-            //     .HasForeignKey(v => v.CandidatoId)
-            //     .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne<Candidate>()
+                .WithMany()
+                 .HasForeignKey(v => v.CandidateId)
+                .OnDelete(DeleteBehavior.Restrict);
             #endregion
         }
     }

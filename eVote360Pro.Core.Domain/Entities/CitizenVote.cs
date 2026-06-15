@@ -8,5 +8,7 @@ namespace eVote360Pro.Core.Domain.Entities
         public required DateTime VotedAt { get; set; }
 
         //navigation properties
+        public Citizen? Citizen { get; set; }
+        public Election? Election { get; set; }
     }
 }

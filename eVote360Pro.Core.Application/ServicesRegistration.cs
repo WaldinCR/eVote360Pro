@@ -1,3 +1,4 @@
+using System.Reflection;
 using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.Mappings.DtosAndViewModels;
 using eVote360Pro.Core.Application.Mappings.EntitiesAndDtos;
@@ -24,9 +25,18 @@ namespace eVote360Pro.Core.Application
             #endregion
 
             #region AutoMapper
-            services.AddAutoMapper(cfg => {
-                cfg.AddMaps(Assembly.GetExecutingAssembly());
-            });
+            //services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            //waldin pendiente descomentar
+            //services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddTransient<IElectorService, ElectorService>();
+            services.AddTransient<ICitizenService, CitizenService>();
+            services.AddTransient<IElectionService, ElectionService>();
+            services.AddTransient<IElectivePositionService, ElectivePositionService>();
+            services.AddTransient<ICandidatePositionService, CandidatePositionService>();
+            #endregion
+
+            #region AutoMapper
+            services.AddAutoMapper(cfg => { }, Assembly.GetExecutingAssembly());
             #endregion
 
         }

@@ -12,7 +12,8 @@ namespace eVote360Pro.Core.Domain.Entities
         public bool IsUsed { get; set; } = false;
 
         //navigation properties
-        //public Ciudadano? Ciudadano { get; set; }
+        public Citizen? Citizen { get; set; }
+        public Election? Election { get; set; }
     }
 
 }

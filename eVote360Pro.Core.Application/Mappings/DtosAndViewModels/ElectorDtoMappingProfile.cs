@@ -13,7 +13,11 @@ namespace eVote360Pro.Core.Application.Mappings.DtosAndViewModels
             CreateMap<ElectivePositionVoteViewModel, SaveVoteDto>()
                 .ForMember(dest => dest.ElectivePositionId, opt => opt.MapFrom(src => src.ElectivePositionId))
                 .ForMember(dest => dest.CandidateId, opt => opt.MapFrom(src => src.SelectedCandidateId))
-                .ForMember(dest => dest.ElectionId, opt => opt.Ignore()); 
+                .ForMember(dest => dest.ElectionId, opt => opt.Ignore())
+                .ForMember(dest => dest.PositionName, opt => opt.MapFrom(src => src.PositionName))
+                .ForMember(dest => dest.CandidateName, opt => opt.Ignore())
+                .ForMember(dest => dest.PartyName, opt => opt.Ignore());
         }
     }
 }
+

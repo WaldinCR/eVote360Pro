@@ -1,6 +1,7 @@
-﻿using eVote360Pro.Core.Application.Helpers;
+using eVote360Pro.Core.Application.Helpers;
 using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.PoliticalParty;
+using eVote360Pro.App.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -56,13 +57,14 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
 
             try
             {
-                //  archivo de logo
+                var savedVm = await _partyService.AddAsync(vm);
+
                 if (vm.LogoFile != null && vm.LogoFile.Length > 0)
                 {
-                    //vm.LogoUrl = await FileManager.UploadAsync(vm.LogoFile, "logos");
+                    savedVm.LogoUrl = UploadFile.Upload(vm.LogoFile, savedVm.Id, "logos");
+                    await _partyService.UpdateAsync(savedVm);
                 }
 
-                await _partyService.AddAsync(vm);
                 TempData["Success"] = "Partido político creado correctamente.";
                 return RedirectToAction(nameof(Index));
             }
@@ -94,10 +96,14 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
 
             try
             {
-                //  logo, reemplazar
-                if (vm.LogoFile != null && vm.LogoFile.Length > 0)
+                var originalParty = await _partyService.GetByIdSaveViewModel(vm.Id);
+                if (originalParty != null && vm.LogoFile != null && vm.LogoFile.Length > 0)
                 {
-                   // vm.LogoUrl = await FileManager.UploadAsync(vm.LogoFile, "logos");
+                    vm.LogoUrl = UploadFile.Upload(vm.LogoFile, vm.Id, "logos", true, originalParty.LogoUrl);
+                }
+                else if (originalParty != null)
+                {
+                    vm.LogoUrl = originalParty.LogoUrl;
                 }
 
                 await _partyService.UpdateAsync(vm);

@@ -24,9 +24,9 @@ namespace eVote360Pro.Core.Application
             #endregion
 
             #region AutoMapper
-            //services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            //waldin pendiente descomentar
-            //services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddAutoMapper(cfg => {
+                cfg.AddMaps(Assembly.GetExecutingAssembly());
+            });
             #endregion
 
         }

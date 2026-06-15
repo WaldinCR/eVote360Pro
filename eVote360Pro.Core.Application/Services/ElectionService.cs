@@ -94,6 +94,20 @@ namespace eVote360Pro.Core.Application.Services
                 }
             }
 
+            // Set candidate ParticipatedInElection = true for all participating candidates
+            var activePositionIds = activePositions.Select(p => p.Id).ToList();
+            var activePartyIds = activeParties.Select(p => p.Id).ToList();
+            var activeAssignments = allAssignments
+                .Where(a => activePositionIds.Contains(a.ElectivePositionId) && activePartyIds.Contains(a.PoliticalPartyId))
+                .ToList();
+            var candidateIds = activeAssignments.Select(a => a.CandidateId).Distinct().ToList();
+            var candidates = await _candidateRepository.GetAllAsync();
+            foreach (var candidate in candidates.Where(c => candidateIds.Contains(c.Id)))
+            {
+                candidate.ParticipatedInElection = true;
+                await _candidateRepository.UpdateAsync(candidate);
+            }
+
             electionToActivate.Status = ElectionStatus.Active;
             electionToActivate.ActivationDate = DateTime.UtcNow; 
             await _electionRepository.UpdateAsync(electionToActivate);
@@ -226,6 +240,24 @@ namespace eVote360Pro.Core.Application.Services
             }
 
             return resultVm;
+        }
+
+        public async Task<List<eVote360Pro.Core.Application.ViewModels.Admin.ElectionSummaryViewModel>> GetElectionSummariesByYearAsync(int year)
+        {
+            var elections = await _electionRepository.GetAllListWithIncludeAsync(e => e.CitizenVotes!);
+            var parties = await _partyRepository.GetAllAsync();
+            var assignments = await _assignmentRepository.GetAllAsync();
+
+            var filteredElections = elections.Where(e => e.Year == year).ToList();
+
+            return filteredElections.Select(e => new eVote360Pro.Core.Application.ViewModels.Admin.ElectionSummaryViewModel
+            {
+                ElectionName = e.Name,
+                RealizationDate = e.ActivationDate?.ToString("dd/MM/yyyy") ?? "N/A",
+                ParticipatingParties = parties.Count(p => p.IsActive),
+                RealCandidates = assignments.Select(a => a.CandidateId).Distinct().Count(),
+                CitizensVoted = e.CitizenVotes?.Count ?? 0
+            }).ToList();
         }
     }
 }

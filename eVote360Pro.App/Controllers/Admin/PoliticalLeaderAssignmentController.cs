@@ -1,4 +1,4 @@
-﻿using eVote360Pro.Core.Application.Interfaces;
+using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.PoliticalLeaderAssignment;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,15 +10,18 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
     {
         private readonly IPoliticalLeaderAssignmentService _assignmentService;
         private readonly IPoliticalPartyService _partyService;
+        private readonly IUserService _userService;
         private readonly IHttpContextAccessor _httpContext;
 
         public PoliticalLeaderAssignmentController(
             IPoliticalLeaderAssignmentService assignmentService,
             IPoliticalPartyService partyService,
+            IUserService userService,
             IHttpContextAccessor httpContext)
         {
             _assignmentService = assignmentService;
             _partyService = partyService;
+            _userService = userService;
             _httpContext = httpContext;
         }
 
@@ -37,6 +40,15 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             if (!IsAdmin()) return AccessDenied();
 
             var assignments = await _assignmentService.GetAllViewModel();
+            var users = await _userService.GetAllAsync();
+            foreach (var a in assignments)
+            {
+                var user = users.FirstOrDefault(u => u.Id == a.UserId);
+                if (user != null)
+                {
+                    a.UserName = $"{user.Name} {user.LastName} ({user.UserName})";
+                }
+            }
             return View(assignments);
         }
 
@@ -45,14 +57,8 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
         {
             if (!IsAdmin()) return AccessDenied();
 
-            // Cargar partidos activos disponibles (sin dirigente asignado)
-            var allParties = await _partyService.GetAllViewModel();
             var allAssignments = await _assignmentService.GetAllViewModel();
-            var assignedPartyIds = allAssignments.Select(a => a.PoliticalPartyId).ToList();
-
-            ViewBag.AvailableParties = allParties
-                .Where(p => p.IsActive && !assignedPartyIds.Contains(p.Id))
-                .ToList();
+            await LoadCreateDropdownsAsync(allAssignments);
 
             return View(new SavePoliticalLeaderAssignmentViewModel());
         }
@@ -66,12 +72,8 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
 
             if (!ModelState.IsValid)
             {
-                var allParties = await _partyService.GetAllViewModel();
                 var allAssignments = await _assignmentService.GetAllViewModel();
-                var assignedPartyIds = allAssignments.Select(a => a.PoliticalPartyId).ToList();
-                ViewBag.AvailableParties = allParties
-                    .Where(p => p.IsActive && !assignedPartyIds.Contains(p.Id))
-                    .ToList();
+                await LoadCreateDropdownsAsync(allAssignments);
                 return View(vm);
             }
 
@@ -84,12 +86,8 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                var allParties = await _partyService.GetAllViewModel();
                 var allAssignments = await _assignmentService.GetAllViewModel();
-                var assignedPartyIds = allAssignments.Select(a => a.PoliticalPartyId).ToList();
-                ViewBag.AvailableParties = allParties
-                    .Where(p => p.IsActive && !assignedPartyIds.Contains(p.Id))
-                    .ToList();
+                await LoadCreateDropdownsAsync(allAssignments);
                 return View(vm);
             }
         }
@@ -112,6 +110,21 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task LoadCreateDropdownsAsync(List<PoliticalLeaderAssignmentViewModel> allAssignments)
+        {
+            var allParties = await _partyService.GetAllViewModel();
+            var assignedPartyIds = allAssignments.Select(a => a.PoliticalPartyId).ToList();
+            ViewBag.AvailableParties = allParties
+                .Where(p => p.IsActive && !assignedPartyIds.Contains(p.Id))
+                .ToList();
+
+            var allUsers = await _userService.GetAllAsync();
+            var assignedUserIds = allAssignments.Select(a => a.UserId).ToList();
+            ViewBag.AvailableLeaders = allUsers
+                .Where(u => u.IsActive && u.Role == (int)eVote360Pro.Core.Domain.Common.Enums.UserRol.DirigentePolitico && !assignedUserIds.Contains(u.Id))
+                .ToList();
         }
     }
 }

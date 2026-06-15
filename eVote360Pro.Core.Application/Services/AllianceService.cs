@@ -1,7 +1,14 @@
-﻿using eVote360Pro.Core.Application.Dtos.Alliance;
+using eVote360Pro.Core.Application.Dtos.Alliance;
 using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.Alliance;
+using eVote360Pro.Core.Domain.Entities;
+using eVote360Pro.Core.Domain.Interfaces;
 using eVote360Pro.Core.Domain.Interfaces.Repositories;
+using eVote360Pro.Core.Domain.Common.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace eVote360Pro.Core.Application.Services
 {
@@ -9,11 +16,22 @@ namespace eVote360Pro.Core.Application.Services
     {
         private readonly IAllianceRepository _allianceRepository;
         private readonly IPoliticalPartyRepository _partyRepository;
+        private readonly IGenericRepository<Election> _electionRepository;
+        private readonly IGenericRepository<CandidatePosition> _candidatePositionRepository;
+        private readonly IGenericRepository<Candidate> _candidateRepository;
 
-        public AllianceService(IAllianceRepository allianceRepository, IPoliticalPartyRepository partyRepository)
+        public AllianceService(
+            IAllianceRepository allianceRepository,
+            IPoliticalPartyRepository partyRepository,
+            IGenericRepository<Election> electionRepository,
+            IGenericRepository<CandidatePosition> candidatePositionRepository,
+            IGenericRepository<Candidate> candidateRepository)
         {
             _allianceRepository = allianceRepository;
             _partyRepository = partyRepository;
+            _electionRepository = electionRepository;
+            _candidatePositionRepository = candidatePositionRepository;
+            _candidateRepository = candidateRepository;
         }
 
         public async Task<List<AllianceViewModel>> GetAllViewModel()
@@ -44,8 +62,28 @@ namespace eVote360Pro.Core.Application.Services
 
         public async Task DeleteAsync(int id)
         {
+            var elections = await _electionRepository.GetAllAsync();
+            if (elections.Any(e => e.Status == ElectionStatus.Active))
+                throw new Exception("No se puede eliminar la alianza mientras haya una elección activa.");
+
             var entity = await _allianceRepository.GetByIdAsync(id);
             if (entity == null) throw new Exception("Alianza no encontrada.");
+
+            // Check for allied candidates assigned between the two parties
+            var assignments = await _candidatePositionRepository.GetAllAsync();
+            var candidates = await _candidateRepository.GetAllAsync();
+
+            bool hasAlliedCandidates = assignments.Any(cp => {
+                var candidate = candidates.FirstOrDefault(c => c.Id == cp.CandidateId);
+                if (candidate == null) return false;
+                
+                return (candidate.PoliticalPartyId == entity.Party1Id && cp.PoliticalPartyId == entity.Party2Id) ||
+                       (candidate.PoliticalPartyId == entity.Party2Id && cp.PoliticalPartyId == entity.Party1Id);
+            });
+
+            if (hasAlliedCandidates)
+                throw new Exception("No se puede eliminar la alianza porque existen candidatos aliados asignados entre ambos partidos.");
+
             await _allianceRepository.DeleteAsync(entity);
         }
 

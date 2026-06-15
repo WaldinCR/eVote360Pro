@@ -1,18 +1,32 @@
-﻿using eVote360Pro.Core.Application.Dtos.PoliticalParty;
+using eVote360Pro.Core.Application.Dtos.PoliticalParty;
+using eVote360Pro.Core.Application.Helpers;
 using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.PoliticalParty;
 using eVote360Pro.Core.Domain.Entities;
 using eVote360Pro.Core.Domain.Interfaces.Repositories;
+using eVote360Pro.Core.Domain.Interfaces;
+using eVote360Pro.Core.Domain.Common.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace eVote360Pro.Core.Application.Services
 {
     public class PoliticalPartyService : IPoliticalPartyService
     {
         private readonly IPoliticalPartyRepository _partyRepository;
+        private readonly IGenericRepository<Election> _electionRepository;
+        private readonly ICandidateRepository _candidateRepository;
 
-        public PoliticalPartyService(IPoliticalPartyRepository partyRepository)
+        public PoliticalPartyService(
+            IPoliticalPartyRepository partyRepository,
+            IGenericRepository<Election> electionRepository,
+            ICandidateRepository candidateRepository)
         {
             _partyRepository = partyRepository;
+            _electionRepository = electionRepository;
+            _candidateRepository = candidateRepository;
         }
 
         public async Task<List<PoliticalPartyViewModel>> GetAllViewModel()
@@ -66,8 +80,13 @@ namespace eVote360Pro.Core.Application.Services
             };
         }
 
-        public async Task AddAsync(SavePoliticalPartyViewModel vm)
+        public async Task<SavePoliticalPartyViewModel> AddAsync(SavePoliticalPartyViewModel vm)
         {
+            // Bloqueo por elección activa
+            var elections = await _electionRepository.GetAllAsync();
+            if (elections.Any(e => e.Status == ElectionStatus.Active))
+                throw new Exception("No se puede crear un partido político mientras haya una elección activa.");
+
             // Validar siglas únicas
             var all = await _partyRepository.GetAllAsync();
 
@@ -77,31 +96,50 @@ namespace eVote360Pro.Core.Application.Services
             if (all.Any(p => p.Name.ToLower() == vm.Name.ToLower()))
                 throw new Exception($"Ya existe un partido con el nombre '{vm.Name}'.");
 
-            var dto = new SavePoliticalPartyDto
+            var entity = new PoliticalParty
             {
                 Name = vm.Name,
                 Description = vm.Description,
                 Acronym = vm.Acronym,
-                LogoUrl = vm.LogoUrl,
+                LogoUrl = vm.LogoUrl ?? string.Empty,
                 IsActive = true
             };
 
-            var entity = new PoliticalParty
-            {
-                Name = dto.Name,
-                Description = dto.Description,
-                Acronym = dto.Acronym,
-                LogoUrl = dto.LogoUrl ?? string.Empty,
-                IsActive = dto.IsActive
-            };
+            var savedEntity = await _partyRepository.AddAsync(entity);
 
-            await _partyRepository.AddAsync(entity);
+            return new SavePoliticalPartyViewModel
+            {
+                Id = savedEntity.Id,
+                Name = savedEntity.Name,
+                Description = savedEntity.Description,
+                Acronym = savedEntity.Acronym,
+                LogoUrl = savedEntity.LogoUrl,
+                IsActive = savedEntity.IsActive
+            };
         }
 
         public async Task UpdateAsync(SavePoliticalPartyViewModel vm)
         {
+            // Bloqueo por elección activa
+            var elections = await _electionRepository.GetAllAsync();
+            if (elections.Any(e => e.Status == ElectionStatus.Active))
+                throw new Exception("No se puede editar un partido político mientras haya una elección activa.");
+
             var entity = await _partyRepository.GetByIdAsync(vm.Id);
             if (entity == null) throw new Exception("Partido no encontrado.");
+
+            // Validación de edición por participación en elección activa o finalizada
+            var candidates = await _candidateRepository.GetAllAsync();
+            var partyCandidates = candidates.Where(c => c.PoliticalPartyId == vm.Id).ToList();
+            bool hasParticipated = partyCandidates.Any(c => c.ParticipatedInElection);
+
+            if (hasParticipated)
+            {
+                if (entity.Name != vm.Name || entity.Acronym != vm.Acronym || vm.LogoFile != null)
+                {
+                    throw new Exception("No se puede editar el nombre, siglas o logo de un partido que ha participado en una elección activa o finalizada.");
+                }
+            }
 
             var all = await _partyRepository.GetAllAsync();
 
@@ -115,15 +153,21 @@ namespace eVote360Pro.Core.Application.Services
             entity.Description = vm.Description;
             entity.Acronym = vm.Acronym;
 
-            // Solo actualizar logo si se envió uno nuevo
-            if (!string.IsNullOrEmpty(vm.LogoUrl))
+            if (!string.IsNullOrWhiteSpace(vm.LogoUrl))
+            {
                 entity.LogoUrl = vm.LogoUrl;
+            }
 
             await _partyRepository.UpdateAsync(entity);
         }
 
         public async Task ChangeStatusAsync(int id)
         {
+            // Bloqueo por elección activa
+            var elections = await _electionRepository.GetAllAsync();
+            if (elections.Any(e => e.Status == ElectionStatus.Active))
+                throw new Exception("No se puede cambiar el estado de un partido político mientras haya una elección activa.");
+
             var entity = await _partyRepository.GetByIdAsync(id);
             if (entity == null) throw new Exception("Partido no encontrado.");
 

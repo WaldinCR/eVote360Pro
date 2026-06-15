@@ -1,4 +1,4 @@
-﻿using eVote360Pro.Core.Application.ViewModels.Alliance;
+using eVote360Pro.Core.Application.ViewModels.Alliance;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ namespace eVote360Pro.Core.Application.Interfaces
         Task AddAsync(CreateAllianceRequestViewModel vm);
         Task AcceptRequestAsync(int id);
         Task RejectRequestAsync(int id);
-        Task DeleteAsync(int id);
+        Task DeleteAsync(int id, int partyId);
         Task<bool> HasPendingRequestAsync(int applicantId, int receiverId);
     }
 }

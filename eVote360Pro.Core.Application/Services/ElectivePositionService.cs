@@ -1,36 +1,46 @@
+using AutoMapper;
+using eVote360Pro.Core.Application.Dtos.ElectivePosition;
 using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.ElectivePosition;
-using eVote360Pro.Core.Application.Dtos.ElectivePosition;
+using eVote360Pro.Core.Domain.Common.Enums;
 using eVote360Pro.Core.Domain.Entities;
 using eVote360Pro.Core.Domain.Interfaces;
-using eVote360Pro.Core.Domain.Common.Enums;
-using AutoMapper;
+using eVote360Pro.Core.Domain.Interfaces.Repositories;
 
 namespace eVote360Pro.Core.Application.Services
 {
-    public class ElectivePositionService : IElectivePositionService
+    public class ElectivePositionService : GenericService<ElectivePosition, ElectivePositionDto>, IElectivePositionService
     {
         private readonly IElectivePositionRepository _positionRepository;
         private readonly IGenericRepository<Election> _electionRepository;
-        private readonly IGenericRepository<Vote> _voteRepository; 
+        private readonly IGenericRepository<Vote> _voteRepository;
+        private readonly IGenericRepository<CandidatePosition> _candidatePositionRepository;
+        private readonly IGenericRepository<Candidate> _candidateRepository;
+        private readonly IGenericRepository<PoliticalParty> _partyRepository;
         private readonly IMapper _mapper;
 
         public ElectivePositionService(
-            IElectivePositionRepository positionRepository, 
+            IElectivePositionRepository positionRepository,
             IGenericRepository<Election> electionRepository,
             IGenericRepository<Vote> voteRepository,
-            IMapper mapper)
+            IGenericRepository<CandidatePosition> candidatePositionRepository,
+            IGenericRepository<Candidate> candidateRepository,
+            IGenericRepository<PoliticalParty> partyRepository,
+            IMapper mapper) : base(positionRepository, mapper)
         {
             _positionRepository = positionRepository;
             _electionRepository = electionRepository;
             _voteRepository = voteRepository;
+            _candidatePositionRepository = candidatePositionRepository;
+            _candidateRepository = candidateRepository;
+            _partyRepository = partyRepository;
             _mapper = mapper;
         }
 
-        public async Task<IReadOnlyList<ElectivePositionDto>> GetAllAsync()
+        public new async Task<IReadOnlyList<ElectivePositionDto>> GetAllAsync()
         {
-            var positions = await _positionRepository.GetAllAsync();
-            return _mapper.Map<List<ElectivePositionDto>>(positions).AsReadOnly();
+            var positions = await base.GetAllAsync();
+            return positions.AsReadOnly();
         }
 
         public async Task<SaveElectivePositionViewModel?> GetByIdSaveViewModelAsync(int id)
@@ -56,7 +66,7 @@ namespace eVote360Pro.Core.Application.Services
             var entity = _mapper.Map<ElectivePosition>(viewModel);
 
             await _positionRepository.AddAsync(entity);
-            return null; 
+            return null;
         }
 
         public async Task<string?> UpdateAsync(SaveElectivePositionViewModel viewModel)
@@ -109,7 +119,7 @@ namespace eVote360Pro.Core.Application.Services
             }
 
             entity.IsActive = !entity.IsActive;
-            
+
             await _positionRepository.UpdateAsync(entity);
             return null;
         }
@@ -125,9 +135,48 @@ namespace eVote360Pro.Core.Application.Services
         {
             var normalizedInput = name.Trim().ToLower();
             var allPositions = await _positionRepository.GetAllAsync();
-            return allPositions.Any(p => 
-                p.Id != excludeId && 
+            return allPositions.Any(p =>
+                p.Id != excludeId &&
                 p.Name.Trim().ToLower() == normalizedInput);
+        }
+    
+        public async Task<List<ElectivePositionWithCandidatesDto>> GetPositionsWithCandidatesForVotingAsync()
+        {
+            var positions = await _positionRepository.GetAllAsync();
+            var allCandidatePositions = await _candidatePositionRepository.GetAllAsync();
+            var allCandidates = await _candidateRepository.GetAllAsync();
+            var allParties = await _partyRepository.GetAllAsync();
+
+            return positions
+                .Where(p => p.IsActive)
+                .Select(p =>
+                {
+                    var assigned = allCandidatePositions
+                        .Where(cp => cp.ElectivePositionId == p.Id)
+                        .Select(cp =>
+                        {
+                            var candidate = allCandidates.FirstOrDefault(c => c.Id == cp.CandidateId);
+                            var party = candidate != null
+                                ? allParties.FirstOrDefault(pa => pa.Id == candidate.PoliticalPartyId)
+                                : null;
+                            return candidate == null ? null : new CandidateForVotingDto
+                            {
+                                Id = candidate.Id,
+                                FullName = $"{candidate.Name} {candidate.LastName}",
+                                PartyName = party?.Name ?? "Desconocido"
+                            };
+                        })
+                        .Where(c => c != null).Select(c => c!)
+                        .ToList();
+
+                    return new ElectivePositionWithCandidatesDto
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Candidates = assigned
+                    };
+                })
+                .ToList();
         }
     }
 }

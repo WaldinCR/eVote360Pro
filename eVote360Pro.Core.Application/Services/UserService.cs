@@ -16,7 +16,7 @@ namespace eVote360Pro.Core.Application.Services
         private readonly IEmailService _emailService;
         private readonly IPoliticalLeaderAssignmentRepository _politicalLeaderAssignmentRepository;
 
-        public UserService(IUserRepository userRepository, IMapper mapper, IEmailService emailService, IPoliticalLeaderAssignmentRepository politicalLeaderAssignmentRepository)
+        public UserService(IUserRepository userRepository, IMapper mapper, IEmailService emailService , IPoliticalLeaderAssignmentRepository politicalLeaderAssignmentRepository)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -114,8 +114,8 @@ namespace eVote360Pro.Core.Application.Services
         }
         public async Task<bool> HasPoliticalPartyAssignedAsync(int userId)
         {
-            var leader = await _politicalLeaderAssignmentRepository.GetByUserIdAsync(userId);
-            return leader != null && leader.PoliticalParty != null && leader.PoliticalParty.IsActive;
+            var assignment = await _politicalLeaderAssignmentRepository.GetByUserIdAsync(userId);
+            return assignment != null;
         }
     }
 }

@@ -8,7 +8,7 @@ using AutoMapper;
 
 namespace eVote360Pro.Core.Application.Services
 {
-    public class ElectionService : IElectionService
+    public class ElectionService : GenericService<Election, ElectionDto>, IElectionService
     {
         private readonly IGenericRepository<Election> _electionRepository;
         private readonly IGenericRepository<ElectivePosition> _positionRepository;
@@ -25,7 +25,7 @@ namespace eVote360Pro.Core.Application.Services
             IGenericRepository<CandidatePosition> assignmentRepository,
             IGenericRepository<Vote> voteRepository,
             IGenericRepository<Candidate> candidateRepository,
-            IMapper mapper)
+            IMapper mapper) : base(electionRepository, mapper)
         {
             _electionRepository = electionRepository;
             _positionRepository = positionRepository;
@@ -36,12 +36,12 @@ namespace eVote360Pro.Core.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<IReadOnlyList<ElectionDto>> GetAllAsync()
+        public new async Task<IReadOnlyList<ElectionDto>> GetAllAsync()
         {
-            var elections = await _electionRepository.GetAllAsync();
-            var orderedElections = elections.OrderByDescending(e => e.Year).ToList();
+            var electionDtos = await base.GetAllAsync();
+            var orderedElections = electionDtos.OrderByDescending(e => e.Year).ToList();
             
-            return _mapper.Map<List<ElectionDto>>(orderedElections).AsReadOnly();
+            return orderedElections.AsReadOnly();
         }
 
         public async Task<string?> AddAsync(SaveElectionViewModel viewModel)

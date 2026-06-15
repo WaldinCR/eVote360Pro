@@ -2,6 +2,7 @@ using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.Services;
 using eVote360Pro.Core.Domain.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace eVote360Pro.Core.Application
 {

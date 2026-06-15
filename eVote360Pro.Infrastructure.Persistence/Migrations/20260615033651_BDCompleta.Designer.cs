@@ -12,8 +12,8 @@ using eVote360Pro.Infrastructure.Persistence.Contexts;
 namespace eVote360Pro.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(eVote360ProDbContext))]
-    [Migration("20260615030031_TestMigration")]
-    partial class TestMigration
+    [Migration("20260615033651_BDCompleta")]
+    partial class BDCompleta
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -148,7 +148,11 @@ namespace eVote360Pro.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CandidateId");
+
                     b.HasIndex("ElectivePositionId");
+
+                    b.HasIndex("PoliticalPartyId");
 
                     b.ToTable("CandidatePositions");
                 });
@@ -457,34 +461,19 @@ namespace eVote360Pro.Infrastructure.Persistence.Migrations
                     b.Property<int?>("CandidateId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CandidateId1")
-                        .HasColumnType("int");
-
                     b.Property<int>("ElectionId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ElectionId1")
-                        .HasColumnType("int");
-
                     b.Property<int>("ElectivePositionId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ElectivePositionId1")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CandidateId");
 
-                    b.HasIndex("CandidateId1");
-
                     b.HasIndex("ElectionId");
 
-                    b.HasIndex("ElectionId1");
-
                     b.HasIndex("ElectivePositionId");
-
-                    b.HasIndex("ElectivePositionId1");
 
                     b.ToTable("Votos", (string)null);
                 });
@@ -540,13 +529,29 @@ namespace eVote360Pro.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("eVote360Pro.Core.Domain.Entities.CandidatePosition", b =>
                 {
+                    b.HasOne("eVote360Pro.Core.Domain.Entities.Candidate", "Candidate")
+                        .WithMany()
+                        .HasForeignKey("CandidateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("eVote360Pro.Core.Domain.Entities.ElectivePosition", "ElectivePosition")
                         .WithMany("CandidatePositions")
                         .HasForeignKey("ElectivePositionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("eVote360Pro.Core.Domain.Entities.PoliticalParty", "PoliticalParty")
+                        .WithMany()
+                        .HasForeignKey("PoliticalPartyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Candidate");
+
                     b.Navigation("ElectivePosition");
+
+                    b.Navigation("PoliticalParty");
                 });
 
             modelBuilder.Entity("eVote360Pro.Core.Domain.Entities.CitizenVote", b =>
@@ -624,34 +629,22 @@ namespace eVote360Pro.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("eVote360Pro.Core.Domain.Entities.Vote", b =>
                 {
-                    b.HasOne("eVote360Pro.Core.Domain.Entities.Candidate", null)
+                    b.HasOne("eVote360Pro.Core.Domain.Entities.Candidate", "Candidate")
                         .WithMany()
                         .HasForeignKey("CandidateId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("eVote360Pro.Core.Domain.Entities.Candidate", "Candidate")
-                        .WithMany()
-                        .HasForeignKey("CandidateId1");
-
-                    b.HasOne("eVote360Pro.Core.Domain.Entities.Election", null)
-                        .WithMany()
-                        .HasForeignKey("ElectionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("eVote360Pro.Core.Domain.Entities.Election", "Election")
                         .WithMany("Votes")
-                        .HasForeignKey("ElectionId1");
-
-                    b.HasOne("eVote360Pro.Core.Domain.Entities.ElectivePosition", null)
-                        .WithMany()
-                        .HasForeignKey("ElectivePositionId")
+                        .HasForeignKey("ElectionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("eVote360Pro.Core.Domain.Entities.ElectivePosition", "ElectivePosition")
                         .WithMany("Votes")
-                        .HasForeignKey("ElectivePositionId1");
+                        .HasForeignKey("ElectivePositionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Candidate");
 

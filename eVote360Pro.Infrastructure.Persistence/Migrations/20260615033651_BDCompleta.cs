@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace eVote360Pro.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class TestMigration : Migration
+    public partial class BDCompleta : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -178,27 +178,6 @@ namespace eVote360Pro.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CandidatePositions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CandidateId = table.Column<int>(type: "int", nullable: false),
-                    ElectivePositionId = table.Column<int>(type: "int", nullable: false),
-                    PoliticalPartyId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CandidatePositions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CandidatePositions_ElectivePositions_ElectivePositionId",
-                        column: x => x.ElectivePositionId,
-                        principalTable: "ElectivePositions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Alianzas",
                 columns: table => new
                 {
@@ -305,6 +284,39 @@ namespace eVote360Pro.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CandidatePositions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CandidateId = table.Column<int>(type: "int", nullable: false),
+                    ElectivePositionId = table.Column<int>(type: "int", nullable: false),
+                    PoliticalPartyId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CandidatePositions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CandidatePositions_Candidatos_CandidateId",
+                        column: x => x.CandidateId,
+                        principalTable: "Candidatos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CandidatePositions_ElectivePositions_ElectivePositionId",
+                        column: x => x.ElectivePositionId,
+                        principalTable: "ElectivePositions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CandidatePositions_PartidosPoliticos_PoliticalPartyId",
+                        column: x => x.PoliticalPartyId,
+                        principalTable: "PartidosPoliticos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Votos",
                 columns: table => new
                 {
@@ -312,10 +324,7 @@ namespace eVote360Pro.Infrastructure.Persistence.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ElectionId = table.Column<int>(type: "int", nullable: false),
                     ElectivePositionId = table.Column<int>(type: "int", nullable: false),
-                    CandidateId = table.Column<int>(type: "int", nullable: true),
-                    ElectionId1 = table.Column<int>(type: "int", nullable: true),
-                    ElectivePositionId1 = table.Column<int>(type: "int", nullable: true),
-                    CandidateId1 = table.Column<int>(type: "int", nullable: true)
+                    CandidateId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -327,32 +336,17 @@ namespace eVote360Pro.Infrastructure.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Votos_Candidatos_CandidateId1",
-                        column: x => x.CandidateId1,
-                        principalTable: "Candidatos",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_Votos_Elections_ElectionId",
                         column: x => x.ElectionId,
                         principalTable: "Elections",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Votos_Elections_ElectionId1",
-                        column: x => x.ElectionId1,
-                        principalTable: "Elections",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_Votos_ElectivePositions_ElectivePositionId",
                         column: x => x.ElectivePositionId,
                         principalTable: "ElectivePositions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Votos_ElectivePositions_ElectivePositionId1",
-                        column: x => x.ElectivePositionId1,
-                        principalTable: "ElectivePositions",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -378,9 +372,19 @@ namespace eVote360Pro.Infrastructure.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_CandidatePositions_CandidateId",
+                table: "CandidatePositions",
+                column: "CandidateId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CandidatePositions_ElectivePositionId",
                 table: "CandidatePositions",
                 column: "ElectivePositionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CandidatePositions_PoliticalPartyId",
+                table: "CandidatePositions",
+                column: "PoliticalPartyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Candidatos_PoliticalPartyId",
@@ -447,29 +451,14 @@ namespace eVote360Pro.Infrastructure.Persistence.Migrations
                 column: "CandidateId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Votos_CandidateId1",
-                table: "Votos",
-                column: "CandidateId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Votos_ElectionId",
                 table: "Votos",
                 column: "ElectionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Votos_ElectionId1",
-                table: "Votos",
-                column: "ElectionId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Votos_ElectivePositionId",
                 table: "Votos",
                 column: "ElectivePositionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Votos_ElectivePositionId1",
-                table: "Votos",
-                column: "ElectivePositionId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_VotosCiudadanos_CitizenId_ElectionId",

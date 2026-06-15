@@ -17,6 +17,7 @@ namespace eVote360Pro.Infrastructure.Shared
 
             #region Services IOC
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IOcrService, OcrService>();
             #endregion
 
         }

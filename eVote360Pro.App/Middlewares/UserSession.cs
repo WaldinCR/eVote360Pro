@@ -54,5 +54,16 @@ namespace eVote360Pro.App.Middlewares
             return userViewModel.Role == (int)UserRol.Administrador;
             
         }
+        public bool IsDirigente()
+        {
+            UserViewModel? userViewModel = _httpContextAccessor.HttpContext?
+                .Session.Get<UserViewModel>("User");
+
+            if (userViewModel == null)
+                return false;
+
+            // verificar si el rol del usuario es igual a "DirigentePolitico"
+            return userViewModel.Role == (int)UserRol.DirigentePolitico;
+        }
     }
 }

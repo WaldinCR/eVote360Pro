@@ -8,5 +8,6 @@ namespace eVote360Pro.Core.Application.Interfaces
         UserViewModel? GetUserSession();
         bool HasUser();
         bool IsAdmin();
+        bool IsDirigente();
     }
 }

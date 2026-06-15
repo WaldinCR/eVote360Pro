@@ -1,5 +1,4 @@
-﻿
-namespace eVote360Pro.Core.Application.Interfaces
+﻿namespace eVote360Pro.Core.Application.Interfaces
 {
     public interface IGenericService<TDto> where TDto : class
     {

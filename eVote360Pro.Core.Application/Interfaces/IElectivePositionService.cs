@@ -10,5 +10,6 @@ namespace eVote360Pro.Core.Application.Interfaces
         Task<string?> AddAsync(SaveElectivePositionViewModel viewModel);
         Task<string?> UpdateAsync(SaveElectivePositionViewModel viewModel);
         Task<string?> DeleteLogicalAsync(int id);
+        Task<List<ElectivePositionWithCandidatesDto>> GetPositionsWithCandidatesForVotingAsync();
     }
 }

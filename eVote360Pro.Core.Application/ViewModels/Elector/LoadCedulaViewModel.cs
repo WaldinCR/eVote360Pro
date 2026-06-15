@@ -8,6 +8,6 @@ namespace eVote360Pro.Core.Application.ViewModels.Elector
         public required string Document { get; set; }
 
         [Required(ErrorMessage = "Debe subir una imagen de su cédula para validar su identidad.")]
-        public required IFormFile CedulaImage { get; set; }
+        public IFormFile? CedulaImage { get; set; }
     }
 }

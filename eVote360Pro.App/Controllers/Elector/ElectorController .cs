@@ -196,15 +196,42 @@ namespace eVote360Pro.App.Areas.Elector.Controllers
             HttpContext.Session.Set("OtpValidated", true);
             return RedirectToAction(nameof(Voting));
         }
-
-        // 5  Pantalla de votación
+     
+        // 5 Pantalla de votación
         public async Task<IActionResult> Voting()
         {
             if (!HttpContext.Session.Get<bool>("OtpValidated"))
                 return RedirectToAction(nameof(Index));
 
-            // TODO: cargar puestos y candidatos cuando el compañero tenga el servicio
-            return View(new VotingViewModel());
+            var positions = await _electivePositionService.GetPositionsWithCandidatesForVotingAsync();
+
+            var vm = new VotingViewModel
+            {
+                Positions = positions.Select(p => new ElectivePositionVoteViewModel
+                {
+                    ElectivePositionId = p.Id,
+                    PositionName = p.Name,
+                    Candidates = p.Candidates.Select(c => new CandidateOptionViewModel
+                    {
+                        Id = c.Id,
+                        FullName = c.FullName,
+                        PartyName = c.PartyName
+                    }).ToList()
+                }).ToList()
+            };
+
+            // Restaurar selecciones previas si el elector volvió a cambiar algo
+            var selections = HttpContext.Session.Get<Dictionary<int, SaveVoteDto>>("VoteSelections");
+            if (selections != null)
+            {
+                foreach (var pos in vm.Positions)
+                {
+                    if (selections.TryGetValue(pos.ElectivePositionId, out var saved))
+                        pos.SelectedCandidateId = saved.CandidateId;
+                }
+            }
+
+            return View(vm);
         }
 
         // 6 Guardar selección

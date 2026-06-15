@@ -2,7 +2,6 @@
 using eVote360Pro.Core.Domain.Interfaces;
 using AutoMapper;
 
-
 namespace eVote360Pro.Core.Application.Services
 {
     public class GenericService<TEntity, TDto> : IGenericService<TDto>

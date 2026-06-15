@@ -5,7 +5,6 @@ using eVote360Pro.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using eVote360Pro.Core.Domain.Interfaces.Repositories;
 
 namespace eVote360Pro.Infrastructure.Persistence
 {

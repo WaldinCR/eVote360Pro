@@ -11,10 +11,10 @@ namespace eVote360Pro.Core.Domain.Entities
         public required int PoliticalPartyId { get; set; } 
 
         // Nav
-        //public Candidate? Candidate { get; set; }
+        public Candidate? Candidate { get; set; }
 
         public ElectivePosition? ElectivePosition { get; set; }
 
-        //public PoliticalParty? PoliticalParty { get; set; }
+        public PoliticalParty? PoliticalParty { get; set; }
     }
 }

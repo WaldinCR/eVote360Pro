@@ -62,6 +62,12 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
 
             if (!ModelState.IsValid) return View(vm);
 
+            if (vm.PhotoFile == null || vm.PhotoFile.Length == 0)
+            {
+                ModelState.AddModelError("PhotoFile", "La foto del candidato es requerida al crear.");
+                return View(vm);
+            }
+
             try
             {
                 var savedVm = await _candidateService.AddAsync(vm);

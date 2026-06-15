@@ -18,7 +18,7 @@ namespace eVote360Pro.App.Helpers
                 return string.Empty;
             }
 
-            string basePath = $"Images/{folderName}/{id}";
+            string basePath = $"uploads/{folderName}";
             string path = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/{basePath}");
 
             if (!Directory.Exists(path))

@@ -1,4 +1,4 @@
-﻿using eVote360Pro.Core.Application.ViewModels.PoliticalParty;
+using eVote360Pro.Core.Application.ViewModels.PoliticalParty;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace eVote360Pro.Core.Application.Interfaces
     {
         Task<List<PoliticalPartyViewModel>> GetAllViewModel();
         Task<SavePoliticalPartyViewModel?> GetByIdSaveViewModel(int id);
-        Task AddAsync(SavePoliticalPartyViewModel vm);
+        Task<SavePoliticalPartyViewModel?> AddAsync(SavePoliticalPartyViewModel vm);
         Task UpdateAsync(SavePoliticalPartyViewModel vm);
         Task ChangeStatusAsync(int id);
     }

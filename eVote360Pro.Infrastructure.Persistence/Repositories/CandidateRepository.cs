@@ -14,5 +14,7 @@ namespace eVote360Pro.Infrastructure.Persistence.Repositories
         public CandidateRepository(eVote360ProDbContext dbContext) : base(dbContext)
         {
         }
-    }        
+
+       //pen
+    }
 }

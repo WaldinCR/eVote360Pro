@@ -1,26 +1,38 @@
-﻿using eVote360Pro.Core.Application.Dtos.Alliance;
+using eVote360Pro.Core.Application.Dtos.Alliance;
 using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.Alliance;
 using eVote360Pro.Core.Domain.Common.Enums;
 using eVote360Pro.Core.Domain.Entities;
+using eVote360Pro.Core.Domain.Interfaces;
 using eVote360Pro.Core.Domain.Interfaces.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 
 namespace eVote360Pro.Core.Application.Services
 {
-    public class AllianceRequestService : IAllianceRequestService
+    public class AllianceRequestService : GenericService<AllianceRequest, CreateAllianceRequestViewModel>, IAllianceRequestService
     {
         private readonly IAllianceRequestRepository _requestRepository;
         private readonly IAllianceRepository _allianceRepository;
         private readonly IPoliticalPartyRepository _partyRepository;
+        private readonly IGenericRepository<Election> _electionRepository;
+        private readonly IMapper _mapper;
 
         public AllianceRequestService(
             IAllianceRequestRepository requestRepository,
             IAllianceRepository allianceRepository,
-            IPoliticalPartyRepository partyRepository)
+            IPoliticalPartyRepository partyRepository,
+            IGenericRepository<Election> electionRepository,
+            IMapper mapper) : base(requestRepository, mapper)
         {
             _requestRepository = requestRepository;
             _allianceRepository = allianceRepository;
             _partyRepository = partyRepository;
+            _electionRepository = electionRepository;
+            _mapper = mapper;
         }
 
         public async Task<List<AllianceRequestViewModel>> GetAllViewModel()
@@ -44,8 +56,12 @@ namespace eVote360Pro.Core.Application.Services
                 requests.Where(r => r.ApplicantPartyId == applicantPartyId).ToList());
         }
 
-        public async Task AddAsync(CreateAllianceRequestViewModel vm)
+        public override async Task<CreateAllianceRequestViewModel?> AddAsync(CreateAllianceRequestViewModel vm)
         {
+            var elections = await _electionRepository.GetAllAsync();
+            if (elections.Any(e => e.Status == ElectionStatus.Active))
+                throw new Exception("No se pueden enviar solicitudes de alianza mientras haya una elección activa.");
+
             if (vm.ApplicantPartyId == vm.ReceiverPartyId)
                 throw new Exception("No puedes solicitar una alianza con tu propio partido.");
 
@@ -68,11 +84,20 @@ namespace eVote360Pro.Core.Application.Services
                 RequestDate = DateTime.Now
             };
 
-            await _requestRepository.AddAsync(entity);
+            var savedEntity = await _requestRepository.AddAsync(entity);
+            return new CreateAllianceRequestViewModel
+            {
+                ApplicantPartyId = savedEntity.ApplicantPartyId,
+                ReceiverPartyId = savedEntity.ReceiverPartyId
+            };
         }
 
         public async Task AcceptRequestAsync(int id)
         {
+            var elections = await _electionRepository.GetAllAsync();
+            if (elections.Any(e => e.Status == ElectionStatus.Active))
+                throw new Exception("No se pueden aceptar solicitudes de alianza mientras haya una elección activa.");
+
             var request = await _requestRepository.GetByIdAsync(id);
             if (request == null) throw new Exception("Solicitud no encontrada.");
             if (request.Status != AllianceRequestStatus.Pending)
@@ -93,6 +118,10 @@ namespace eVote360Pro.Core.Application.Services
 
         public async Task RejectRequestAsync(int id)
         {
+            var elections = await _electionRepository.GetAllAsync();
+            if (elections.Any(e => e.Status == ElectionStatus.Active))
+                throw new Exception("No se pueden rechazar solicitudes de alianza mientras haya una elección activa.");
+
             var request = await _requestRepository.GetByIdAsync(id);
             if (request == null) throw new Exception("Solicitud no encontrada.");
             if (request.Status != AllianceRequestStatus.Pending)
@@ -103,12 +132,21 @@ namespace eVote360Pro.Core.Application.Services
             await _requestRepository.UpdateAsync(request);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, int partyId)
         {
+            var elections = await _electionRepository.GetAllAsync();
+            if (elections.Any(e => e.Status == ElectionStatus.Active))
+                throw new Exception("No se pueden eliminar solicitudes de alianza mientras haya una elección activa.");
+
             var entity = await _requestRepository.GetByIdAsync(id);
             if (entity == null) throw new Exception("Solicitud no encontrada.");
+            
+            if (entity.ApplicantPartyId != partyId)
+                throw new Exception("Solo puedes eliminar solicitudes enviadas por tu propio partido.");
+
             if (entity.Status != AllianceRequestStatus.Pending)
                 throw new Exception("Solo se pueden eliminar solicitudes pendientes.");
+
             await _requestRepository.DeleteAsync(entity);
         }
 

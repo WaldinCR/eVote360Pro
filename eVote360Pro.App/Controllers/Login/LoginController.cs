@@ -1,9 +1,11 @@
-﻿using eVote360Pro.Core.Application.Dtos.User;
+using eVote360Pro.Core.Application.Dtos.User;
 using eVote360Pro.Core.Application.Helpers;
 using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.Login;
 using eVote360Pro.Core.Application.ViewModels.User;
 using eVote360Pro.Core.Domain.Common.Enums;
+using eVote360Pro.Core.Domain.Interfaces.Repositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eVote360Pro.App.Controllers
@@ -12,11 +14,13 @@ namespace eVote360Pro.App.Controllers
     {
         private readonly IUserService _userService;
         private readonly IUserSession _userSession;
+        private readonly IPoliticalLeaderAssignmentRepository _leaderAssignmentRepository;
 
-        public LoginController(IUserService userService, IUserSession userSession)
+        public LoginController(IUserService userService, IUserSession userSession, IPoliticalLeaderAssignmentRepository leaderAssignmentRepository)
         {
             _userService = userService;
             _userSession = userSession;
+            _leaderAssignmentRepository = leaderAssignmentRepository;
         }
 
         public IActionResult Index()
@@ -54,15 +58,20 @@ namespace eVote360Pro.App.Controllers
                 return View(vm);
             }
 
-            // Validar que dirigente tenga partido asignado (lo verifica el servicio)
+            int? partyId = null;
+            string? partyName = null;
+
+            // Validar que dirigente tenga partido asignado
             if ((UserRol)user.Role == UserRol.DirigentePolitico)
             {
-                bool hasParty = await _userService.HasPoliticalPartyAssignedAsync(user.Id);
-                if (!hasParty)
+                var assignment = await _leaderAssignmentRepository.GetByUserIdAsync(user.Id);
+                if (assignment == null || assignment.PoliticalParty == null || !assignment.PoliticalParty.IsActive)
                 {
                     ModelState.AddModelError("", "No tiene un partido político asignado, por lo tanto no puede iniciar sesión. Por favor, póngase en contacto con un administrador.");
                     return View(vm);
                 }
+                partyId = assignment.PoliticalPartyId;
+                partyName = assignment.PoliticalParty.Name;
             }
 
             var sessionUser = new UserViewModel
@@ -77,12 +86,25 @@ namespace eVote360Pro.App.Controllers
             };
 
             HttpContext.Session.Set("User", sessionUser);
+            HttpContext.Session.SetString("UserName", user.UserName);
+            HttpContext.Session.SetString("UserRole", ((UserRol)user.Role).ToString());
+
+            if (partyId.HasValue && partyName != null)
+            {
+                HttpContext.Session.SetInt32("PartyId", partyId.Value);
+                HttpContext.Session.SetString("PartyName", partyName);
+            }
+
             return RedirectByRole(user.Role);
         }
 
         public IActionResult Logout()
         {
             HttpContext.Session.Remove("User"); 
+            HttpContext.Session.Remove("UserName");
+            HttpContext.Session.Remove("UserRole");
+            HttpContext.Session.Remove("PartyId");
+            HttpContext.Session.Remove("PartyName");
             return RedirectToRoute(new { controller = "Login", action = "Index" });
         }
 
@@ -95,8 +117,8 @@ namespace eVote360Pro.App.Controllers
         {
             return (UserRol)role switch
             {
-                UserRol.Administrador => RedirectToAction("Index", "Usuario", new { area = "Admin" }),
-                UserRol.DirigentePolitico => RedirectToAction("Index", "Home", new { area = "Dirigente" }),
+                UserRol.Administrador => RedirectToAction("Index", "Home", new { area = "Admin" }),
+                UserRol.DirigentePolitico => RedirectToAction("Index", "Home", new { area = "Leader" }),
                 _ => RedirectToAction("Index", "Login")
             };
         }

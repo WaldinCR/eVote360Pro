@@ -5,7 +5,6 @@ using eVote360Pro.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using eVote360Pro.Core.Domain.Interfaces.Repositories;
 
 namespace eVote360Pro.Infrastructure.Persistence
 {
@@ -35,12 +34,12 @@ namespace eVote360Pro.Infrastructure.Persistence
             services.AddTransient<IVerificationCodeRepository, VerificationCodeRepository>();
             services.AddTransient<ICitizenVoteRepository, CitizenVoteRepository>();
             services.AddTransient<IVoteRepository, VoteRepository>();
-            //waldin 
             services.AddTransient<IPoliticalPartyRepository, PoliticalPartyRepository>();
             services.AddTransient<ICandidateRepository, CandidateRepository>();
             services.AddTransient<IPoliticalLeaderAssignmentRepository, PoliticalLeaderAssignmentRepository>();
             services.AddTransient<IAllianceRepository, AllianceRepository>();
             services.AddTransient<IAllianceRequestRepository, AllianceRequestRepository>();
+            services.AddTransient<IElectivePositionRepository, ElectivePositionRepository>();
             #endregion
         }
 

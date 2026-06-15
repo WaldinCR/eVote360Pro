@@ -9,23 +9,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace eVote360Pro.Core.Application.Services
 {
-    public class PoliticalLeaderAssignmentService : IPoliticalLeaderAssignmentService
+    public class PoliticalLeaderAssignmentService : GenericService<PoliticalLeaderAssignment, SavePoliticalLeaderAssignmentViewModel>, IPoliticalLeaderAssignmentService
     {
         private readonly IPoliticalLeaderAssignmentRepository _assignmentRepository;
         private readonly IPoliticalPartyRepository _partyRepository;
         private readonly IGenericRepository<Election> _electionRepository;
+        private readonly IMapper _mapper;
 
         public PoliticalLeaderAssignmentService(
             IPoliticalLeaderAssignmentRepository assignmentRepository,
             IPoliticalPartyRepository partyRepository,
-            IGenericRepository<Election> electionRepository)
+            IGenericRepository<Election> electionRepository,
+            IMapper mapper) : base(assignmentRepository, mapper)
         {
             _assignmentRepository = assignmentRepository;
             _partyRepository = partyRepository;
             _electionRepository = electionRepository;
+            _mapper = mapper;
         }
 
         public async Task<List<PoliticalLeaderAssignmentViewModel>> GetAllViewModel()
@@ -53,7 +57,7 @@ namespace eVote360Pro.Core.Application.Services
             }).ToList();
         }
 
-        public async Task AddAsync(SavePoliticalLeaderAssignmentViewModel vm)
+        public override async Task<SavePoliticalLeaderAssignmentViewModel?> AddAsync(SavePoliticalLeaderAssignmentViewModel vm)
         {
             var elections = await _electionRepository.GetAllAsync();
             if (elections.Any(e => e.Status == ElectionStatus.Active))
@@ -83,10 +87,16 @@ namespace eVote360Pro.Core.Application.Services
                 PoliticalPartyId = dto.PoliticalPartyId
             };
 
-            await _assignmentRepository.AddAsync(entity);
+            var savedEntity = await _assignmentRepository.AddAsync(entity);
+            return new SavePoliticalLeaderAssignmentViewModel
+            {
+                Id = savedEntity.Id,
+                UserId = savedEntity.UserId,
+                PoliticalPartyId = savedEntity.PoliticalPartyId
+            };
         }
 
-        public async Task DeleteAsync(int id)
+        public override async Task<bool> DeleteAsync(int id)
         {
             var elections = await _electionRepository.GetAllAsync();
             if (elections.Any(e => e.Status == ElectionStatus.Active))
@@ -95,6 +105,7 @@ namespace eVote360Pro.Core.Application.Services
             var entity = await _assignmentRepository.GetByIdAsync(id);
             if (entity == null) throw new Exception("Asignación no encontrada.");
             await _assignmentRepository.DeleteAsync(entity);
+            return true;
         }
 
         public async Task<bool> CheckIfUserIsAssignedAsync(int userId)

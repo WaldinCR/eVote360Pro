@@ -9,29 +9,33 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace eVote360Pro.Core.Application.Services
 {
-    public class AllianceService : IAllianceService
+    public class AllianceService : GenericService<Alliance, AllianceViewModel>, IAllianceService
     {
         private readonly IAllianceRepository _allianceRepository;
         private readonly IPoliticalPartyRepository _partyRepository;
         private readonly IGenericRepository<Election> _electionRepository;
         private readonly IGenericRepository<CandidatePosition> _candidatePositionRepository;
         private readonly IGenericRepository<Candidate> _candidateRepository;
+        private readonly IMapper _mapper;
 
         public AllianceService(
             IAllianceRepository allianceRepository,
             IPoliticalPartyRepository partyRepository,
             IGenericRepository<Election> electionRepository,
             IGenericRepository<CandidatePosition> candidatePositionRepository,
-            IGenericRepository<Candidate> candidateRepository)
+            IGenericRepository<Candidate> candidateRepository,
+            IMapper mapper) : base(allianceRepository, mapper)
         {
             _allianceRepository = allianceRepository;
             _partyRepository = partyRepository;
             _electionRepository = electionRepository;
             _candidatePositionRepository = candidatePositionRepository;
             _candidateRepository = candidateRepository;
+            _mapper = mapper;
         }
 
         public async Task<List<AllianceViewModel>> GetAllViewModel()
@@ -60,7 +64,7 @@ namespace eVote360Pro.Core.Application.Services
             }).ToList();
         }
 
-        public async Task DeleteAsync(int id)
+        public override async Task<bool> DeleteAsync(int id)
         {
             var elections = await _electionRepository.GetAllAsync();
             if (elections.Any(e => e.Status == ElectionStatus.Active))
@@ -85,6 +89,7 @@ namespace eVote360Pro.Core.Application.Services
                 throw new Exception("No se puede eliminar la alianza porque existen candidatos aliados asignados entre ambos partidos.");
 
             await _allianceRepository.DeleteAsync(entity);
+            return true;
         }
 
         public async Task<bool> HasActiveAllianceAsync(int party1Id, int party2Id)

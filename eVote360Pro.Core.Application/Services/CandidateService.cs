@@ -10,26 +10,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace eVote360Pro.Core.Application.Services
 {
-    public class CandidateService : ICandidateService
+    public class CandidateService : GenericService<Candidate, SaveCandidateViewModel>, ICandidateService
     {
         private readonly ICandidateRepository _candidateRepository;
         private readonly IPoliticalPartyRepository _partyRepository;
         private readonly IGenericRepository<Election> _electionRepository;
         private readonly IGenericRepository<CandidatePosition> _candidatePositionRepository;
+        private readonly IMapper _mapper;
 
         public CandidateService(
             ICandidateRepository candidateRepository, 
             IPoliticalPartyRepository partyRepository,
             IGenericRepository<Election> electionRepository,
-            IGenericRepository<CandidatePosition> candidatePositionRepository)
+            IGenericRepository<CandidatePosition> candidatePositionRepository,
+            IMapper mapper) : base(candidateRepository, mapper)
         {
             _candidateRepository = candidateRepository;
             _partyRepository = partyRepository;
             _electionRepository = electionRepository;
             _candidatePositionRepository = candidatePositionRepository;
+            _mapper = mapper;
         }
 
         public async Task<List<CandidateViewModel>> GetAllViewModel()
@@ -74,7 +78,7 @@ namespace eVote360Pro.Core.Application.Services
             };
         }
 
-        public async Task<SaveCandidateViewModel> AddAsync(SaveCandidateViewModel vm)
+        public override async Task<SaveCandidateViewModel?> AddAsync(SaveCandidateViewModel vm)
         {
             // Bloqueo por elección activa
             var elections = await _electionRepository.GetAllAsync();

@@ -4,7 +4,6 @@ using eVote360Pro.Core.Application.Mappings.DtosAndViewModels;
 using eVote360Pro.Core.Application.Mappings.EntitiesAndDtos;
 using eVote360Pro.Core.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
 namespace eVote360Pro.Core.Application
 {

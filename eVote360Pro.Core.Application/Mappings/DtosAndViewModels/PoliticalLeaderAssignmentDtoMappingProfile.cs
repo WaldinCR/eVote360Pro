@@ -1,12 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using AutoMapper;
+using eVote360Pro.Core.Application.Dtos.PoliticalLeaderAssignment;
+using eVote360Pro.Core.Application.ViewModels.PoliticalLeaderAssignment;
 
 namespace eVote360Pro.Core.Application.Mappings.DtosAndViewModels
 {
-    internal class PoliticalLeaderAssignmentDtoMappingProfile
+    public class PoliticalLeaderAssignmentDtoMappingProfile : Profile
     {
+        public PoliticalLeaderAssignmentDtoMappingProfile()
+        {
+            CreateMap<PoliticalLeaderAssignmentDto, PoliticalLeaderAssignmentViewModel>()
+                .ReverseMap();
+
+            CreateMap<SavePoliticalLeaderAssignmentDto, SavePoliticalLeaderAssignmentViewModel>()
+                .ReverseMap();
+        }
     }
 }

@@ -55,6 +55,12 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
 
             if (!ModelState.IsValid) return View(vm);
 
+            if (vm.LogoFile == null || vm.LogoFile.Length == 0)
+            {
+                ModelState.AddModelError("LogoFile", "El logo del partido es requerido al crear.");
+                return View(vm);
+            }
+
             try
             {
                 var savedVm = await _partyService.AddAsync(vm);

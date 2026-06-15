@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace eVote360Pro.Core.Application.ViewModels.Admin
 {
@@ -14,7 +9,13 @@ namespace eVote360Pro.Core.Application.ViewModels.Admin
 
         public List<int> AvailableYears { get; set; } = new List<int>();
         public List<ElectionSummaryViewModel> Elections { get; set; } = new List<ElectionSummaryViewModel>();
-    }
+
+        public int TotalParties { get; set; }
+        public int ActiveParties { get; set; }
+        public int InactiveParties { get; set; }
+        public int TotalCandidates { get; set; }
+        public int ActiveCandidates { get; set; }
+    }  
 
     public class ElectionSummaryViewModel
     {

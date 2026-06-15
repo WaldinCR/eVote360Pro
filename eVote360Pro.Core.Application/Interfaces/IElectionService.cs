@@ -12,5 +12,6 @@ namespace eVote360Pro.Core.Application.Interfaces
         Task<string?> ActivateElectionAsync(int id);
         Task<string?> FinishElectionAsync(int id);
         Task<ElectionResultViewModel?> GetResultsAsync(int id);
+        Task<List<eVote360Pro.Core.Application.ViewModels.Admin.ElectionSummaryViewModel>> GetElectionSummariesByYearAsync(int year);
     }
 }

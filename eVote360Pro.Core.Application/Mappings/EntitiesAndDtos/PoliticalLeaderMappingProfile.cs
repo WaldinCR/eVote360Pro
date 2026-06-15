@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using eVote360Pro.Core.Application.Dtos.PoliticalLeader;
+using eVote360Pro.Core.Application.Dtos.PoliticalLeaderAssignment;
 using eVote360Pro.Core.Domain.Entities;
 
 namespace eVote360Pro.Core.Application.Mappings.EntitiesAndDtos
@@ -8,9 +8,8 @@ namespace eVote360Pro.Core.Application.Mappings.EntitiesAndDtos
     {
         public PoliticalLeaderMappingProfile()
         {
-            // Mapeo entre Entidad y DTO (para el mantenimiento del Dirigente)
-            CreateMap<PoliticalLeader, PoliticalLeaderDto>().ReverseMap();
-            CreateMap<PoliticalLeader, SavePoliticalLeaderDto>().ReverseMap();
+            CreateMap<PoliticalLeaderAssignment, PoliticalLeaderAssignmentDto>().ReverseMap();
+            CreateMap<PoliticalLeaderAssignment, SavePoliticalLeaderAssignmentDto>().ReverseMap();
         }
     }
 }

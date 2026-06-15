@@ -1,8 +1,15 @@
-﻿using eVote360Pro.Core.Application.Dtos.Candidate;
+using eVote360Pro.Core.Application.Dtos.Candidate;
+using eVote360Pro.Core.Application.Helpers;
 using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.Candidate;
 using eVote360Pro.Core.Domain.Entities;
+using eVote360Pro.Core.Domain.Interfaces;
 using eVote360Pro.Core.Domain.Interfaces.Repositories;
+using eVote360Pro.Core.Domain.Common.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace eVote360Pro.Core.Application.Services
 {
@@ -10,11 +17,19 @@ namespace eVote360Pro.Core.Application.Services
     {
         private readonly ICandidateRepository _candidateRepository;
         private readonly IPoliticalPartyRepository _partyRepository;
+        private readonly IGenericRepository<Election> _electionRepository;
+        private readonly IGenericRepository<CandidatePosition> _candidatePositionRepository;
 
-        public CandidateService(ICandidateRepository candidateRepository, IPoliticalPartyRepository partyRepository)
+        public CandidateService(
+            ICandidateRepository candidateRepository, 
+            IPoliticalPartyRepository partyRepository,
+            IGenericRepository<Election> electionRepository,
+            IGenericRepository<CandidatePosition> candidatePositionRepository)
         {
             _candidateRepository = candidateRepository;
             _partyRepository = partyRepository;
+            _electionRepository = electionRepository;
+            _candidatePositionRepository = candidatePositionRepository;
         }
 
         public async Task<List<CandidateViewModel>> GetAllViewModel()
@@ -59,66 +74,81 @@ namespace eVote360Pro.Core.Application.Services
             };
         }
 
-        public async Task AddAsync(SaveCandidateViewModel vm)
+        public async Task<SaveCandidateViewModel> AddAsync(SaveCandidateViewModel vm)
         {
-            // ViewModel → SaveDto → Entity
-            var dto = new SaveCandidateDto
-            {
-                Name = vm.Name,
-                LastName = vm.LastName,
-                PhotoUrl = vm.PhotoUrl,
-                IsActive = true,
-                PoliticalPartyId = vm.PoliticalPartyId
-            };
+            // Bloqueo por elección activa
+            var elections = await _electionRepository.GetAllAsync();
+            if (elections.Any(e => e.Status == ElectionStatus.Active))
+                throw new Exception("No se puede crear un candidato mientras haya una elección activa.");
 
             var entity = new Candidate
             {
-                Name = dto.Name,
-                LastName = dto.LastName,
-                PhotoUrl = dto.PhotoUrl ?? string.Empty,
+                Name = vm.Name,
+                LastName = vm.LastName,
+                PhotoUrl = vm.PhotoUrl ?? string.Empty,
                 IsActive = true,
                 ParticipatedInElection = false,
-                PoliticalPartyId = dto.PoliticalPartyId
+                PoliticalPartyId = vm.PoliticalPartyId
             };
 
-            await _candidateRepository.AddAsync(entity);
+            var savedEntity = await _candidateRepository.AddAsync(entity);
+
+            return new SaveCandidateViewModel
+            {
+                Id = savedEntity.Id,
+                Name = savedEntity.Name,
+                LastName = savedEntity.LastName,
+                PhotoUrl = savedEntity.PhotoUrl,
+                IsActive = savedEntity.IsActive,
+                PoliticalPartyId = savedEntity.PoliticalPartyId
+            };
         }
 
         public async Task UpdateAsync(SaveCandidateViewModel vm)
         {
+            // Bloqueo por elección activa
+            var elections = await _electionRepository.GetAllAsync();
+            if (elections.Any(e => e.Status == ElectionStatus.Active))
+                throw new Exception("No se puede editar un candidato mientras haya una elección activa.");
+
             var entity = await _candidateRepository.GetByIdAsync(vm.Id);
             if (entity == null) throw new Exception("Candidato no encontrado.");
 
             if (entity.ParticipatedInElection)
                 throw new Exception("No se puede editar un candidato que participó en una elección activa o finalizada.");
 
-            // ViewModel → SaveDto → Entity
-            var dto = new SaveCandidateDto
-            {
-                Id = vm.Id,
-                Name = vm.Name,
-                LastName = vm.LastName,
-                PhotoUrl = vm.PhotoUrl,
-                IsActive = vm.IsActive,
-                PoliticalPartyId = vm.PoliticalPartyId
-            };
+            entity.Name = vm.Name;
+            entity.LastName = vm.LastName;
 
-            entity.Name = dto.Name;
-            entity.LastName = dto.LastName;
-            if (!string.IsNullOrEmpty(dto.PhotoUrl))
-                entity.PhotoUrl = dto.PhotoUrl;
+            if (!string.IsNullOrWhiteSpace(vm.PhotoUrl))
+            {
+                entity.PhotoUrl = vm.PhotoUrl;
+            }
 
             await _candidateRepository.UpdateAsync(entity);
         }
 
         public async Task ChangeStatusAsync(int id, bool status)
         {
+            // Bloqueo por elección activa
+            var elections = await _electionRepository.GetAllAsync();
+            if (elections.Any(e => e.Status == ElectionStatus.Active))
+                throw new Exception("No se puede cambiar el estado de un candidato mientras haya una elección activa.");
+
             var entity = await _candidateRepository.GetByIdAsync(id);
             if (entity == null) throw new Exception("Candidato no encontrado.");
+
+            if (!status)
+            {
+                var assignments = await _candidatePositionRepository.GetAllAsync();
+                if (assignments.Any(cp => cp.CandidateId == id))
+                    throw new Exception("No se puede desactivar un candidato que está asignado a un puesto electivo.");
+            }
 
             entity.IsActive = status;
             await _candidateRepository.UpdateAsync(entity);
         }
+
         private List<CandidateViewModel> MapToViewModelList(List<Candidate> candidates, List<PoliticalParty> parties)
         {
             var dtos = candidates.Select(c => new CandidateDto

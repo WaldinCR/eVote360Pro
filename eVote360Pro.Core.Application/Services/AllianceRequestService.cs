@@ -9,26 +9,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace eVote360Pro.Core.Application.Services
 {
-    public class AllianceRequestService : IAllianceRequestService
+    public class AllianceRequestService : GenericService<AllianceRequest, CreateAllianceRequestViewModel>, IAllianceRequestService
     {
         private readonly IAllianceRequestRepository _requestRepository;
         private readonly IAllianceRepository _allianceRepository;
         private readonly IPoliticalPartyRepository _partyRepository;
         private readonly IGenericRepository<Election> _electionRepository;
+        private readonly IMapper _mapper;
 
         public AllianceRequestService(
             IAllianceRequestRepository requestRepository,
             IAllianceRepository allianceRepository,
             IPoliticalPartyRepository partyRepository,
-            IGenericRepository<Election> electionRepository)
+            IGenericRepository<Election> electionRepository,
+            IMapper mapper) : base(requestRepository, mapper)
         {
             _requestRepository = requestRepository;
             _allianceRepository = allianceRepository;
             _partyRepository = partyRepository;
             _electionRepository = electionRepository;
+            _mapper = mapper;
         }
 
         public async Task<List<AllianceRequestViewModel>> GetAllViewModel()
@@ -52,7 +56,7 @@ namespace eVote360Pro.Core.Application.Services
                 requests.Where(r => r.ApplicantPartyId == applicantPartyId).ToList());
         }
 
-        public async Task AddAsync(CreateAllianceRequestViewModel vm)
+        public override async Task<CreateAllianceRequestViewModel?> AddAsync(CreateAllianceRequestViewModel vm)
         {
             var elections = await _electionRepository.GetAllAsync();
             if (elections.Any(e => e.Status == ElectionStatus.Active))
@@ -80,7 +84,12 @@ namespace eVote360Pro.Core.Application.Services
                 RequestDate = DateTime.Now
             };
 
-            await _requestRepository.AddAsync(entity);
+            var savedEntity = await _requestRepository.AddAsync(entity);
+            return new CreateAllianceRequestViewModel
+            {
+                ApplicantPartyId = savedEntity.ApplicantPartyId,
+                ReceiverPartyId = savedEntity.ReceiverPartyId
+            };
         }
 
         public async Task AcceptRequestAsync(int id)

@@ -13,7 +13,7 @@ namespace eVote360Pro.Core.Application.Interfaces
         Task<List<CandidateViewModel>> GetAllByPartyIdViewModel(int partyId);
 
         Task<SaveCandidateViewModel?> GetByIdSaveViewModel(int id);
-        Task<SaveCandidateViewModel> AddAsync(SaveCandidateViewModel vm);
+        Task<SaveCandidateViewModel?> AddAsync(SaveCandidateViewModel vm);
         Task UpdateAsync(SaveCandidateViewModel vm);
         Task ChangeStatusAsync(int id, bool status);
     }

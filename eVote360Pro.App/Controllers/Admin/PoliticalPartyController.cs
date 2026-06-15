@@ -65,7 +65,7 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             {
                 var savedVm = await _partyService.AddAsync(vm);
 
-                if (vm.LogoFile != null && vm.LogoFile.Length > 0)
+                if (savedVm != null && vm.LogoFile != null && vm.LogoFile.Length > 0)
                 {
                     savedVm.LogoUrl = UploadFile.Upload(vm.LogoFile, savedVm.Id, "logos");
                     await _partyService.UpdateAsync(savedVm);

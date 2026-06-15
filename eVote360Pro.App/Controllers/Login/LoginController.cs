@@ -1,4 +1,4 @@
-﻿using eVote360Pro.Core.Application.Dtos.User;
+using eVote360Pro.Core.Application.Dtos.User;
 using eVote360Pro.Core.Application.Helpers;
 using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.Login;

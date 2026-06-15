@@ -1,40 +1,78 @@
 using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.CandidatePosition;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 
 namespace eVote360Pro.App.Controllers.Leader
 {
-    [Authorize(Roles = "Dirigente")]
     public class CandidatePositionController : Controller
     {
         private readonly ICandidatePositionService _candidatePositionService;
-        private readonly IMapper _mapper;
+        private readonly ICandidateService _candidateService;
+        private readonly IElectivePositionService _positionService;
+        private readonly IAllianceService _allianceService;
 
-        public CandidatePositionController(ICandidatePositionService candidatePositionService, IMapper mapper)
+        public CandidatePositionController(
+            ICandidatePositionService candidatePositionService,
+            ICandidateService candidateService,
+            IElectivePositionService positionService,
+            IAllianceService allianceService)
         {
             _candidatePositionService = candidatePositionService;
-            _mapper = mapper;
+            _candidateService = candidateService;
+            _positionService = positionService;
+            _allianceService = allianceService;
+        }
+
+        private bool IsLeader() =>
+            HttpContext.Session.GetString("UserRole") == "DirigentePolitico";
+
+        private int GetPartyId() =>
+            HttpContext.Session.GetInt32("PartyId") ?? 0;
+
+        private IActionResult AccessDenied()
+        {
+            TempData["Error"] = "No tiene permisos para acceder a esta sección o debe iniciar sesión primero.";
+            return RedirectToAction("Index", "Login", new { area = "" });
         }
 
         public async Task<IActionResult> Index()
         {
-            // ID temporal fijo. Al integrar el Login, se reemplaza por la sesión del dirigente
-            int currentLeaderPartyId = 1; 
+            if (!IsLeader()) return AccessDenied();
 
-            var dtos = await _candidatePositionService.GetAllByPartyAsync(currentLeaderPartyId);
+            int partyId = GetPartyId();
+            var dtos = await _candidatePositionService.GetAllByPartyAsync(partyId);
             
-            var list = _mapper.Map<List<CandidatePositionViewModel>>(dtos);
+            var list = new List<CandidatePositionViewModel>();
+            foreach (var dto in dtos)
+            {
+                list.Add(new CandidatePositionViewModel
+                {
+                    Id = dto.Id,
+                    CandidateId = dto.CandidateId,
+                    CandidateName = dto.CandidateName,
+                    ElectivePositionId = dto.ElectivePositionId,
+                    ElectivePositionName = dto.ElectivePositionName,
+                    PoliticalPartyId = dto.PoliticalPartyId,
+                    IsAllied = dto.IsAllied
+                });
+            }
 
             return View(list);
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            if (!IsLeader()) return AccessDenied();
+
+            int partyId = GetPartyId();
+            await LoadViewBagsAsync(partyId);
+
             return View("Create", new SaveCandidatePositionViewModel());
         }
 
@@ -42,8 +80,14 @@ namespace eVote360Pro.App.Controllers.Leader
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SaveCandidatePositionViewModel vm)
         {
+            if (!IsLeader()) return AccessDenied();
+
+            int partyId = GetPartyId();
+            vm.PoliticalPartyId = partyId;
+
             if (!ModelState.IsValid)
             {
+                await LoadViewBagsAsync(partyId);
                 return View("Create", vm);
             }
 
@@ -51,6 +95,7 @@ namespace eVote360Pro.App.Controllers.Leader
             if (!string.IsNullOrEmpty(error))
             {
                 TempData["Error"] = error;
+                await LoadViewBagsAsync(partyId);
                 return View("Create", vm);
             }
 
@@ -62,6 +107,8 @@ namespace eVote360Pro.App.Controllers.Leader
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
+            if (!IsLeader()) return AccessDenied();
+
             var error = await _candidatePositionService.DeleteAsync(id);
             if (!string.IsNullOrEmpty(error))
             {
@@ -73,6 +120,28 @@ namespace eVote360Pro.App.Controllers.Leader
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task LoadViewBagsAsync(int userPartyId)
+        {
+            var alliances = await _allianceService.GetAllViewModel();
+            var alliedPartyIds = alliances
+                .Where(a => a.Party1Id == userPartyId || a.Party2Id == userPartyId)
+                .Select(a => a.Party1Id == userPartyId ? a.Party2Id : a.Party1Id)
+                .ToList();
+
+            var allCandidates = await _candidateService.GetAllViewModel();
+            var availableCandidates = allCandidates
+                .Where(c => c.IsActive && (c.PoliticalPartyId == userPartyId || alliedPartyIds.Contains(c.PoliticalPartyId)))
+                .ToList();
+
+            var allPositions = await _positionService.GetAllAsync();
+            var availablePositions = allPositions
+                .Where(p => p.IsActive)
+                .ToList();
+
+            ViewBag.Candidates = availableCandidates;
+            ViewBag.Positions = availablePositions;
         }
     }
 }

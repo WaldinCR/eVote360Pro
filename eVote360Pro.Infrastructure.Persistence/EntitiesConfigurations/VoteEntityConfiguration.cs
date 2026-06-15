@@ -1,4 +1,4 @@
-﻿using eVote360Pro.Core.Domain.Entities;
+using eVote360Pro.Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -22,17 +22,17 @@ namespace eVote360Pro.Infrastructure.Persistence.EntitiesConfigurations
             #endregion
 
             #region Relationship Configuration
-            builder.HasOne<Election>()
-                .WithMany()
+            builder.HasOne(v => v.Election)
+                .WithMany(e => e.Votes)
                .HasForeignKey(v => v.ElectionId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne<ElectivePosition>() 
-                 .WithMany()
+            builder.HasOne(v => v.ElectivePosition) 
+                 .WithMany(ep => ep.Votes)
                  .HasForeignKey(v => v.ElectivePositionId)
                   .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne<Candidate>()
+            builder.HasOne(v => v.Candidate)
                 .WithMany()
                  .HasForeignKey(v => v.CandidateId)
                 .OnDelete(DeleteBehavior.Restrict);

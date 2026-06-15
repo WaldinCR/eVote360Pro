@@ -72,7 +72,7 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
             {
                 var savedVm = await _candidateService.AddAsync(vm);
 
-                if (vm.PhotoFile != null && vm.PhotoFile.Length > 0)
+                if (savedVm != null && vm.PhotoFile != null && vm.PhotoFile.Length > 0)
                 {
                     savedVm.PhotoUrl = UploadFile.Upload(vm.PhotoFile, savedVm.Id, "candidates");
                     await _candidateService.UpdateAsync(savedVm);

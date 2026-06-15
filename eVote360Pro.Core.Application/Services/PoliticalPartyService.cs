@@ -10,23 +10,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace eVote360Pro.Core.Application.Services
 {
-    public class PoliticalPartyService : IPoliticalPartyService
+    public class PoliticalPartyService : GenericService<PoliticalParty, SavePoliticalPartyViewModel>, IPoliticalPartyService
     {
         private readonly IPoliticalPartyRepository _partyRepository;
         private readonly IGenericRepository<Election> _electionRepository;
         private readonly ICandidateRepository _candidateRepository;
+        private readonly IMapper _mapper;
 
         public PoliticalPartyService(
             IPoliticalPartyRepository partyRepository,
             IGenericRepository<Election> electionRepository,
-            ICandidateRepository candidateRepository)
+            ICandidateRepository candidateRepository,
+            IMapper mapper) : base(partyRepository, mapper)
         {
             _partyRepository = partyRepository;
             _electionRepository = electionRepository;
             _candidateRepository = candidateRepository;
+            _mapper = mapper;
         }
 
         public async Task<List<PoliticalPartyViewModel>> GetAllViewModel()
@@ -80,7 +84,7 @@ namespace eVote360Pro.Core.Application.Services
             };
         }
 
-        public async Task<SavePoliticalPartyViewModel> AddAsync(SavePoliticalPartyViewModel vm)
+        public override async Task<SavePoliticalPartyViewModel?> AddAsync(SavePoliticalPartyViewModel vm)
         {
             // Bloqueo por elección activa
             var elections = await _electionRepository.GetAllAsync();

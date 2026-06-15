@@ -4,7 +4,6 @@ using eVote360Pro.Core.Application.Dtos.CandidatePosition;
 using eVote360Pro.Core.Domain.Entities;
 using eVote360Pro.Core.Domain.Interfaces;
 using eVote360Pro.Core.Domain.Common.Enums;
-using AutoMapper;
 
 namespace eVote360Pro.Core.Application.Services
 {
@@ -16,7 +15,6 @@ namespace eVote360Pro.Core.Application.Services
         private readonly IGenericRepository<Election> _electionRepository;
         private readonly IGenericRepository<Alliance> _allianceRepository;    
         private readonly IGenericRepository<PoliticalParty> _partyRepository;  
-        private readonly IMapper _mapper;
 
         public CandidatePositionService(
             IGenericRepository<CandidatePosition> candidatePositionRepository,
@@ -24,8 +22,7 @@ namespace eVote360Pro.Core.Application.Services
             IGenericRepository<ElectivePosition> positionRepository,
             IGenericRepository<Election> electionRepository,
             IGenericRepository<Alliance> allianceRepository,
-            IGenericRepository<PoliticalParty> partyRepository,
-            IMapper mapper)
+            IGenericRepository<PoliticalParty> partyRepository)
         {
             _candidatePositionRepository = candidatePositionRepository;
             _candidateRepository = candidateRepository;
@@ -33,7 +30,6 @@ namespace eVote360Pro.Core.Application.Services
             _electionRepository = electionRepository;
             _allianceRepository = allianceRepository;
             _partyRepository = partyRepository;
-            _mapper = mapper;
         }
 
         public async Task<IReadOnlyList<CandidatePositionDto>> GetAllByPartyAsync(int partyId)
@@ -105,7 +101,13 @@ namespace eVote360Pro.Core.Application.Services
                     return "El candidato aliado solo puede postularse al mismo puesto que tiene en su partido de origen.";
             }
 
-            var entity = _mapper.Map<CandidatePosition>(viewModel);
+            var entity = new CandidatePosition
+            {
+                Id = viewModel.Id,
+                CandidateId = viewModel.CandidateId,
+                ElectivePositionId = viewModel.ElectivePositionId,
+                PoliticalPartyId = viewModel.PoliticalPartyId
+            };
 
             await _candidatePositionRepository.AddAsync(entity);
             return null;

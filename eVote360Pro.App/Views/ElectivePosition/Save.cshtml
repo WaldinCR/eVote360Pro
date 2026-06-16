@@ -1,4 +1,60 @@
 @model eVote360Pro.Core.Application.ViewModels.ElectivePosition.SaveElectivePositionViewModel
+
 @{
-    ViewData["Title"] = Model.Id == 0 ? "Nuevo Puesto" : "Editar Puesto";
+    var isEdit = Model.Id > 0;
+    ViewData["Title"] = isEdit ? "Editar Puesto Electivo" : "Nuevo Puesto Electivo";
 }
+
+<div class="atop">
+    <p class="aptitle"><i class="ti ti-edit"></i> @(isEdit ? "Editar Puesto Electivo" : "Nuevo Puesto Electivo")</p>
+    <a href="@Url.Action("Index", "ElectivePosition")" class="bo"><i class="ti ti-arrow-left"></i> Volver</a>
+</div>
+
+<div class="form-section" style="max-width: 600px; margin: 0 auto;">
+    <p class="form-section-title"><i class="ti ti-edit"></i> Datos del puesto electivo</p>
+    
+    <form method="post" action="@(isEdit ? Url.Action("Edit", "ElectivePosition") : Url.Action("Create", "ElectivePosition"))">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="HasParticipated" />
+        
+        <div asp-validation-summary="ModelOnly" class="ae" style="margin-bottom: 1rem;"></div>
+
+        <div class="fw">
+            <label asp-for="Name" class="fl">Nombre del Puesto <span class="req">*</span></label>
+            @if (Model.HasParticipated)
+            {
+                <input asp-for="Name" class="fi" type="text" readonly style="background: var(--gy50); color: var(--gy600);" />
+                <p class="fhint" style="color: var(--r800);"><i class="ti ti-lock"></i> El nombre de este puesto no se puede modificar porque ya ha participado en elecciones.</p>
+            }
+            else
+            {
+                <input asp-for="Name" class="fi" type="text" placeholder="Ej. Regidor" required />
+                <span asp-validation-for="Name" style="font-size: 11px; color: var(--r400);"></span>
+                <p class="fhint">Debe ser único en el sistema.</p>
+            }
+        </div>
+
+        <div class="fw">
+            <label asp-for="Description" class="fl">Descripción <span class="req">*</span></label>
+            <textarea asp-for="Description" class="fi" placeholder="Describa las responsabilidades del puesto..." style="min-height:100px;" required></textarea>
+            <span asp-validation-for="Description" style="font-size: 11px; color: var(--r400);"></span>
+        </div>
+
+        @if (!isEdit)
+        {
+            <input type="hidden" asp-for="IsActive" value="true" />
+        }
+        else
+        {
+            <input type="hidden" asp-for="IsActive" />
+        }
+
+        <div style="display:flex; gap:8px; margin-top:1.5rem">
+            <button type="submit" class="fbtn" style="border: none; cursor: pointer; padding: 9px 18px; font-weight: 600; border-radius: var(--rmd); background: var(--g800); color: #fff; display: inline-flex; align-items: center; gap: 5px;">
+                <i class="ti ti-check"></i> Guardar
+            </button>
+            <a href="@Url.Action("Index", "ElectivePosition")" class="bo" style="text-decoration: none;">Cancelar</a>
+        </div>
+    </form>
+</div>

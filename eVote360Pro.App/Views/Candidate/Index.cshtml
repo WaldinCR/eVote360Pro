@@ -1,5 +1,186 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@model List<eVote360Pro.Core.Application.ViewModels.Candidate.CandidateViewModel>
+@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+@using eVote360Pro.Core.Domain.Common.Enums
+
 @{
+    ViewData["Title"] = "Mantenimiento de Candidatos";
+    var isElectionActive = DbContext.Elections.Any(e => e.Status == ElectionStatus.Active);
+}
+
+<div class="atop">
+    <p class="aptitle"><i class="ti ti-users"></i> Candidatos de Mi Partido</p>
+    @if (!isElectionActive)
+    {
+        <a href="@Url.Action("Create", "Candidate")" class="bnew" style="text-decoration: none;">
+            <i class="ti ti-plus"></i> Nuevo candidato
+        </a>
+    }
+    else
+    {
+        <button class="bnew" disabled style="opacity: 0.5; cursor: not-allowed;" title="Acciones bloqueadas: Existe una elección activa.">
+            <i class="ti ti-plus"></i> Nuevo candidato
+        </button>
+    }
+</div>
+
+@if (isElectionActive)
+{
+    <div class="ae" style="margin-bottom: 1rem;">
+        <i class="ti ti-alert-circle"></i>
+        <span>Acciones de creación, edición y activación/inactivación bloqueadas: Existe una elección activa.</span>
+    </div>
+}
+
+<div class="fb">
+    <input class="finp" type="text" placeholder="Buscar candidato..." style="width:200px" id="candidateSearch">
+    <select class="fsel" id="statusFilter">
+        <option value="">Todos</option>
+        <option value="Activo">Activos</option>
+        <option value="Inactivo">Inactivos</option>
+    </select>
+</div>
+
+<div class="tw">
+    <table class="dt" id="candidatesTable">
+        <thead>
+            <tr>
+                <th style="width:12%">Foto</th>
+                <th style="width:35%">Nombre completo</th>
+                <th style="width:15%">Estado</th>
+                <th style="width:18%">Restricciones</th>
+                <th style="width:20%">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    var dbCandidate = DbContext.Candidates.FirstOrDefault(c => c.Id == item.Id);
+                    var participated = dbCandidate?.ParticipatedInElection ?? false;
+
+                    <tr data-name="@($"{item.Name} {item.LastName}".ToLower())" data-status="@(item.IsActive ? "Activo" : "Inactivo")">
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.PhotoUrl))
+                            {
+                                <img src="@item.PhotoUrl" alt="Foto" style="width:36px; height:36px; object-fit:cover; border-radius:50%; border: 2px solid var(--gy200);" />
+                            }
+                            else
+                            {
+                                <div style="width:36px;height:36px;background:var(--g50);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--g800);border: 2px solid var(--gy200);">
+                                    @(item.Name.Length >= 1 ? item.Name.Substring(0, 1).ToUpper() : "")@(item.LastName.Length >= 1 ? item.LastName.Substring(0, 1).ToUpper() : "")
+                                </div>
+                            }
+                        </td>
+                        <td>
+                            <strong>@item.Name @item.LastName</strong>
+                        </td>
+                        <td>
+                            @if (item.IsActive)
+                            {
+                                <span class="bdg bact">Activo</span>
+                            }
+                            else
+                            {
+                                <span class="bdg binact">Inactivo</span>
+                            }
+                        </td>
+                        <td>
+                            @if (participated)
+                            {
+                                <span style="font-size:11px;color:var(--r800)"><i class="ti ti-lock" style="font-size:10px"></i> Ha participado en elecciones</span>
+                            }
+                            else
+                            {
+                                <span>—</span>
+                            }
+                        </td>
+                        <td>
+                            @if (isElectionActive)
+                            {
+                                <button class="bsm gray" disabled style="opacity: 0.5; cursor: not-allowed;" title="Existe una elección activa."><i class="ti ti-edit"></i> Editar</button>
+                                @if (item.IsActive)
+                                {
+                                    <button class="bsm red" disabled style="opacity: 0.5; cursor: not-allowed;">Inactivar</button>
+                                }
+                                else
+                                {
+                                    <button class="bsm green" disabled style="opacity: 0.5; cursor: not-allowed;">Activar</button>
+                                }
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Edit", "Candidate", new { id = item.Id })" class="bsm gray"><i class="ti ti-edit"></i> Editar</a>
+                                
+                                @if (participated)
+                                {
+                                    <button class="bsm red" disabled style="opacity: 0.5; cursor: not-allowed;" title="No se puede inactivar un candidato que ya participó en una elección.">Inactivar</button>
+                                }
+                                else
+                                {
+                                    <form method="post" action="@Url.Action("ChangeStatus", "Candidate")" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <input type="hidden" name="currentStatus" value="@item.IsActive.ToString().ToLower()" />
+                                        @if (item.IsActive)
+                                        {
+                                            <button type="submit" class="bsm red" onclick="return confirm('¿Está seguro de inactivar este candidato?');">Inactivar</button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" class="bsm green" onclick="return confirm('¿Está seguro de activar este candidato?');">Activar</button>
+                                        }
+                                    </form>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--gy400);">No hay candidatos registrados en su partido.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<p class="tfoot">@Model?.Count candidatos</p>
+
+<div class="rule-box">
+    <p><i class="ti ti-shield-lock"></i> Reglas críticas</p>
+    <ul>
+        <li>Los candidatos están restringidos a pertenecer al partido político del dirigente actual.</li>
+        <li>Si existe una <strong>elección activa</strong>, se bloquean todas las acciones de creación, modificación o cambio de estado.</li>
+        <li>Si el candidato ya <strong>participó en una elección</strong>, su nombre, apellido y foto quedan congelados y no se puede inactivar.</li>
+    </ul>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('candidateSearch').addEventListener('input', filterTable);
+        document.getElementById('statusFilter').addEventListener('change', filterTable);
+
+        function filterTable() {
+            var searchVal = document.getElementById('candidateSearch').value.toLowerCase();
+            var statusVal = document.getElementById('statusFilter').value;
+            var rows = document.querySelectorAll('#candidatesTable tbody tr');
+
+            rows.forEach(function(row) {
+                var name = row.getAttribute('data-name');
+                var status = row.getAttribute('data-status');
+
+                var nameMatch = !name || name.indexOf(searchVal) > -1;
+                var statusMatch = !statusVal || status === statusVal;
+
+                if (nameMatch && statusMatch) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    </script>
 }

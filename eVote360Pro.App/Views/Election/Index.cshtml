@@ -1,5 +1,156 @@
-@using eVote360Pro.Core.Domain.Common.Enums
-@model IEnumerable<eVote360Pro.Core.Application.ViewModels.Election.ElectionViewModel>
+@model List<eVote360Pro.Core.Application.ViewModels.Election.ElectionViewModel>
+@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+
 @{
-    ViewData["Title"] = "Gestión de Elecciones";
+    ViewData["Title"] = "Control de Elecciones";
+    var activePartiesCount = DbContext.PoliticalParties.Count(p => p.IsActive);
+    var activePositionsCount = DbContext.ElectivePositions.Count(p => p.IsActive);
+    var hasActiveElection = Model.Any(e => e.Status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Active);
+}
+
+<div class="atop">
+    <p class="aptitle"><i class="ti ti-calendar-event"></i> Control de elecciones</p>
+    @if (!hasActiveElection)
+    {
+        <a href="@Url.Action("Create", "Election")" class="bnew" style="text-decoration: none;">
+            <i class="ti ti-plus"></i> Nueva elección
+        </a>
+    }
+    else
+    {
+        <button class="bnew" disabled style="opacity: 0.5; cursor: not-allowed;" title="Ya existe una elección activa.">
+            <i class="ti ti-plus"></i> Nueva elección
+        </button>
+    }
+</div>
+
+<div class="fb">
+    <input class="finp" type="text" placeholder="Buscar..." style="width:160px" id="electionSearch">
+    <select class="fsel" id="statusFilter">
+        <option value="">Todos los estados</option>
+        <option value="Pendiente">Pendiente</option>
+        <option value="Activa">Activa</option>
+        <option value="Finalizada">Finalizada</option>
+    </select>
+</div>
+
+<div class="tw">
+    <table class="dt" id="electionsTable">
+        <thead>
+            <tr>
+                <th style="width:26%">Nombre</th>
+                <th style="width:12%">Fecha</th>
+                <th style="width:9%">Partidos</th>
+                <th style="width:9%">Puestos</th>
+                <th style="width:14%">Participación</th>
+                <th style="width:12%">Estado</th>
+                <th style="width:18%">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    var electionDb = DbContext.Elections.FirstOrDefault(x => x.Id == item.Id);
+                    var activationDateStr = electionDb?.ActivationDate?.ToString("dd/MM/yyyy") ?? "—";
+                    var votesCount = DbContext.CitizenVotes.Count(cv => cv.ElectionId == item.Id);
+
+                    <tr data-name="@item.Name.ToLower()" data-status="@item.Status.ToString()">
+                        <td><strong>@item.Name</strong></td>
+                        <td>@activationDateStr</td>
+                        <td>@activePartiesCount</td>
+                        <td>@activePositionsCount</td>
+                        <td>@votesCount.ToString("N0") votos</td>
+                        <td>
+                            @if (item.Status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Active)
+                            {
+                                <span class="bdg bact">Activa</span>
+                            }
+                            else if (item.Status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Pending)
+                            {
+                                <span class="bdg bpend">Pendiente</span>
+                            }
+                            else
+                            {
+                                <span class="bdg bdone">Finalizada</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.Status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Active)
+                            {
+                                <form method="post" action="@Url.Action("Finish", "Election", new { id = item.Id })" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="bsm red" onclick="return confirm('¿Está seguro de finalizar esta elección?');">
+                                        <i class="ti ti-square"></i> Finalizar
+                                    </button>
+                                </form>
+                            }
+                            else if (item.Status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Pending)
+                            {
+                                <form method="post" action="@Url.Action("Activate", "Election", new { id = item.Id })" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="bsm blue" onclick="return confirm('¿Está seguro de activar esta elección? Se verificará que todos los puestos y partidos tengan candidatos asignados.');">
+                                        <i class="ti ti-player-play"></i> Activar
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Results", "Election", new { id = item.Id })" class="bsm gray">
+                                    <i class="ti ti-chart-bar"></i> Ver resultados
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--gy400);">No hay elecciones registradas.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<p class="tfoot">@Model.Count elecciones · de más reciente a más antigua</p>
+
+<div class="rule-box">
+    <p><i class="ti ti-shield-lock"></i> Reglas críticas</p>
+    <ul>
+        <li>Solo puede existir <strong>una elección activa</strong> a la vez.</li>
+        <li>Al activar se valida configuración completa (puestos, partidos, candidatos).</li>
+        <li>Resultados solo visibles para elecciones <strong>Finalizadas</strong>.</li>
+        <li>Se permiten <strong>múltiples pendientes</strong> simultáneamente.</li>
+        <li>Campos críticos bloqueados si participó en elección activa o finalizada.</li>
+    </ul>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('electionSearch').addEventListener('input', filterTable);
+        document.getElementById('statusFilter').addEventListener('change', filterTable);
+
+        function filterTable() {
+            var searchVal = document.getElementById('electionSearch').value.toLowerCase();
+            var statusVal = document.getElementById('statusFilter').value;
+            var rows = document.querySelectorAll('#electionsTable tbody tr');
+
+            rows.forEach(function(row) {
+                var name = row.getAttribute('data-name');
+                var status = row.getAttribute('data-status');
+
+                var nameMatch = !name || name.indexOf(searchVal) > -1;
+                var statusMatch = !statusVal || status === statusVal;
+
+                if (nameMatch && statusMatch) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    </script>
 }

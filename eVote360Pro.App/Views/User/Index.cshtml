@@ -1,5 +1,134 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@model List<eVote360Pro.Core.Application.ViewModels.User.UserViewModel>
+@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+@using eVote360Pro.Core.Application.Helpers
+@using eVote360Pro.Core.Application.ViewModels.User
+@using eVote360Pro.Core.Domain.Common.Enums
+@using Microsoft.AspNetCore.Http
+
 @{
+    ViewData["Title"] = "Mantenimiento de Usuarios";
+    var hasActiveElection = (bool)(ViewBag.HasActiveElection ?? DbContext.Elections.Any(e => e.Status == ElectionStatus.Active));
+    var currentUser = Context.Session.Get<UserViewModel>("User");
+}
+
+<div class="atop">
+    <p class="aptitle"><i class="ti ti-user-cog"></i> Usuarios del sistema</p>
+    @if (!hasActiveElection)
+    {
+        <a href="@Url.Action("Create", "User")" class="bnew" style="text-decoration: none;">
+            <i class="ti ti-plus"></i> Nuevo usuario
+        </a>
+    }
+    else
+    {
+        <button class="bnew" disabled style="opacity: 0.5; cursor: not-allowed;" title="Acción bloqueada: Existe una elección activa.">
+            <i class="ti ti-plus"></i> Nuevo usuario
+        </button>
+    }
+</div>
+
+@if (hasActiveElection)
+{
+    <div class="ae" style="margin-bottom: 1rem;">
+        <i class="ti ti-alert-circle"></i>
+        <span>Acciones de creación bloqueadas: Existe una elección activa.</span>
+    </div>
+}
+
+<div class="fb">
+    <input class="finp" type="text" placeholder="Buscar usuario..." style="width:160px" id="userSearch">
+</div>
+
+<div class="tw">
+    <table class="dt" id="usersTable">
+        <thead>
+            <tr>
+                <th style="width:20%">Nombre completo</th>
+                <th style="width:20%">Username</th>
+                <th style="width:26%">Correo</th>
+                <th style="width:14%">Rol</th>
+                <th style="width:10%">Estado</th>
+                <th style="width:20%">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr data-name="@($"{item.Name} {item.LastName} {item.UserName}".ToLower())">
+                        <td><strong>@item.Name @item.LastName</strong></td>
+                        <td>@item.UserName</td>
+                        <td>@item.Email</td>
+                        <td>
+                            @if (item.Role == (int)UserRol.Administrador)
+                            {
+                                <span class="chip"><i class="ti ti-shield" style="font-size:10px"></i> Administrador</span>
+                            }
+                            else
+                            {
+                                <span class="chip" style="background:var(--g50);color:var(--g800);border-color:var(--g200)"><i class="ti ti-star" style="font-size:10px"></i> Dirigente</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.IsActive)
+                            {
+                                <span class="bdg bact">Activo</span>
+                            }
+                            else
+                            {
+                                <span class="bdg binact">Inactivo</span>
+                            }
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", "User", new { id = item.Id })" class="bsm gray"><i class="ti ti-edit"></i> Editar</a>
+                            
+                            @if (currentUser?.Id == item.Id)
+                            {
+                                <button class="bsm red" disabled style="opacity:.4; cursor:not-allowed;" title="No puede desactivar su propio usuario.">Inactivar</button>
+                            }
+                            else
+                            {
+                                <form method="post" action="@Url.Action("ToggleActive", "User", new { id = item.Id })" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    @if (item.IsActive)
+                                    {
+                                        <button type="submit" class="bsm red" onclick="return confirm('¿Está seguro de inactivar este usuario?');">Inactivar</button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" class="bsm green" onclick="return confirm('¿Está seguro de activar este usuario?');">Activar</button>
+                                    }
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--gy400);">No hay usuarios registrados.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('userSearch').addEventListener('input', function() {
+            var searchVal = this.value.toLowerCase();
+            var rows = document.querySelectorAll('#usersTable tbody tr');
+
+            rows.forEach(function(row) {
+                var name = row.getAttribute('data-name');
+                if (!name || name.indexOf(searchVal) > -1) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
 }

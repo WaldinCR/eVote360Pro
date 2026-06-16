@@ -1,5 +1,94 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@model eVote360Pro.Core.Application.ViewModels.User.SaveUserViewModel
+@using eVote360Pro.Core.Domain.Common.Enums
+@using eVote360Pro.Core.Application.Helpers
+@using eVote360Pro.Core.Application.ViewModels.User
+
 @{
+    ViewData["Title"] = "Editar Usuario";
+    var currentUser = Context.Session.Get<UserViewModel>("User");
+    var isSelfEdit = currentUser?.Id == Model.Id;
 }
+
+<div class="atop">
+    <p class="aptitle"><i class="ti ti-edit"></i> Editar Usuario</p>
+    <a href="@Url.Action("Index", "User")" class="bo"><i class="ti ti-arrow-left"></i> Volver</a>
+</div>
+
+<div class="form-section" style="max-width: 600px; margin: 0 auto;">
+    <p class="form-section-title"><i class="ti ti-edit"></i> Datos del usuario</p>
+    
+    <form method="post" action="@Url.Action("Edit", "User")">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="IsActive" />
+
+        <div asp-validation-summary="ModelOnly" class="ae" style="margin-bottom: 1rem;"></div>
+
+        <div class="row2">
+            <div class="fw">
+                <label asp-for="Name" class="fl">Nombre <span class="req">*</span></label>
+                <input asp-for="Name" class="fi" type="text" required />
+                <span asp-validation-for="Name" style="font-size: 11px; color: var(--r400);"></span>
+            </div>
+            <div class="fw">
+                <label asp-for="LastName" class="fl">Apellido <span class="req">*</span></label>
+                <input asp-for="LastName" class="fi" type="text" required />
+                <span asp-validation-for="LastName" style="font-size: 11px; color: var(--r400);"></span>
+            </div>
+        </div>
+
+        <div class="row2">
+            <div class="fw">
+                <label asp-for="UserName" class="fl">Nombre de Usuario <span class="req">*</span></label>
+                <input asp-for="UserName" class="fi" type="text" required />
+                <span asp-validation-for="UserName" style="font-size: 11px; color: var(--r400);"></span>
+            </div>
+            <div class="fw">
+                <label asp-for="Email" class="fl">Correo Electrónico <span class="req">*</span></label>
+                <input asp-for="Email" class="fi" type="email" required />
+                <span asp-validation-for="Email" style="font-size: 11px; color: var(--r400);"></span>
+            </div>
+        </div>
+
+        <div class="row2">
+            <div class="fw">
+                <label asp-for="Password" class="fl">Nueva Contraseña</label>
+                <input asp-for="Password" class="fi" type="password" placeholder="Dejar en blanco para no cambiar" />
+                <span asp-validation-for="Password" style="font-size: 11px; color: var(--r400);"></span>
+            </div>
+            <div class="fw">
+                <label asp-for="ConfirmPassword" class="fl">Confirmar Nueva Contraseña</label>
+                <input asp-for="ConfirmPassword" class="fi" type="password" placeholder="Dejar en blanco para no cambiar" />
+                <span asp-validation-for="ConfirmPassword" style="font-size: 11px; color: var(--r400);"></span>
+            </div>
+        </div>
+
+        <div class="fw">
+            <label asp-for="Role" class="fl">Rol <span class="req">*</span></label>
+            @if (isSelfEdit)
+            {
+                <input type="hidden" asp-for="Role" />
+                <select class="fi" disabled style="background: var(--gy50); color: var(--gy600);">
+                    <option value="@((int)UserRol.Administrador)" selected>Administrador</option>
+                </select>
+                <p class="fhint" style="color: var(--gy600);"><i class="ti ti-lock"></i> No puede cambiar su propio rol mientras esté autenticado.</p>
+            }
+            else
+            {
+                <select asp-for="Role" class="fi" required>
+                    <option value="">Seleccione un rol</option>
+                    <!option value="@((int)UserRol.Administrador)" @(Model.Role == (int)UserRol.Administrador ? "selected" : "")>Administrador</!option>
+                    <!option value="@((int)UserRol.DirigentePolitico)" @(Model.Role == (int)UserRol.DirigentePolitico ? "selected" : "")>Dirigente Político</!option>
+                </select>
+                <span asp-validation-for="Role" style="font-size: 11px; color: var(--r400);"></span>
+            }
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:1.5rem">
+            <button type="submit" class="fbtn" style="border: none; cursor: pointer; padding: 9px 18px; font-weight: 600; border-radius: var(--rmd); background: var(--g800); color: #fff; display: inline-flex; align-items: center; gap: 5px;">
+                <i class="ti ti-check"></i> Guardar
+            </button>
+            <a href="@Url.Action("Index", "User")" class="bo" style="text-decoration: none;">Cancelar</a>
+        </div>
+    </form>
+</div>

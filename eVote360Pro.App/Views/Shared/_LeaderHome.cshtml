@@ -1,0 +1,93 @@
+@model eVote360Pro.Core.Application.ViewModels.Leader.LeaderHomeViewModel
+@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+@using Microsoft.AspNetCore.Http
+
+@{
+    var userName = Context.Session.GetString("UserName") ?? "Dirigente";
+    var partyId = Context.Session.GetInt32("PartyId") ?? 0;
+    var party = DbContext.PoliticalParties.FirstOrDefault(p => p.Id == partyId);
+    var assignedCandidatesCount = DbContext.CandidatePositions.Count(cp => cp.PoliticalPartyId == partyId);
+    var isElectionActive = DbContext.Elections.Any(e => e.Status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Active);
+}
+
+<div class="atop">
+    <p class="aptitle"><i class="ti ti-home"></i> Mi partido</p>
+    <div class="auser">
+        <div class="aavat" style="background: var(--g50); color: var(--g800);">
+            @(string.IsNullOrEmpty(userName) ? "D" : userName[0].ToString().ToUpper())
+        </div> 
+        @userName
+    </div>
+</div>
+
+<div class="phero">
+    <div class="plogobox">
+        @if (party != null && !string.IsNullOrEmpty(party.LogoUrl))
+        {
+            <img src="@party.LogoUrl" alt="Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: var(--rmd);" />
+        }
+        else
+        {
+            @(party?.Acronym ?? "LOG")
+        }
+    </div>
+    <div>
+        <p class="pname">@(party?.Name ?? "Partido Político")</p>
+        <p class="pdirig"><i class="ti ti-user"></i> Dirigente: @userName</p>
+        <p class="psiglas">SIGLAS: @(party?.Acronym ?? "N/A")</p>
+    </div>
+</div>
+
+@if (Model != null)
+{
+    <div class="kgrid" style="margin-bottom: 1rem;">
+        <div class="kc blue">
+            <p class="kval">@Model.ActiveCandidates</p>
+            <p class="klabel">Candidatos activos</p>
+        </div>
+        <div class="kc gray">
+            <p class="kval">@Model.InactiveCandidates</p>
+            <p class="klabel">Candidatos inactivos</p>
+        </div>
+        <div class="kc green">
+            <p class="kval">@Model.ActiveAlliances</p>
+            <p class="klabel">Alianzas aprobadas</p>
+        </div>
+        <div class="kc amber">
+            <p class="kval">@Model.PendingAllianceRequests</p>
+            <p class="klabel">Solicitudes pendientes</p>
+        </div>
+        <div class="kc teal">
+            <p class="kval">@assignedCandidatesCount</p>
+            <p class="klabel">Candidatos asignados a puesto</p>
+        </div>
+    </div>
+
+    @if (Model.PendingAllianceRequests > 0)
+    {
+        <div class="abanner blue">
+            <div>
+                <strong><i class="ti ti-bell"></i> Solicitudes de alianza pendientes</strong>
+                <span>Tiene @Model.PendingAllianceRequests solicitud esperando su respuesta</span>
+            </div>
+            <a href="@Url.Action("Index", "Alliance", new { area = "Leader" })" class="fbtn" style="text-decoration: none;">
+                <i class="ti ti-arrow-right"></i> Revisar
+            </a>
+        </div>
+    }
+}
+
+@if (isElectionActive)
+{
+    <div class="ae" style="margin-top: 1rem;">
+        <i class="ti ti-alert-circle" style="flex-shrink: 0;"></i>
+        <span><strong>Elección activa.</strong> Las acciones de candidatos, asignaciones y alianzas están bloqueadas actualmente.</span>
+    </div>
+}
+else
+{
+    <div class="aw" style="margin-top: 1rem;">
+        <i class="ti ti-alert-triangle" style="flex-shrink: 0;"></i>
+        <span><strong>Sin elección activa.</strong> Las acciones de candidatos, asignaciones y alianzas están habilitadas actualmente.</span>
+    </div>
+}

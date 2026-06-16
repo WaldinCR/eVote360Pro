@@ -1,4 +1,57 @@
 @model eVote360Pro.Core.Application.ViewModels.PoliticalLeaderAssignment.SavePoliticalLeaderAssignmentViewModel
+@using eVote360Pro.Core.Application.ViewModels.User
+@using eVote360Pro.Core.Application.ViewModels.PoliticalParty
+
 @{
     ViewData["Title"] = "Asignar Dirigente";
+    var availableParties = ViewBag.AvailableParties as List<PoliticalPartyViewModel> ?? new List<PoliticalPartyViewModel>();
+    var availableLeaders = ViewBag.AvailableLeaders as List<UserViewModel> ?? new List<UserViewModel>();
 }
+
+<div class="atop">
+    <p class="aptitle"><i class="ti ti-plus"></i> Asignar Dirigente a Partido</p>
+    <a href="@Url.Action("Index", "PoliticalLeaderAssignment")" class="bo"><i class="ti ti-arrow-left"></i> Volver</a>
+</div>
+
+<div class="form-section" style="max-width: 600px; margin: 0 auto;">
+    <p class="form-section-title"><i class="ti ti-link"></i> Datos de la asignación</p>
+
+    <form method="post" action="@Url.Action("Create", "PoliticalLeaderAssignment")">
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="ModelOnly" class="ae" style="margin-bottom: 1rem;"></div>
+
+        <div class="fw">
+            <label asp-for="UserId" class="fl">Dirigente Político <span class="req">*</span></label>
+            <select asp-for="UserId" class="fi" required>
+                <option value="">Seleccione un dirigente</option>
+                @foreach (var leader in availableLeaders)
+                {
+                    <option value="@leader.Id">@($"{leader.Name} {leader.LastName} ({leader.UserName})")</option>
+                }
+            </select>
+            <span asp-validation-for="UserId" style="font-size: 11px; color: var(--r400);"></span>
+            <p class="fhint" style="color: var(--gy600);">Solo se muestran los usuarios con rol "Dirigente Político" que están activos y no tienen partido asignado.</p>
+        </div>
+
+        <div class="fw" style="margin-top: 1.25rem;">
+            <label asp-for="PoliticalPartyId" class="fl">Partido Político <span class="req">*</span></label>
+            <select asp-for="PoliticalPartyId" class="fi" required>
+                <option value="">Seleccione un partido</option>
+                @foreach (var party in availableParties)
+                {
+                    <option value="@party.Id">@party.Name (@party.Acronym)</option>
+                }
+            </select>
+            <span asp-validation-for="PoliticalPartyId" style="font-size: 11px; color: var(--r400);"></span>
+            <p class="fhint" style="color: var(--gy600);">Solo se muestran los partidos activos que no tienen un dirigente asignado.</p>
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:1.75rem">
+            <button type="submit" class="fbtn" style="border: none; cursor: pointer; padding: 9px 18px; font-weight: 600; border-radius: var(--rmd); background: var(--g800); color: #fff; display: inline-flex; align-items: center; gap: 5px;">
+                <i class="ti ti-check"></i> Asignar
+            </button>
+            <a href="@Url.Action("Index", "PoliticalLeaderAssignment")" class="bo" style="text-decoration: none;">Cancelar</a>
+        </div>
+    </form>
+</div>

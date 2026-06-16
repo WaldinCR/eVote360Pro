@@ -1,4 +1,144 @@
 @model eVote360Pro.Core.Application.ViewModels.Election.ElectionResultViewModel
+@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+
 @{
-    ViewData["Title"] = "Resultados Oficiales";
+    ViewData["Title"] = "Resultados Electorales";
+    var totalVotos = DbContext.CitizenVotes.Count(cv => cv.ElectionId == Model.ElectionId);
+    var totalPartidos = DbContext.PoliticalParties.Count(p => p.IsActive);
+    var totalPuestos = Model.Positions.Count;
+}
+
+<div class="atop">
+    <p class="aptitle"><i class="ti ti-chart-bar"></i> Resultados — @Model.ElectionName</p>
+    <a href="@Url.Action("Index", "Election")" class="bo" style="text-decoration: none;"><i class="ti ti-arrow-left"></i> Volver</a>
+</div>
+
+<div class="mgrid">
+    <div class="mc blue">
+        <div class="mico"><i class="ti ti-users"></i></div>
+        <p class="mlabel">Total votos emitidos</p>
+        <p class="mval">@totalVotos.ToString("N0")</p>
+    </div>
+    <div class="mc green">
+        <div class="mico"><i class="ti ti-flag"></i></div>
+        <p class="mlabel">Partidos participantes</p>
+        <p class="mval">@totalPartidos</p>
+    </div>
+    <div class="mc teal">
+        <div class="mico"><i class="ti ti-briefcase"></i></div>
+        <p class="mlabel">Puestos en disputa</p>
+        <p class="mval">@totalPuestos</p>
+    </div>
+</div>
+
+@if (Model.Positions != null && Model.Positions.Any())
+{
+    foreach (var pos in Model.Positions)
+    {
+        <div class="form-section">
+            <p class="form-section-title" style="font-size: 15px;">
+                <i class="ti ti-briefcase"></i> @pos.PositionName
+                @if (pos.IsTie)
+                {
+                    <span class="bdg bpend" style="margin-top:0; margin-left:.5rem"><i class="ti ti-equal" style="font-size:10px"></i> Empate</span>
+                }
+                else
+                {
+                    <span class="bdg bact" style="margin-top:0; margin-left:.5rem"><i class="ti ti-trophy" style="font-size:10px"></i> Ganador determinado</span>
+                }
+            </p>
+            
+            <div class="tw">
+                <table class="dt" style="table-layout:auto">
+                    <thead>
+                        <tr>
+                            <th>Candidato</th>
+                            <th>Partido</th>
+                            <th>Votos</th>
+                            <th>Porcentaje</th>
+                            <th>Resultado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (pos.Candidates != null && pos.Candidates.Any())
+                        {
+                            var maxVotes = pos.Candidates.Max(c => c.Votes);
+
+                            foreach (var cand in pos.Candidates)
+                            {
+                                var isWinner = !pos.IsTie && maxVotes > 0 && cand.Votes == maxVotes && cand.CandidateName != "Ninguno";
+                                var isTie = pos.IsTie && maxVotes > 0 && cand.Votes == maxVotes && cand.CandidateName != "Ninguno";
+
+                                string rowStyle = "";
+                                if (isWinner) rowStyle = "background: var(--g50);";
+                                else if (isTie) rowStyle = "background: var(--a50);";
+
+                                <tr style="@rowStyle">
+                                    <td>
+                                        @if (isWinner || isTie)
+                                        {
+                                            <strong>@cand.CandidateName</strong>
+                                        }
+                                        else if (cand.CandidateName == "Ninguno")
+                                        {
+                                            <em style="color:var(--gy600)">Ninguno</em>
+                                        }
+                                        else
+                                        {
+                                            @cand.CandidateName
+                                        }
+                                    </td>
+                                    <td>@cand.PartyName</td>
+                                    <td>
+                                        @if (isWinner || isTie)
+                                        {
+                                            <strong>@cand.Votes.ToString("N0")</strong>
+                                        }
+                                        else
+                                        {
+                                            @cand.Votes.ToString("N0")
+                                        }
+                                    </td>
+                                    <td>
+                                        <div style="display:flex; align-items:center; gap:8px">
+                                            <div style="width:80px; height:8px; background:var(--gy100); border-radius:100px">
+                                                <div style="width: @(cand.Percentage)%; height:100%; background: @(isWinner ? "var(--g600)" : (isTie ? "var(--a400)" : "var(--b400)")); border-radius:100px"></div>
+                                            </div>
+                                            <strong>@cand.Percentage.ToString("F1")%</strong>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (isWinner)
+                                        {
+                                            <span class="bdg bact"><i class="ti ti-trophy" style="font-size:10px"></i> Ganador(a)</span>
+                                        }
+                                        else if (isTie)
+                                        {
+                                            <span class="bdg bpend"><i class="ti ti-equal" style="font-size:10px"></i> Empate</span>
+                                        }
+                                        else
+                                        {
+                                            <span>—</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--gy400);">No hay votos registrados para este puesto.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="form-section" style="text-align: center; color: var(--gy400);">
+        No hay datos de resultados disponibles para esta elección.
+    </div>
 }

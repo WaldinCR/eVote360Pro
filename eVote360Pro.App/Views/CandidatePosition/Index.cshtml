@@ -1,4 +1,132 @@
-@model IEnumerable<eVote360Pro.Core.Application.ViewModels.CandidatePosition.CandidatePositionViewModel>
+@model List<eVote360Pro.Core.Application.ViewModels.CandidatePosition.CandidatePositionViewModel>
+@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+@using eVote360Pro.Core.Domain.Common.Enums
+
 @{
-    ViewData["Title"] = "Boleta del Partido";
+    ViewData["Title"] = "Candidatos Asignados";
+    var isElectionActive = DbContext.Elections.Any(e => e.Status == ElectionStatus.Active);
+}
+
+<div class="atop">
+    <p class="aptitle"><i class="ti ti-link"></i> Asignación de Candidatos a Puestos</p>
+    @if (!isElectionActive)
+    {
+        <a href="@Url.Action("Create", "CandidatePosition")" class="bnew" style="text-decoration: none;">
+            <i class="ti ti-plus"></i> Asignar candidato
+        </a>
+    }
+    else
+    {
+        <button class="bnew" disabled style="opacity: 0.5; cursor: not-allowed;" title="Acción bloqueada: Existe una elección activa.">
+            <i class="ti ti-plus"></i> Asignar candidato
+        </button>
+    }
+</div>
+
+@if (isElectionActive)
+{
+    <div class="ae" style="margin-bottom: 1rem;">
+        <i class="ti ti-alert-circle"></i>
+        <span>Acciones de creación y eliminación bloqueadas: Existe una elección activa.</span>
+    </div>
+}
+
+<div class="fb">
+    <input class="finp" type="text" placeholder="Buscar asignación..." style="width:200px" id="assignmentSearch">
+</div>
+
+<div class="tw">
+    <table class="dt" id="assignmentsTable">
+        <thead>
+            <tr>
+                <th style="width: 40%;">Candidato</th>
+                <th style="width: 15%;">Origen</th>
+                <th style="width: 30%;">Puesto Electivo</th>
+                <th style="width: 15%;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr data-search="@($"{item.CandidateName} {item.ElectivePositionName}".ToLower())">
+                        <td>
+                            <strong>@item.CandidateName</strong>
+                        </td>
+                        <td>
+                            @if (item.IsAllied)
+                            {
+                                <span class="bdg bpend" style="color: var(--gy800); background: var(--gy100); border-color: var(--gy300);">
+                                    <i class="ti ti-handshake" style="font-size:10px"></i> Aliado
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="bdg bact">
+                                    <i class="ti ti-flag" style="font-size:10px"></i> Propio
+                                </span>
+                            }
+                        </td>
+                        <td>
+                            <span class="chip" style="background:var(--b50); color:var(--b800); border-color:var(--b200)">
+                                @item.ElectivePositionName
+                            </span>
+                        </td>
+                        <td>
+                            @if (!isElectionActive)
+                            {
+                                <form method="post" action="@Url.Action("Delete", "CandidatePosition", new { id = item.Id })" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="bsm red" onclick="return confirm('¿Está seguro de eliminar esta asignación?');">
+                                        <i class="ti ti-trash"></i> Eliminar
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <button class="bsm red" disabled style="opacity: 0.4; cursor: not-allowed;" title="Acción bloqueada: Existe una elección activa.">
+                                    <i class="ti ti-trash"></i> Eliminar
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" style="text-align: center; color: var(--gy400);">No hay candidatos asignados a puestos en su partido.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<p class="tfoot">@Model?.Count asignaciones de candidatos</p>
+
+<div class="rule-box">
+    <p><i class="ti ti-shield-lock"></i> Reglas críticas</p>
+    <ul>
+        <li>Se pueden asignar candidatos propios y candidatos de partidos con los que se tiene una <strong>alianza activa</strong>.</li>
+        <li>Si existe una <strong>elección activa</strong>, no se pueden realizar nuevas asignaciones ni eliminar las existentes.</li>
+    </ul>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('assignmentSearch').addEventListener('input', function() {
+            var searchVal = this.value.toLowerCase();
+            var rows = document.querySelectorAll('#assignmentsTable tbody tr');
+
+            rows.forEach(function(row) {
+                var searchContent = row.getAttribute('data-search');
+                if (!searchContent || searchContent.indexOf(searchVal) > -1) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
 }

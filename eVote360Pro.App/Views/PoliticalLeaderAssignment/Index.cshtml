@@ -1,4 +1,118 @@
 @model List<eVote360Pro.Core.Application.ViewModels.PoliticalLeaderAssignment.PoliticalLeaderAssignmentViewModel>
+@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+@using eVote360Pro.Core.Domain.Common.Enums
+
 @{
-    ViewData["Title"] = "Dirigentes Asignados";
+    ViewData["Title"] = "Asignación de Dirigentes";
+    var hasActiveElection = DbContext.Elections.Any(e => e.Status == ElectionStatus.Active);
+}
+
+<div class="atop">
+    <p class="aptitle"><i class="ti ti-users"></i> Asignación de Dirigentes Políticos</p>
+    @if (!hasActiveElection)
+    {
+        <a href="@Url.Action("Create", "PoliticalLeaderAssignment")" class="bnew" style="text-decoration: none;">
+            <i class="ti ti-plus"></i> Nueva asignación
+        </a>
+    }
+    else
+    {
+        <button class="bnew" disabled style="opacity: 0.5; cursor: not-allowed;" title="Acción bloqueada: Existe una elección activa.">
+            <i class="ti ti-plus"></i> Nueva asignación
+        </button>
+    }
+</div>
+
+@if (hasActiveElection)
+{
+    <div class="ae" style="margin-bottom: 1rem;">
+        <i class="ti ti-alert-circle"></i>
+        <span>Acciones de creación y eliminación bloqueadas: Existe una elección activa.</span>
+    </div>
+}
+
+<div class="fb">
+    <input class="finp" type="text" placeholder="Buscar asignación..." style="width:200px" id="assignmentSearch">
+</div>
+
+<div class="tw">
+    <table class="dt" id="assignmentsTable">
+        <thead>
+            <tr>
+                <th style="width: 45%;">Dirigente Político (Usuario)</th>
+                <th style="width: 40%;">Partido Político</th>
+                <th style="width: 15%;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr data-search="@($"{item.UserName} {item.PoliticalPartyName}".ToLower())">
+                        <td>
+                            <strong>@item.UserName</strong>
+                        </td>
+                        <td>
+                            <span class="chip" style="background:var(--b50); color:var(--b800); border-color:var(--b200)">
+                                <i class="ti ti-flag" style="font-size:10px"></i> @item.PoliticalPartyName
+                            </span>
+                        </td>
+                        <td>
+                            @if (!hasActiveElection)
+                            {
+                                <form method="post" action="@Url.Action("Delete", "PoliticalLeaderAssignment", new { id = item.Id })" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="bsm red" onclick="return confirm('¿Está seguro de eliminar esta asignación?');">
+                                        <i class="ti ti-trash"></i> Eliminar
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <button class="bsm red" disabled style="opacity: 0.4; cursor: not-allowed;" title="Acción bloqueada: Existe una elección activa.">
+                                    <i class="ti ti-trash"></i> Eliminar
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3" style="text-align: center; color: var(--gy400);">No hay asignaciones de dirigentes registradas.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<p class="tfoot">@Model?.Count asignaciones de dirigentes</p>
+
+<div class="rule-box">
+    <p><i class="ti ti-shield-lock"></i> Reglas críticas</p>
+    <ul>
+        <li>Un dirigente político solo puede ser asignado a <strong>un partido político</strong>.</li>
+        <li>Un partido político solo puede tener <strong>un dirigente asignado</strong>.</li>
+        <li>No se pueden crear ni eliminar asignaciones si existe una <strong>elección activa</strong>.</li>
+    </ul>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('assignmentSearch').addEventListener('input', function() {
+            var searchVal = this.value.toLowerCase();
+            var rows = document.querySelectorAll('#assignmentsTable tbody tr');
+
+            rows.forEach(function(row) {
+                var searchContent = row.getAttribute('data-search');
+                if (!searchContent || searchContent.indexOf(searchVal) > -1) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
 }

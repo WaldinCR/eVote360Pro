@@ -7,8 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace eVote360Pro.App.Controllers.Leader
+namespace eVote360Pro.App.Areas.Leader.Controllers
 {
+    [Area("Leader")]
     public class CandidatePositionController : Controller
     {
         private readonly ICandidatePositionService _candidatePositionService;

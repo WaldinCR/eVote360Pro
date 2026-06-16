@@ -84,21 +84,21 @@
                             <td>
                                 @if (status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Active)
                                 {
-                                    <form method="post" action="@Url.Action("Finish", "Election", new { area = "", id = electionId })" style="display:inline;">
+                                    <form method="post" action="@Url.Action("Finish", "Election", new { area = "Admin", id = electionId })" style="display:inline;">
                                         @Html.AntiForgeryToken()
                                         <button type="submit" class="bsm red" onclick="return confirm('¿Está seguro de finalizar esta elección?');"><i class="ti ti-square"></i> Finalizar</button>
                                     </form>
                                 }
                                 else if (status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Pending)
                                 {
-                                    <form method="post" action="@Url.Action("Activate", "Election", new { area = "", id = electionId })" style="display:inline;">
+                                    <form method="post" action="@Url.Action("Activate", "Election", new { area = "Admin", id = electionId })" style="display:inline;">
                                         @Html.AntiForgeryToken()
                                         <button type="submit" class="bsm blue" onclick="return confirm('¿Está seguro de activar esta elección?');"><i class="ti ti-player-play"></i> Activar</button>
                                     </form>
                                 }
                                 else
                                 {
-                                    <a href="@Url.Action("Results", "Election", new { area = "", id = electionId })" class="bsm gray"><i class="ti ti-chart-bar"></i> Ver resultados</a>
+                                    <a href="@Url.Action("Results", "Election", new { area = "Admin", id = electionId })" class="bsm gray"><i class="ti ti-chart-bar"></i> Ver resultados</a>
                                 }
                             </td>
                         </tr>

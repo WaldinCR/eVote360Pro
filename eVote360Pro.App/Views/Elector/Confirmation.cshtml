@@ -1,4 +1,62 @@
 @{
-    ViewData["Title"] = "Voto Registrado";
-    ViewData["NavbarTitle"] = "Votación finalizada";
+    ViewData["Title"] = "Voto Registrado Exitosamente";
 }
+
+<div class="mframe">
+    <div class="mtopbar">
+        <div class="mdot r"></div>
+        <div class="mdot y"></div>
+        <div class="mdot g"></div>
+        <div class="murl">evote360.gob.do/gracias</div>
+    </div>
+    
+    <div class="enav">
+        <span class="elogo">e<span>Vote</span>360 Pro</span>
+        <span class="navtxt"><i class="ti ti-circle-check"></i> Votación finalizada</span>
+    </div>
+    
+    <div class="ca" style="display:flex;align-items:center;justify-content:center;min-height:440px">
+        <div class="ccard" style="width:100%;text-align:center">
+            <!-- Ícono de éxito animado -->
+            <div style="width:72px;height:72px;background:var(--g50);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;border:3px solid #C0DD97">
+                <i class="ti ti-circle-check" style="font-size:38px;color:var(--g800)"></i>
+            </div>
+            
+            <h2 class="ch" style="color:var(--g800);font-size:20px">¡Su voto fue registrado!</h2>
+            <p class="cs" style="font-size:14px;line-height:1.6">Ha participado exitosamente en la <strong>Elección General 2026</strong>.<br>Su voto es secreto y ha quedado registrado de forma segura.</p>
+            
+            <!-- Resumen compacto -->
+            <div style="background:var(--g50);border:1px solid #C0DD97;border-radius:var(--rlg);padding:1rem;margin-bottom:1.25rem;text-align:left">
+                <p style="font-size:12px;font-weight:700;color:var(--g800);margin-bottom:.625rem"><i class="ti ti-clipboard-check"></i> Resumen de su participación</p>
+                <div style="display:flex;flex-direction:column;gap:5px">
+                    <div style="display:flex;justify-content:space-between;font-size:12px">
+                        <span style="color:var(--gy600)">Elección:</span>
+                        <span style="font-weight:600;color:#1A202C">Elección General 2026</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:12px">
+                        <span style="color:var(--gy600)">Fecha y hora:</span>
+                        <span style="font-weight:600;color:#1A202C">@DateTime.Now.ToString("dd/MM/yyyy · hh:mm tt")</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:12px">
+                        <span style="color:var(--gy600)">Estado:</span>
+                        <span class="bdg bact" style="margin-top:0">Voto emitido</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Correo enviado -->
+            <div class="ai" style="text-align:left;margin-bottom:1.25rem">
+                <i class="ti ti-mail-check" style="flex-shrink:0;font-size:18px;color:var(--b600)"></i>
+                <span>Hemos enviado un <strong>correo de confirmación</strong> con el resumen de su votación a su dirección registrada.</span>
+            </div>
+            
+            <p style="font-size:12px;color:var(--gy400);line-height:1.6">Puede cerrar esta ventana de forma segura.<br>Gracias por participar en el proceso democrático.</p>
+            
+            <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid #F1F5F9">
+                <p style="font-size:11px;color:var(--gy400)"><i class="ti ti-lock" style="font-size:12px"></i> Proceso confidencial · La secuencia de su voto no puede ser rastreada</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="fstrip"><i class="ti ti-shield"></i> eVote360 Pro · Voto registrado y protegido</div>
+</div>

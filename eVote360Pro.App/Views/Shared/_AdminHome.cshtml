@@ -1,7 +1,8 @@
 @model eVote360Pro.Core.Application.ViewModels.Admin.AdminHomeViewModel
-@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+@inject eVote360Pro.Core.Application.Interfaces.IElectionService ElectionService
 
 @{
+    var elections = await ElectionService.GetAllAsync();
     var totalVotos = Model?.Elections?.Sum(e => e.CitizensVoted) ?? 0;
 }
 
@@ -58,7 +59,7 @@
                 {
                     foreach (var item in Model.Elections)
                     {
-                        var electionDb = DbContext.Elections.FirstOrDefault(x => x.Name == item.ElectionName && x.Year == Model.SelectedYear);
+                        var electionDb = elections.FirstOrDefault(x => x.Name == item.ElectionName && x.Year == Model.SelectedYear);
                         var status = electionDb?.Status ?? eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Pending;
                         var electionId = electionDb?.Id ?? 0;
 

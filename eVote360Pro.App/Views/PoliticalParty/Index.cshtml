@@ -1,9 +1,12 @@
 @model List<eVote360Pro.Core.Application.ViewModels.PoliticalParty.PoliticalPartyViewModel>
-@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+@inject eVote360Pro.Core.Application.Interfaces.IElectionService ElectionService
+@inject eVote360Pro.Core.Domain.Interfaces.Repositories.ICandidateRepository CandidateRepository
 
 @{
     ViewData["Title"] = "Partidos Políticos";
-    var isElectionActive = DbContext.Elections.Any(e => e.Status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Active);
+    var elections = await ElectionService.GetAllAsync();
+    var isElectionActive = elections.Any(e => e.Status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Active);
+    var candidates = await CandidateRepository.GetAllAsync();
 }
 
 <div class="atop">
@@ -24,10 +27,7 @@
 
 @if (isElectionActive)
 {
-    <div class="ae" style="margin-bottom: 1rem;">
-        <i class="ti ti-alert-circle"></i>
-        <span>Acciones de creación, edición y activación/inactivación bloqueadas: Existe una elección activa.</span>
-    </div>
+    <partial name="_BloqueoEleccionActiva" />
 }
 
 <div class="fb">
@@ -56,7 +56,7 @@
             {
                 foreach (var item in Model)
                 {
-                    var hasParticipated = DbContext.Candidates.Any(c => c.PoliticalPartyId == item.Id && c.ParticipatedInElection);
+                    var hasParticipated = candidates.Any(c => c.PoliticalPartyId == item.Id && c.ParticipatedInElection);
 
                     <tr data-name="@($"{item.Name} {item.Acronym}".ToLower())" data-status="@(item.IsActive ? "Activo" : "Inactivo")">
                         <td>

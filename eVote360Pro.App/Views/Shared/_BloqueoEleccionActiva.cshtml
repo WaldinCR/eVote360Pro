@@ -1,5 +1,46 @@
-@inject eVote360Pro.Core.Application.Interfaces.IElectionService ElectionService
-@{
-    var elections = await ElectionService.GetAllAsync();
-    var activeElection = elections.FirstOrDefault(e => e.Status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Active);
-}
+<!-- BANNER DE BLOQUEO POR ELECCIÓN ACTIVA -->
+<div style="background:var(--r50);border:1.5px solid var(--r400);border-radius:var(--rlg);padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:flex-start;gap:12px">
+    <div style="width:40px;height:40px;background:var(--r400);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <i class="ti ti-lock" style="font-size:20px;color:#fff"></i>
+    </div>
+    <div>
+        <p style="font-size:14px;font-weight:700;color:var(--r800);margin-bottom:.25rem">Módulo bloqueado — Elección activa en curso</p>
+        <p style="font-size:12px;color:var(--r800);line-height:1.6">Existe una elección activa: <strong>Elección General 2026</strong>. No se pueden crear, editar ni cambiar el estado de los registros mientras haya un proceso electoral en curso.<br>Solo se permite la <strong>visualización</strong> de datos.</p>
+        <div style="margin-top:.625rem;display:flex;gap:8px;flex-wrap:wrap">
+            <span class="bdg bact" style="margin-top:0"><i class="ti ti-circle-check" style="font-size:10px"></i> Elección General 2026 — ACTIVA</span>
+            <span style="font-size:11px;color:var(--r800);display:flex;align-items:center;gap:4px"><i class="ti ti-calendar"></i> Inició: 15/05/2026</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        function disableActions() {
+            // Find the main content container where the actions are
+            const mainContainer = document.querySelector('.am');
+            if (mainContainer) {
+                // Find all active interactive buttons and inputs that perform editing/actions
+                const selectors = 'button:not(.bback):not(.btn-back-to-puestos), input:not([type="hidden"]), select, a.bnew, a.bp, a.be, a.bsm';
+                const elements = mainContainer.querySelectorAll(selectors);
+                elements.forEach(el => {
+                    if (el.tagName === 'A') {
+                        el.style.pointerEvents = 'none';
+                        el.style.opacity = '0.4';
+                        el.style.cursor = 'not-allowed';
+                    } else {
+                        el.disabled = true;
+                        el.style.opacity = '0.4';
+                        el.style.cursor = 'not-allowed';
+                    }
+                });
+            }
+        }
+        
+        // Execute immediately
+        disableActions();
+        
+        // Hook into event listeners to ensure it runs as DOM loads
+        document.addEventListener('DOMContentLoaded', disableActions);
+        window.addEventListener('load', disableActions);
+    })();
+</script>

@@ -1,9 +1,10 @@
 @model List<eVote360Pro.Core.Application.ViewModels.ElectivePosition.ElectivePositionViewModel>
-@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+@inject eVote360Pro.Core.Application.Interfaces.IElectionService ElectionService
 
 @{
     ViewData["Title"] = "Puestos Electivos";
-    var isElectionActive = DbContext.Elections.Any(e => e.Status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Active);
+    var elections = await ElectionService.GetAllAsync();
+    var isElectionActive = elections.Any(e => e.Status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Active);
 }
 
 <div class="atop">
@@ -24,10 +25,7 @@
 
 @if (isElectionActive)
 {
-    <div class="ae" style="margin-bottom: 1rem;">
-        <i class="ti ti-alert-circle"></i>
-        <span>Acciones de creación, edición y activación/inactivación bloqueadas: Existe una elección activa.</span>
-    </div>
+    <partial name="_BloqueoEleccionActiva" />
 }
 
 <div class="fb">
@@ -120,7 +118,7 @@
     </table>
 </div>
 
-<p class="tfoot">@Model.Count puestos registrados</p>
+<p class="tfoot">@(Model?.Count ?? 0) puestos registrados</p>
 
 @section Scripts {
     <script>

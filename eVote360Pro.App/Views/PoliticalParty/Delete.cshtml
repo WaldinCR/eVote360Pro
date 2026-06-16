@@ -1,4 +1,4 @@
 @{
     Layout = null;
-    Context.Response.Redirect(Url.Action("Index", "PoliticalParty"));
+    Context.Response.Redirect(Url.Action("Index", "PoliticalParty") ?? "/");
 }

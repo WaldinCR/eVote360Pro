@@ -95,8 +95,8 @@ namespace eVote360Pro.App.Controllers
         {
             return (UserRol)role switch
             {
-                UserRol.Administrador => RedirectToAction("Index", "User", new { area = "Admin" }),
-                UserRol.DirigentePolitico => RedirectToAction("Index", "Home", new { area = "Dirigente" }),
+                UserRol.Administrador => RedirectToAction("Index", "Home", new { area = "Admin" }),
+                UserRol.DirigentePolitico => RedirectToAction("Index", "Home", new { area = "Leader" }),
                 _ => RedirectToAction("Index", "Login")
             };
         }

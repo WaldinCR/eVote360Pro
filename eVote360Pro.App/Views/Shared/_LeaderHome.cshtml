@@ -1,13 +1,16 @@
 @model eVote360Pro.Core.Application.ViewModels.Leader.LeaderHomeViewModel
-@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+@inject eVote360Pro.Core.Application.Interfaces.IPoliticalPartyService PoliticalPartyService
+@inject eVote360Pro.Core.Application.Interfaces.ICandidatePositionService CandidatePositionService
+@inject eVote360Pro.Core.Application.Interfaces.IElectionService ElectionService
 @using Microsoft.AspNetCore.Http
 
 @{
     var userName = Context.Session.GetString("UserName") ?? "Dirigente";
     var partyId = Context.Session.GetInt32("PartyId") ?? 0;
-    var party = DbContext.PoliticalParties.FirstOrDefault(p => p.Id == partyId);
-    var assignedCandidatesCount = DbContext.CandidatePositions.Count(cp => cp.PoliticalPartyId == partyId);
-    var isElectionActive = DbContext.Elections.Any(e => e.Status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Active);
+    var party = await PoliticalPartyService.GetByIdSaveViewModel(partyId);
+    var assignedCandidatesCount = (await CandidatePositionService.GetAllByPartyAsync(partyId)).Count;
+    var elections = await ElectionService.GetAllAsync();
+    var isElectionActive = elections.Any(e => e.Status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Active);
 }
 
 <div class="atop">

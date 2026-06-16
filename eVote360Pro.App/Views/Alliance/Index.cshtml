@@ -1,10 +1,11 @@
 @using eVote360Pro.Core.Application.ViewModels.Alliance
 @using eVote360Pro.Core.Domain.Common.Enums
-@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+@inject eVote360Pro.Core.Application.Interfaces.IElectionService ElectionService
 
 @{
     ViewData["Title"] = "Alianzas Políticas";
-    var isElectionActive = DbContext.Elections.Any(e => e.Status == ElectionStatus.Active);
+    var elections = await ElectionService.GetAllAsync();
+    var isElectionActive = elections.Any(e => e.Status == ElectionStatus.Active);
     
     var receivedPending = ViewBag.ReceivedPending as List<AllianceRequestViewModel> ?? new List<AllianceRequestViewModel>();
     var sentRequests = ViewBag.SentRequests as List<AllianceRequestViewModel> ?? new List<AllianceRequestViewModel>();
@@ -31,10 +32,7 @@
 
 @if (isElectionActive)
 {
-    <div class="ae" style="margin-bottom: 1.5rem;">
-        <i class="ti ti-alert-circle"></i>
-        <span>Acciones de alianzas bloqueadas: Existe una elección activa.</span>
-    </div>
+    <partial name="_BloqueoEleccionActiva" />
 }
 
 <!-- SECCIÓN 1: SOLICITUDES RECIBIDAS -->

@@ -1,9 +1,9 @@
 @model eVote360Pro.Core.Application.ViewModels.Candidate.SaveCandidateViewModel
-@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+@inject eVote360Pro.Core.Domain.Interfaces.Repositories.ICandidateRepository CandidateRepository
 
 @{
     ViewData["Title"] = "Editar Candidato";
-    var dbCandidate = DbContext.Candidates.FirstOrDefault(c => c.Id == Model.Id);
+    var dbCandidate = await CandidateRepository.GetByIdAsync(Model.Id);
     var participated = dbCandidate?.ParticipatedInElection ?? false;
 }
 

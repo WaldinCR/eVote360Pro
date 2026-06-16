@@ -1,10 +1,13 @@
 @model List<eVote360Pro.Core.Application.ViewModels.Candidate.CandidateViewModel>
-@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+@inject eVote360Pro.Core.Application.Interfaces.IElectionService ElectionService
+@inject eVote360Pro.Core.Domain.Interfaces.Repositories.ICandidateRepository CandidateRepository
 @using eVote360Pro.Core.Domain.Common.Enums
 
 @{
     ViewData["Title"] = "Mantenimiento de Candidatos";
-    var isElectionActive = DbContext.Elections.Any(e => e.Status == ElectionStatus.Active);
+    var elections = await ElectionService.GetAllAsync();
+    var isElectionActive = elections.Any(e => e.Status == ElectionStatus.Active);
+    var allCandidates = await CandidateRepository.GetAllAsync();
 }
 
 <div class="atop">
@@ -25,10 +28,7 @@
 
 @if (isElectionActive)
 {
-    <div class="ae" style="margin-bottom: 1rem;">
-        <i class="ti ti-alert-circle"></i>
-        <span>Acciones de creación, edición y activación/inactivación bloqueadas: Existe una elección activa.</span>
-    </div>
+    <partial name="_BloqueoEleccionActiva" />
 }
 
 <div class="fb">
@@ -56,7 +56,7 @@
             {
                 foreach (var item in Model)
                 {
-                    var dbCandidate = DbContext.Candidates.FirstOrDefault(c => c.Id == item.Id);
+                    var dbCandidate = allCandidates.FirstOrDefault(c => c.Id == item.Id);
                     var participated = dbCandidate?.ParticipatedInElection ?? false;
 
                     <tr data-name="@($"{item.Name} {item.LastName}".ToLower())" data-status="@(item.IsActive ? "Activo" : "Inactivo")">

@@ -21,6 +21,13 @@ builder.Services.AddSharedLayerIoc(builder.Configuration);
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped<IUserSession, UserSession>();
 
+builder.Services.Configure<Microsoft.AspNetCore.Mvc.Razor.RazorViewEngineOptions>(options =>
+{
+    options.AreaViewLocationFormats.Clear();
+    options.AreaViewLocationFormats.Add("/Views/{1}/{0}.cshtml");
+    options.AreaViewLocationFormats.Add("/Views/Shared/{0}.cshtml");
+});
+
 var app = builder.Build();
 
 
@@ -41,13 +48,20 @@ app.UseAuthorization();
 app.MapStaticAssets();
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}")
+    .WithStaticAssets();
 
-app.MapAreaControllerRoute(
-    name: "elector_default",
-    areaName: "Elector",
-    pattern: "{controller=Elector}/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "elector_route",
+    pattern: "Elector/{action=Index}/{id?}",
+    defaults: new { area = "Elector", controller = "Elector" })
+    .WithStaticAssets();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}") 
+    .WithStaticAssets();
 
 
 await app.RunAsync();

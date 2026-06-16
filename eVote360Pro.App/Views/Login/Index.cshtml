@@ -1,7 +1,76 @@
 @model eVote360Pro.Core.Application.ViewModels.Login.LoginViewModel
 @{
-    ViewData["Title"] = "Acceso al Sistema";
-    Layout = "_LayoutElector";
-    // Título personalizado para el navbar del layout elector
-    ViewData["NavbarTitle"] = "<a class=\"navpill\" href=\"/Elector\" style=\"color: #B5D4F4; font-size: 13px; padding: 5px 12px; border: 1px solid rgba(255,255,255,.25); border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 5px;\"><i class=\"ti ti-arrow-left\"></i> Ir a votación</a>";
+    ViewData["Title"] = "Inicio de Sesión";
 }
+
+<div class="mframe">
+    <div class="mtopbar">
+        <div class="mdot r"></div>
+        <div class="mdot y"></div>
+        <div class="mdot g"></div>
+        <div class="murl">evote360.gob.do/acceder</div>
+    </div>
+    
+    <div class="enav">
+        <span class="elogo">e<span>Vote</span>360 Pro</span>
+        <a class="navpill" asp-controller="Elector" asp-action="Index"><i class="ti ti-arrow-left"></i> Ir a votación</a>
+    </div>
+    
+    <div class="ca" style="display:flex;align-items:center;justify-content:center;min-height:440px">
+        <div class="ccard" style="width:100%">
+            <div class="cicn" style="background:var(--b800)"><i class="ti ti-lock" style="color:#fff"></i></div>
+            <h2 class="ch">Acceso al sistema</h2>
+            <p class="cs">Solo para personal autorizado: Administradores y Dirigentes políticos.</p>
+            
+            <form asp-controller="Login" asp-action="Index" method="post">
+                <div class="fw">
+                    <label class="fl" asp-for="UserName">Usuario <span class="req">*</span></label>
+                    <input class="fi" type="text" asp-for="UserName" placeholder="nombre de usuario" autocomplete="username">
+                </div>
+                <div class="fw">
+                    <label class="fl" asp-for="Password">Contraseña <span class="req">*</span></label>
+                    <input class="fi" type="password" asp-for="Password" placeholder="••••••••" autocomplete="current-password">
+                </div>
+                
+                <button type="submit" class="bp"><i class="ti ti-login"></i> Iniciar sesión</button>
+            </form>
+            
+            <!-- Estados de error -->
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div style="margin-top:1.25rem">
+                    <p class="sh">Mensajes de validación</p>
+                    @foreach (var modelState in ViewData.ModelState.Values)
+                    {
+                        @foreach (var error in modelState.Errors)
+                        {
+                            <div class="ae" style="margin-bottom:6px">
+                                <i class="ti ti-alert-circle"></i>
+                                <span>@error.ErrorMessage</span>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+            
+            <!-- Redirección por rol -->
+            <div style="margin-top:1rem;background:var(--b50);border-radius:var(--rmd);padding:.875rem;border:1px solid var(--b100)">
+                <p style="font-size:11px;font-weight:700;color:var(--b800);margin-bottom:.5rem"><i class="ti ti-arrows-right"></i> Redirección automática por rol</p>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                    <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--b800)">
+                        <span class="chip"><i class="ti ti-shield" style="font-size:10px"></i> Administrador</span>
+                        <i class="ti ti-arrow-right" style="font-size:12px;color:var(--gy400)"></i>
+                        <span>Home del administrador</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--g800)">
+                        <span class="chip" style="background:var(--g50);color:var(--g800);border-color:var(--g200)"><i class="ti ti-star" style="font-size:10px"></i> Dirigente</span>
+                        <i class="ti ti-arrow-right" style="font-size:12px;color:var(--gy400)"></i>
+                        <span>Home del partido (portal dirigente)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="fstrip"><i class="ti ti-shield"></i> Acceso restringido · Solo personal autorizado</div>
+</div>

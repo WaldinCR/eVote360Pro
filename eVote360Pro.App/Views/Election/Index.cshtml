@@ -1,11 +1,16 @@
 @model List<eVote360Pro.Core.Application.ViewModels.Election.ElectionViewModel>
-@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+@inject eVote360Pro.Core.Application.Interfaces.IElectionService ElectionService
+@inject eVote360Pro.Core.Application.Interfaces.IPoliticalPartyService PoliticalPartyService
+@inject eVote360Pro.Core.Application.Interfaces.IElectivePositionService ElectivePositionService
+@inject eVote360Pro.Core.Domain.Interfaces.ICitizenVoteRepository CitizenVoteRepository
 
 @{
     ViewData["Title"] = "Control de Elecciones";
-    var activePartiesCount = DbContext.PoliticalParties.Count(p => p.IsActive);
-    var activePositionsCount = DbContext.ElectivePositions.Count(p => p.IsActive);
+    var elections = await ElectionService.GetAllAsync();
+    var activePartiesCount = (await PoliticalPartyService.GetAllViewModel()).Count(p => p.IsActive);
+    var activePositionsCount = (await ElectivePositionService.GetAllAsync()).Count(p => p.IsActive);
     var hasActiveElection = Model.Any(e => e.Status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Active);
+    var allVotes = await CitizenVoteRepository.GetAllAsync();
 }
 
 <div class="atop">
@@ -52,9 +57,9 @@
             {
                 foreach (var item in Model)
                 {
-                    var electionDb = DbContext.Elections.FirstOrDefault(x => x.Id == item.Id);
+                    var electionDb = elections.FirstOrDefault(x => x.Id == item.Id);
                     var activationDateStr = electionDb?.ActivationDate?.ToString("dd/MM/yyyy") ?? "—";
-                    var votesCount = DbContext.CitizenVotes.Count(cv => cv.ElectionId == item.Id);
+                    var votesCount = allVotes.Count(cv => cv.ElectionId == item.Id);
 
                     <tr data-name="@item.Name.ToLower()" data-status="@item.Status.ToString()">
                         <td><strong>@item.Name</strong></td>
@@ -115,7 +120,7 @@
     </table>
 </div>
 
-<p class="tfoot">@Model.Count elecciones · de más reciente a más antigua</p>
+<p class="tfoot">@(Model?.Count ?? 0) elecciones · de más reciente a más antigua</p>
 
 <div class="rule-box">
     <p><i class="ti ti-shield-lock"></i> Reglas críticas</p>

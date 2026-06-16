@@ -1,6 +1,85 @@
-@using eVote360Pro.Core.Application.ViewModels.Elector
-@model LoadCedulaViewModel
+@model eVote360Pro.Core.Application.ViewModels.Elector.LoadCedulaViewModel
 @{
     ViewData["Title"] = "Validación de Identidad (OCR)";
-    ViewData["NavbarTitle"] = "Verificación de identidad";
 }
+
+<div class="mframe">
+    <div class="mtopbar">
+        <div class="mdot r"></div>
+        <div class="mdot y"></div>
+        <div class="mdot g"></div>
+        <div class="murl">evote360.gob.do/identidad</div>
+    </div>
+    
+    <div class="enav">
+        <span class="elogo">e<span>Vote</span>360 Pro</span>
+        <span class="navtxt">Verificación de identidad</span>
+    </div>
+    
+    <div class="ca">
+        <div class="ccard">
+            <div class="wiz">
+                <div class="ws done" data-n="✓">Documento</div>
+                <div class="ws active" data-n="2">Identidad</div>
+                <div class="ws" data-n="3">Código</div>
+                <div class="ws" data-n="4">Votación</div>
+            </div>
+            
+            <h2 class="ch" style="text-align:left;font-size:16px;margin-bottom:.25rem">Validación de identidad</h2>
+            <p class="cs" style="text-align:left;font-size:13px;margin-bottom:1.25rem">Cargue una foto clara de la parte <strong>frontal</strong> de su cédula. El sistema extraerá su número automáticamente.</p>
+            
+            <form asp-controller="Elector" asp-action="LoadCedula" method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="Document" />
+                
+                <div class="upz">
+                    <i class="ti ti-id"></i>
+                    <p class="upm">Arrastre la imagen aquí</p>
+                    <p class="ups">o haga clic para seleccionar desde su dispositivo</p>
+                    <button type="button" class="bo"><i class="ti ti-upload"></i> Seleccionar imagen</button>
+                    <input type="file" asp-for="CedulaImage" style="display:none;" accept=".jpg,.jpeg,.png">
+                    <p class="upf"><i class="ti ti-photo"></i> Formatos aceptados: .jpg · .jpeg · .png</p>
+                </div>
+                
+                <div class="ai">
+                    <i class="ti ti-info-circle" style="flex-shrink:0;margin-top:1px"></i>
+                    <span>Asegúrese de que el número de documento sea claramente legible y la imagen esté bien iluminada.</span>
+                </div>
+                
+                <button type="submit" class="bp" style="margin-top:1rem"><i class="ti ti-scan"></i> Validar identidad</button>
+            </form>
+        </div>
+        
+        <div style="max-width:440px;margin:1rem auto 0">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <p class="sh">Mensajes de validación</p>
+                @foreach (var modelState in ViewData.ModelState.Values)
+                {
+                    @foreach (var error in modelState.Errors)
+                    {
+                        <div class="ae">
+                            <i class="ti ti-alert-circle"></i>
+                            <span>@error.ErrorMessage</span>
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+    
+    <div class="fstrip"><i class="ti ti-shield"></i> Procesamiento OCR seguro</div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.querySelector('input[type="file"]');
+        const upsText = document.querySelector('.ups');
+        if (fileInput && upsText) {
+            fileInput.addEventListener('change', function() {
+                if (fileInput.files && fileInput.files[0]) {
+                    upsText.innerHTML = `<strong>Archivo seleccionado:</strong> ${fileInput.files[0].name}`;
+                }
+            });
+        }
+    });
+</script>

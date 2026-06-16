@@ -1,10 +1,319 @@
-@model VotingViewModel
-@using eVote360Pro.Core.Application.Dtos.Vote
 @using eVote360Pro.Core.Application.Helpers
-@using eVote360Pro.Core.Application.ViewModels.Elector
-@inject eVote360Pro.Core.Application.Interfaces.IAllianceService AllianceService
+@using eVote360Pro.Core.Application.Dtos.Vote
+@model eVote360Pro.Core.Application.ViewModels.Elector.VotingViewModel
 @{
-    ViewData["Title"] = "Panel de Votación";
-    ViewData["NavbarTitle"] = "Proceso de votación activo";
-    
+    ViewData["Title"] = "Proceso de Votación";
+    var voteSelections = Context.Session.Get<Dictionary<int, SaveVoteDto>>("VoteSelections") ?? new Dictionary<int, SaveVoteDto>();
+    int totalPositions = Model.Positions.Count;
+    int selectedPositionsCount = voteSelections.Count;
+    bool allSelected = selectedPositionsCount == totalPositions;
+    double progressPercent = totalPositions > 0 ? ((double)selectedPositionsCount / totalPositions) * 100 : 0;
 }
+
+<!-- SECCIÓN 4: PANEL DE PUESTOS ELECTIVOS -->
+<div id="section-puestos">
+    <div class="mframe">
+        <div class="mtopbar">
+            <div class="mdot r"></div>
+            <div class="mdot y"></div>
+            <div class="mdot g"></div>
+            <div class="murl">evote360.gob.do/puestos</div>
+        </div>
+        
+        <div class="enav">
+            <span class="elogo">e<span>Vote</span>360 Pro</span>
+            <span class="navtxt"><i class="ti ti-progress"></i> Proceso de votación activo</span>
+        </div>
+        
+        <div class="ca wh" style="padding:1.5rem">
+            <div class="wiz" style="max-width:500px;margin:0 auto 1.5rem">
+                <div class="ws done" data-n="✓">Documento</div>
+                <div class="ws done" data-n="✓">Identidad</div>
+                <div class="ws done" data-n="✓">Código</div>
+                <div class="ws active" data-n="4">Votación</div>
+            </div>
+            
+            <div class="phead">
+                <div>
+                    <p class="plabel">Seleccione un candidato por cada puesto</p>
+                    <p class="psub">Debe completar todos los puestos para finalizar su votación.</p>
+                </div>
+                <div class="pctr">@selectedPositionsCount / @totalPositions seleccionados</div>
+            </div>
+            
+            <div class="pbar">
+                <div class="pbarf" style="width: @(progressPercent)%;"></div>
+            </div>
+            
+            <div class="pgrid">
+                @foreach (var pos in Model.Positions)
+                {
+                    bool isSelected = voteSelections.ContainsKey(pos.ElectivePositionId);
+                    <div class="pc @(isSelected ? "sel" : "")" data-position-id="@pos.ElectivePositionId">
+                        <div class="sdot @(isSelected ? "ok" : "pend")">
+                            <i class="ti ti-@(isSelected ? "check" : "circle")"></i>
+                        </div>
+                        <p class="pn">@pos.PositionName</p>
+                        <p class="pm">Partidos: <strong>@pos.Candidates.Select(c => c.PartyName).Distinct().Count()</strong></p>
+                        <p class="pm">Candidatos: <strong>@pos.Candidates.Count</strong></p>
+                        @if (isSelected)
+                        {
+                            <span class="bdg bsel"><i class="ti ti-check" style="font-size:10px"></i> Seleccionado</span>
+                        }
+                        else
+                        {
+                            <span class="bdg bpend">Pendiente</span>
+                        }
+                    </div>
+                }
+            </div>
+            
+            <div class="aw">
+                <i class="ti ti-alert-triangle" style="flex-shrink:0;margin-top:1px"></i>
+                <span>Puede regresar a un puesto ya seleccionado para <strong>modificar su elección</strong> antes de finalizar el proceso.</span>
+            </div>
+            
+            <button id="btn-finalizar" class="bp" style="max-width:440px;margin:1rem auto 0; @(!allSelected ? "opacity:.5;cursor:not-allowed;" : "")" @(!allSelected ? "disabled" : "")>
+                <i class="ti ti-send"></i> Finalizar votación 
+                @if (!allSelected)
+                {
+                    <span style="font-size:11px;opacity:.8">(complete todos los puestos)</span>
+                }
+            </button>
+        </div>
+        
+        <div class="fstrip"><i class="ti ti-shield"></i> Sus selecciones son privadas y confidenciales</div>
+    </div>
+</div>
+
+<!-- SECCIÓN 5: BOLETA ELECTORAL DIGITAL PARA CADA PUESTO -->
+@foreach (var pos in Model.Positions)
+{
+    var isSelected = voteSelections.TryGetValue(pos.ElectivePositionId, out var saved) && saved != null;
+    var selectedCandId = isSelected ? saved!.CandidateId : (int?)null;
+    var isNingunoSelected = isSelected && saved!.CandidateId == null;
+
+    var initialCandId = isSelected ? (saved!.CandidateId?.ToString() ?? "") : "";
+    var initialCandName = isSelected ? (saved!.CandidateName ?? "") : "";
+    var initialPartyName = isSelected ? (saved!.PartyName ?? "") : "";
+
+    <div id="section-boleta-@pos.ElectivePositionId" class="section-ballot" style="display:none;">
+        <div class="mframe">
+            <div class="mtopbar">
+                <div class="mdot r"></div>
+                <div class="mdot y"></div>
+                <div class="mdot g"></div>
+                <div class="murl">evote360.gob.do/boleta/@pos.PositionName.ToLower().Replace(" ", "-")</div>
+            </div>
+            
+            <div class="enav">
+                <span class="elogo">e<span>Vote</span>360 Pro</span>
+                <span class="navtxt"><i class="ti ti-progress"></i> @selectedPositionsCount / @totalPositions puestos</span>
+            </div>
+            
+            <div class="ca wh" style="padding:1.25rem">
+                <div class="bhead">
+                    <div>
+                        <p class="btitle"><i class="ti ti-briefcase"></i> Puesto: @pos.PositionName</p>
+                        <p class="bsub">Seleccione exactamente un candidato o la opción "Ninguno"</p>
+                    </div>
+                    <a class="bback" href="#"><i class="ti ti-arrow-left"></i> Volver</a>
+                </div>
+                
+                <form asp-controller="Elector" asp-action="SavePositionVote" method="post">
+                    <input type="hidden" name="electivePositionId" value="@pos.ElectivePositionId">
+                    <input type="hidden" name="positionName" value="@pos.PositionName">
+                    
+                    <input type="hidden" name="candidateId" class="val-cand-id" value="@initialCandId">
+                    <input type="hidden" name="candidateName" class="val-cand-name" value="@initialCandName">
+                    <input type="hidden" name="partyName" class="val-party-name" value="@initialPartyName">
+                    
+                    <div class="bgrid">
+                        @foreach (var cand in pos.Candidates)
+                        {
+                            bool isCandSelected = selectedCandId == cand.Id;
+                            
+                            string initials = "";
+                            if (!string.IsNullOrEmpty(cand.FullName)) {
+                                var parts = cand.FullName.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                                if (parts.Length >= 2) initials = (parts[0][0].ToString() + parts[1][0].ToString()).ToUpper();
+                                else if (parts.Length == 1) initials = parts[0][0].ToString().ToUpper();
+                            }
+                            
+                            <div class="ccard2 @(isCandSelected ? "sel2" : "")" 
+                                 data-id="@cand.Id" 
+                                 data-name="@cand.FullName" 
+                                 data-party="@cand.PartyName">
+                                <input type="radio" name="selectedRadio" value="@cand.Id" style="display:none;" @(isCandSelected ? "checked" : "") required>
+                                <div class="cavat" style="background:var(--b50);color:var(--b800)">@initials</div>
+                                <p class="cnam">@cand.FullName</p>
+                                <div class="ppill"><i class="ti ti-flag" style="font-size:10px"></i> @cand.PartyName</div>
+                            </div>
+                        }
+                        
+                        <!-- Opción Ninguno -->
+                        <div class="ccard2 ning @(isNingunoSelected ? "sel2" : "")" 
+                             data-id="" 
+                             data-name="Ninguno" 
+                             data-party="—">
+                            <input type="radio" name="selectedRadio" value="" style="display:none;" @(isNingunoSelected ? "checked" : "") required>
+                            <div class="cavat" style="background:var(--gy50);color:var(--gy400)"><i class="ti ti-ban" style="font-size:22px"></i></div>
+                            <p class="cnam" style="color:var(--gy600)">Ninguno</p>
+                            <div class="ppill gray">Voto en blanco</div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="be"><i class="ti ti-device-floppy"></i> Guardar voto del puesto</button>
+                </form>
+            </div>
+            
+            <div class="fstrip"><i class="ti ti-shield"></i> Su voto es secreto y no puede ser rastreado</div>
+        </div>
+    </div>
+}
+
+<!-- SECCIÓN 6: CONFIRMACIÓN Y FINALIZACIÓN -->
+<div id="section-confirmacion" style="display:none;">
+    <div class="mframe">
+        <div class="mtopbar">
+            <div class="mdot r"></div>
+            <div class="mdot y"></div>
+            <div class="mdot g"></div>
+            <div class="murl">evote360.gob.do/confirmacion</div>
+        </div>
+        
+        <div class="enav">
+            <span class="elogo">e<span>Vote</span>360 Pro</span>
+            <span class="navtxt"><i class="ti ti-progress"></i> Confirmación final</span>
+        </div>
+        
+        <div class="ca wh" style="padding:1.5rem">
+            <div style="max-width:560px;margin:0 auto">
+                <div style="text-align:center;margin-bottom:1.5rem">
+                    <div style="width:56px;height:56px;background:var(--g50);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .75rem">
+                        <i class="ti ti-clipboard-check" style="font-size:28px;color:var(--g800)"></i>
+                    </div>
+                    <h2 style="font-size:18px;font-weight:700;color:#1A202C;margin-bottom:.25rem">Revise sus selecciones</h2>
+                    <p style="font-size:13px;color:var(--gy600)">Una vez confirme no podrá modificar su voto. Verifique cada opción.</p>
+                </div>
+                
+                <div class="form-section">
+                    <p class="form-section-title"><i class="ti ti-clipboard-list"></i> Resumen de votación — Elección General 2026</p>
+                    <div class="tw">
+                        <table class="dt" style="table-layout:auto">
+                            <thead>
+                                <tr>
+                                    <th>Puesto</th>
+                                    <th>Candidato seleccionado</th>
+                                    <th>Partido</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var pos in Model.Positions)
+                                {
+                                    if (voteSelections.TryGetValue(pos.ElectivePositionId, out var saved) && saved != null)
+                                    {
+                                        <tr>
+                                            <td><strong>@pos.PositionName</strong></td>
+                                            @if (saved.CandidateId == null)
+                                            {
+                                                <td style="color:var(--gy600);font-style:italic">Ninguno (voto en blanco)</td>
+                                                <td>—</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@saved.CandidateName</td>
+                                                <td><span class="ppill"><i class="ti ti-flag" style="font-size:10px"></i> @saved.PartyName</span></td>
+                                            }
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="aw" style="margin-top:0">
+                    <i class="ti ti-alert-triangle" style="flex-shrink:0"></i>
+                    <span>Esta acción es <strong>irreversible</strong>. Una vez confirme, su voto quedará registrado y no podrá repetir el proceso.</span>
+                </div>
+                
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:1rem">
+                    <button type="button" class="bo btn-back-to-puestos" style="justify-content:center;width:100%"><i class="ti ti-arrow-left"></i> Modificar selección</button>
+                    
+                    <form asp-controller="Elector" asp-action="FinishVoting" method="post">
+                        <button type="submit" class="bp" style="margin-top:0;width:100%;background:var(--g800)"><i class="ti ti-send"></i> Confirmar y votar</button>
+                    </form>
+                </div>
+                
+                <div class="ai" style="margin-top:.875rem">
+                    <i class="ti ti-mail" style="flex-shrink:0"></i>
+                    <span>Al finalizar recibirá un correo electrónico con el resumen de su votación como comprobante.</span>
+                </div>
+            </div>
+        </div>
+        <div class="fstrip"><i class="ti ti-shield"></i> Su voto es secreto · Confidencialidad garantizada</div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Click on a position card in S4 to show its ballot screen S5
+    document.querySelectorAll('.pc').forEach(card => {
+        card.addEventListener('click', function() {
+            const positionId = this.dataset.positionId;
+            if (positionId) {
+                document.getElementById('section-puestos').style.display = 'none';
+                document.getElementById('section-boleta-' + positionId).style.display = 'block';
+            }
+        });
+    });
+
+    // Go back from ballot S5 to positions panel S4
+    document.querySelectorAll('.bback').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const ballotSec = this.closest('.section-ballot');
+            if (ballotSec) {
+                ballotSec.style.display = 'none';
+                document.getElementById('section-puestos').style.display = 'block';
+            }
+        });
+    });
+
+    // Finalize voting (click button in S4 to show S6)
+    const btnFinalizar = document.getElementById('btn-finalizar');
+    if (btnFinalizar) {
+        btnFinalizar.addEventListener('click', function() {
+            if (!this.disabled) {
+                document.getElementById('section-puestos').style.display = 'none';
+                document.getElementById('section-confirmacion').style.display = 'block';
+            }
+        });
+    });
+
+    // Back from confirmation screen S6 to positions panel S4
+    document.querySelectorAll('.btn-back-to-puestos').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.getElementById('section-confirmacion').style.display = 'none';
+            document.getElementById('section-puestos').style.display = 'block';
+        });
+    });
+
+    // Selecting a candidate/ninguno card inside ballot S5
+    document.querySelectorAll('.ccard2').forEach(card => {
+        card.addEventListener('click', function() {
+            const form = this.closest('form');
+            if (!form) return;
+            
+            const id = this.dataset.id || '';
+            const name = this.dataset.name || '';
+            const party = this.dataset.party || '';
+            
+            form.querySelector('.val-cand-id').value = id;
+            form.querySelector('.val-cand-name').value = name;
+            form.querySelector('.val-party-name').value = party;
+        });
+    });
+});
+</script>

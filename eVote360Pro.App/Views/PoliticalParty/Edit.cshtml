@@ -1,9 +1,10 @@
 @model eVote360Pro.Core.Application.ViewModels.PoliticalParty.SavePoliticalPartyViewModel
-@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+@inject eVote360Pro.Core.Domain.Interfaces.Repositories.ICandidateRepository CandidateRepository
 
 @{
     ViewData["Title"] = "Editar Partido Político";
-    var hasParticipated = DbContext.Candidates.Any(c => c.PoliticalPartyId == Model.Id && c.ParticipatedInElection);
+    var candidates = await CandidateRepository.GetAllAsync();
+    var hasParticipated = candidates.Any(c => c.PoliticalPartyId == Model.Id && c.ParticipatedInElection);
 }
 
 <div class="atop">

@@ -13,11 +13,11 @@
            class="sbi @(currentController == "Home" && currentArea == "Admin" ? "active" : "")">
             <i class="ti ti-home"></i> Home
         </a>
-        <a href="@Url.Action("Index", "ElectivePosition", new { area = "" })" 
+        <a href="@Url.Action("Index", "ElectivePosition", new { area = "Admin" })" 
            class="sbi @(currentController == "ElectivePosition" ? "active" : "")">
             <i class="ti ti-briefcase"></i> Puesto Electivo
         </a>
-        <a href="@Url.Action("Index", "Citizen", new { area = "" })" 
+        <a href="@Url.Action("Index", "Citizen", new { area = "Admin" })" 
            class="sbi @(currentController == "Citizen" ? "active" : "")">
             <i class="ti ti-users"></i> Ciudadanos
         </a>
@@ -33,7 +33,7 @@
            class="sbi @(currentController == "PoliticalLeaderAssignment" ? "active" : "")">
             <i class="ti ti-link"></i> Asig. Dirigentes
         </a>
-        <a href="@Url.Action("Index", "Election", new { area = "" })" 
+        <a href="@Url.Action("Index", "Election", new { area = "Admin" })" 
            class="sbi @(currentController == "Election" ? "active" : "")">
             <i class="ti ti-calendar-event"></i> Elecciones
         </a>

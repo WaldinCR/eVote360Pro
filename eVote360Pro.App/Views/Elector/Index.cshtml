@@ -1,6 +1,78 @@
-@using eVote360Pro.Core.Application.ViewModels.Elector
-@model AddDocumentViewModel
+@model eVote360Pro.Core.Application.ViewModels.Elector.AddDocumentViewModel
 @{
-    ViewData["Title"] = "Ingreso de Documento";
-    ViewData["ShowLoginLink"] = true;
+    ViewData["Title"] = "Entrada de Documento";
 }
+
+<div class="mframe">
+    <div class="mtopbar">
+        <div class="mdot r"></div>
+        <div class="mdot y"></div>
+        <div class="mdot g"></div>
+        <div class="murl">evote360.gob.do</div>
+    </div>
+    
+    <div class="enav">
+        <span class="elogo">e<span>Vote</span>360 Pro</span>
+        <a class="navpill" asp-controller="Login" asp-action="Index"><i class="ti ti-login"></i> Acceder</a>
+    </div>
+    
+    <div class="ca">
+        <div class="ccard">
+            <div class="wiz">
+                <div class="ws active" data-n="1">Documento</div>
+                <div class="ws" data-n="2">Identidad</div>
+                <div class="ws" data-n="3">Código</div>
+                <div class="ws" data-n="4">Votación</div>
+            </div>
+            
+            <div class="cicn"><i class="ti ti-shield-check"></i></div>
+            <h2 class="ch">Bienvenido al proceso electoral</h2>
+            <p class="cs">Ingrese su número de documento de identidad para iniciar su participación en la elección activa.</p>
+            
+            <form asp-controller="Elector" asp-action="Index" method="post">
+                <div class="fw">
+                    <label class="fl" asp-for="Document">Número de documento de identidad <span class="req">*</span></label>
+                    <input class="fi" type="text" asp-for="Document" placeholder="Ej. 00112345678" maxlength="11" autocomplete="off">
+                    <p class="fhint"><i class="ti ti-info-circle" style="font-size:11px"></i> Se trata como texto; puede contener ceros al inicio.</p>
+                </div>
+                
+                <button class="bp" type="submit"><i class="ti ti-check"></i> Votar</button>
+            </form>
+            
+            <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid #F1F5F9;text-align:center">
+                <p style="font-size:11px;color:var(--gy400)"><i class="ti ti-lock" style="font-size:12px"></i> Proceso confidencial y seguro · © ITLA 2026</p>
+            </div>
+        </div>
+        
+        <div style="max-width:440px;margin:1rem auto 0">
+            @if (ViewBag.Message != null || !ViewData.ModelState.IsValid)
+            {
+                <p class="sh">Mensajes de validación</p>
+            }
+            
+            @if (ViewBag.Message != null)
+            {
+                <div class="ae">
+                    <i class="ti ti-alert-circle"></i>
+                    <span>@ViewBag.Message</span>
+                </div>
+            }
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                @foreach (var modelState in ViewData.ModelState.Values)
+                {
+                    @foreach (var error in modelState.Errors)
+                    {
+                        <div class="ae">
+                            <i class="ti ti-alert-circle"></i>
+                            <span>@error.ErrorMessage</span>
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+    
+    <div class="fstrip"><i class="ti ti-shield"></i> eVote360 Pro · Sistema Electoral Certificado</div>
+</div>

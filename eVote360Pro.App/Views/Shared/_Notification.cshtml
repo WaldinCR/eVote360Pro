@@ -1,0 +1,14 @@
+@if (TempData["Error"] != null)
+{
+    <div class="evote-notif ae">
+        <i class="ti ti-alert-circle"></i>
+        <span>@TempData["Error"]</span>
+    </div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="evote-notif as">
+        <i class="ti ti-circle-check"></i>
+        <span>@TempData["Success"]</span>
+    </div>
+}

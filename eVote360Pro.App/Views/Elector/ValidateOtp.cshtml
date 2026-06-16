@@ -1,6 +1,75 @@
-@using eVote360Pro.Core.Application.ViewModels.Elector
-@model ValidateOtpViewModel
+@model eVote360Pro.Core.Application.ViewModels.Elector.ValidateOtpViewModel
 @{
-    ViewData["Title"] = "Código de Verificación";
-    ViewData["NavbarTitle"] = "Verificación de código";
+    ViewData["Title"] = "Código de Verificación (OTP)";
 }
+
+<div class="mframe">
+    <div class="mtopbar">
+        <div class="mdot r"></div>
+        <div class="mdot y"></div>
+        <div class="mdot g"></div>
+        <div class="murl">evote360.gob.do/verificacion</div>
+    </div>
+    
+    <div class="enav">
+        <span class="elogo">e<span>Vote</span>360 Pro</span>
+        <span class="navtxt">Verificación de código</span>
+    </div>
+    
+    <div class="ca">
+        <div class="ccard">
+            <div class="wiz">
+                <div class="ws done" data-n="✓">Documento</div>
+                <div class="ws done" data-n="✓">Identidad</div>
+                <div class="ws active" data-n="3">Código</div>
+                <div class="ws" data-n="4">Votación</div>
+            </div>
+            
+            <div class="cicn"><i class="ti ti-mail-check"></i></div>
+            <h2 class="ch">Código de verificación</h2>
+            <p class="cs">Hemos enviado un código de 6 dígitos a su correo registrado. Ingréselo para continuar.</p>
+            
+            <form id="otp-form" asp-controller="Elector" asp-action="ValidateOtp" method="post">
+                <input type="hidden" id="otp-hidden" asp-for="Code" />
+                
+                <div class="otpg">
+                    <input class="ob" maxlength="1" type="text" inputmode="numeric" aria-label="Dígito 1" required autocomplete="off">
+                    <input class="ob" maxlength="1" type="text" inputmode="numeric" aria-label="Dígito 2" required autocomplete="off">
+                    <input class="ob" maxlength="1" type="text" inputmode="numeric" aria-label="Dígito 3" required autocomplete="off">
+                    <input class="ob" maxlength="1" type="text" inputmode="numeric" aria-label="Dígito 4" required autocomplete="off">
+                    <input class="ob" maxlength="1" type="text" inputmode="numeric" aria-label="Dígito 5" required autocomplete="off">
+                    <input class="ob" maxlength="1" type="text" inputmode="numeric" aria-label="Dígito 6" required autocomplete="off">
+                </div>
+                
+                <div class="timerrow">
+                    <div class="timerbadge">
+                        <i class="ti ti-clock"></i> 
+                        <span id="otp-timer" data-seconds="300">05:00</span> restantes
+                    </div>
+                    <p class="timerhint">Código válido por 5 minutos · <a href="#" onclick="window.location.reload(); return false;">Reenviar código</a></p>
+                </div>
+                
+                <button type="submit" class="bp"><i class="ti ti-shield-check"></i> Validar código</button>
+            </form>
+        </div>
+        
+        <div style="max-width:440px;margin:1rem auto 0">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <p class="sh">Mensajes de validación</p>
+                @foreach (var modelState in ViewData.ModelState.Values)
+                {
+                    @foreach (var error in modelState.Errors)
+                    {
+                        <div class="ae">
+                            <i class="ti ti-alert-circle"></i>
+                            <span>@error.ErrorMessage</span>
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+    
+    <div class="fstrip"><i class="ti ti-shield"></i> Código de uso único · expira en 5 minutos</div>
+</div>

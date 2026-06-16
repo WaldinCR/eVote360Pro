@@ -1,5 +1,62 @@
 @{
     ViewData["Title"] = "Acceso Denegado";
-    Layout = "_LayoutElector";
-    ViewData["NavbarTitle"] = "<span style=\"color:#FCEBEB; font-size:13px; display:flex; align-items:center; gap:5px;\"><i class=\"ti ti-shield-off\"></i> Acceso restringido</span>";
 }
+
+<div class="mframe">
+    <div class="mtopbar">
+        <div class="mdot r"></div>
+        <div class="mdot y"></div>
+        <div class="mdot g"></div>
+        <div class="murl">evote360.gob.do/error/403</div>
+    </div>
+    
+    <div class="enav">
+        <span class="elogo">e<span>Vote</span>360 Pro</span>
+        <span class="navtxt"><i class="ti ti-shield-off"></i> Acceso restringido</span>
+    </div>
+    
+    <div class="ca" style="display:flex;align-items:center;justify-content:center;min-height:440px">
+        <div class="ccard" style="width:100%;text-align:center;max-width:540px;">
+            <div style="width:72px;height:72px;background:var(--r50);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;border:3px solid #F7C1C1">
+                <i class="ti ti-lock" style="font-size:36px;color:var(--r800)"></i>
+            </div>
+            <h2 class="ch" style="color:var(--r800);font-size:20px">Acceso denegado (403)</h2>
+            <p class="cs" style="font-size:14px;margin-bottom:1.5rem">No tiene los permisos necesarios para acceder a esta sección del sistema.</p>
+            
+            <div style="text-align:left;margin-bottom:1.5rem">
+                <p class="sh">Escenarios de acceso denegado</p>
+                
+                <div style="border:1px solid #E2E8F0;border-radius:var(--rlg);overflow:hidden">
+                    <div style="padding:.75rem 1rem;border-bottom:1px solid #F1F5F9;display:flex;gap:10px;align-items:flex-start">
+                        <span class="chip" style="background:var(--r50);color:var(--r800);border-color:var(--r400);flex-shrink:0">403</span>
+                        <div>
+                            <p style="font-size:12px;font-weight:700;color:#1A202C">Acceso a paneles administrativos</p>
+                            <p style="font-size:11px;color:var(--gy600)">Se requiere rol de Administrador. Los dirigentes políticos y electores tienen restringida esta sección.</p>
+                        </div>
+                    </div>
+                    <div style="padding:.75rem 1rem;border-bottom:1px solid #F1F5F9;display:flex;gap:10px;align-items:flex-start">
+                        <span class="chip" style="background:var(--r50);color:var(--r800);border-color:var(--r400);flex-shrink:0">403</span>
+                        <div>
+                            <p style="font-size:12px;font-weight:700;color:#1A202C">Mantenimiento de datos y elecciones</p>
+                            <p style="font-size:11px;color:var(--gy600)">Crear o modificar elecciones, partidos, ciudadanos, y usuarios está restringido a administradores autorizados.</p>
+                        </div>
+                    </div>
+                    <div style="padding:.75rem 1rem;display:flex;gap:10px;align-items:flex-start">
+                        <span class="chip" style="background:var(--r50);color:var(--r800);border-color:var(--r400);flex-shrink:0">403</span>
+                        <div>
+                            <p style="font-size:12px;font-weight:700;color:#1A202C">Flujo de votación del elector</p>
+                            <p style="font-size:11px;color:var(--gy600)">Los electores deben seguir el proceso secuencial en orden. Si intenta saltarse pasos por URL, el sistema le redirigirá.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+                <a class="bo" href="@Url.Action("Index", "Login", new { area = "" })" style="text-decoration:none;"><i class="ti ti-login"></i> Ir al inicio de sesión</a>
+                <a class="bp" href="@Url.Action("Index", "Home", new { area = "" })" style="width:auto;margin-top:0;text-decoration:none;"><i class="ti ti-home"></i> Ir al inicio</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="fstrip"><i class="ti ti-shield"></i> Acceso controlado por rol · Protección contra acceso no autorizado por URL</div>
+</div>

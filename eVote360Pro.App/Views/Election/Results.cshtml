@@ -1,10 +1,13 @@
 @model eVote360Pro.Core.Application.ViewModels.Election.ElectionResultViewModel
-@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+@inject eVote360Pro.Core.Domain.Interfaces.ICitizenVoteRepository CitizenVoteRepository
+@inject eVote360Pro.Core.Application.Interfaces.IPoliticalPartyService PoliticalPartyService
 
 @{
     ViewData["Title"] = "Resultados Electorales";
-    var totalVotos = DbContext.CitizenVotes.Count(cv => cv.ElectionId == Model.ElectionId);
-    var totalPartidos = DbContext.PoliticalParties.Count(p => p.IsActive);
+    var allVotes = await CitizenVoteRepository.GetAllAsync();
+    var totalVotos = allVotes.Count(cv => cv.ElectionId == Model.ElectionId);
+    var parties = await PoliticalPartyService.GetAllViewModel();
+    var totalPartidos = parties.Count(p => p.IsActive);
     var totalPuestos = Model.Positions.Count;
 }
 

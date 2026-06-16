@@ -7,7 +7,7 @@
 @{
     ViewData["Title"] = "Control de Elecciones";
     var elections = await ElectionService.GetAllAsync();
-    var activePartiesCount = (await PoliticalPartyService.GetAllViewModel()).Count(p => p.IsActive);
+    var activePartiesCount = (await PoliticalPartyService.GetAllAsync()).Count(p => p.IsActive);
     var activePositionsCount = (await ElectivePositionService.GetAllAsync()).Count(p => p.IsActive);
     var hasActiveElection = Model.Any(e => e.Status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Active);
     var allVotes = await CitizenVoteRepository.GetAllAsync();

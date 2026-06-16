@@ -1,10 +1,12 @@
 using eVote360Pro.Core.Application.Helpers;
 using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.PoliticalParty;
+using eVote360Pro.Core.Application.Dtos.PoliticalParty;
 using eVote360Pro.App.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
 
 namespace eVote360Pro.App.Areas.Admin.Controllers
 {
@@ -13,11 +15,13 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
     {
         private readonly IPoliticalPartyService _partyService;
         private readonly IUserSession _userSession;
+        private readonly IMapper _mapper;
 
-        public PoliticalPartyController(IPoliticalPartyService partyService, IUserSession userSession)
+        public PoliticalPartyController(IPoliticalPartyService partyService, IUserSession userSession, IMapper mapper)
         {
             _partyService = partyService;
             _userSession = userSession;
+            _mapper = mapper;
         }
 
         // GET: /Admin/PoliticalParty
@@ -28,8 +32,17 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             if (!_userSession.IsAdmin())
                 return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
-            var parties = await _partyService.GetAllViewModel();
-            return View(parties);
+            var parties = await _partyService.GetAllAsync();
+            var viewModels = parties.Select(p => new PoliticalPartyViewModel
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                Acronym = p.Acronym,
+                LogoUrl = p.LogoUrl,
+                IsActive = p.IsActive
+            }).ToList();
+            return View(viewModels);
         }
 
         // GET: /Admin/PoliticalParty/Create
@@ -62,12 +75,13 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
 
             try
             {
-                var savedVm = await _partyService.AddAsync(vm);
+                var dto = _mapper.Map<SavePoliticalPartyDto>(vm);
+                var savedDto = await _partyService.AddAsync(dto);
 
-                if (savedVm != null && vm.LogoFile != null && vm.LogoFile.Length > 0)
+                if (savedDto != null && vm.LogoFile != null && vm.LogoFile.Length > 0)
                 {
-                    savedVm.LogoUrl = UploadFile.Upload(vm.LogoFile, savedVm.Id, "logos");
-                    await _partyService.UpdateAsync(savedVm);
+                    savedDto.LogoUrl = UploadFile.Upload(vm.LogoFile, savedDto.Id, "logos");
+                    await _partyService.UpdateAsync(savedDto);
                 }
 
                 TempData["Success"] = "Partido político creado correctamente.";
@@ -88,8 +102,9 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             if (!_userSession.IsAdmin())
                 return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
-            var vm = await _partyService.GetByIdSaveViewModel(id);
-            if (vm == null) return NotFound();
+            var dto = await _partyService.GetByIdSaveDtoAsync(id);
+            if (dto == null) return NotFound();
+            var vm = _mapper.Map<SavePoliticalPartyViewModel>(dto);
             return View(vm);
         }
 
@@ -107,17 +122,18 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
 
             try
             {
-                var originalParty = await _partyService.GetByIdSaveViewModel(vm.Id);
-                if (originalParty != null && vm.LogoFile != null && vm.LogoFile.Length > 0)
+                var originalPartyDto = await _partyService.GetByIdSaveDtoAsync(vm.Id);
+                if (originalPartyDto != null && vm.LogoFile != null && vm.LogoFile.Length > 0)
                 {
-                    vm.LogoUrl = UploadFile.Upload(vm.LogoFile, vm.Id, "logos", true, originalParty.LogoUrl);
+                    vm.LogoUrl = UploadFile.Upload(vm.LogoFile, vm.Id, "logos", true, originalPartyDto.LogoUrl);
                 }
-                else if (originalParty != null)
+                else if (originalPartyDto != null)
                 {
-                    vm.LogoUrl = originalParty.LogoUrl;
+                    vm.LogoUrl = originalPartyDto.LogoUrl;
                 }
 
-                await _partyService.UpdateAsync(vm);
+                var dto = _mapper.Map<SavePoliticalPartyDto>(vm);
+                await _partyService.UpdateAsync(dto);
                 TempData["Success"] = "Partido político actualizado correctamente.";
                 return RedirectToAction(nameof(Index));
             }
@@ -151,4 +167,4 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
     }
-}
+}   

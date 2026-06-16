@@ -7,7 +7,7 @@
 @{
     var userName = Context.Session.GetString("UserName") ?? "Dirigente";
     var partyId = Context.Session.GetInt32("PartyId") ?? 0;
-    var party = await PoliticalPartyService.GetByIdSaveViewModel(partyId);
+    var party = await PoliticalPartyService.GetByIdSaveDtoAsync(partyId);
     var assignedCandidatesCount = (await CandidatePositionService.GetAllByPartyAsync(partyId)).Count;
     var elections = await ElectionService.GetAllAsync();
     var isElectionActive = elections.Any(e => e.Status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Active);

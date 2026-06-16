@@ -6,7 +6,7 @@
     ViewData["Title"] = "Resultados Electorales";
     var allVotes = await CitizenVoteRepository.GetAllAsync();
     var totalVotos = allVotes.Count(cv => cv.ElectionId == Model.ElectionId);
-    var parties = await PoliticalPartyService.GetAllViewModel();
+    var parties = await PoliticalPartyService.GetAllAsync();
     var totalPartidos = parties.Count(p => p.IsActive);
     var totalPuestos = Model.Positions.Count;
 }

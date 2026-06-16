@@ -13,8 +13,8 @@ namespace eVote360Pro.Core.Application.Interfaces
         Task<List<AllianceRequestViewModel>> GetReceivedPendingAsync(int receiverPartyId);
         Task<List<AllianceRequestViewModel>> GetSentByPartyAsync(int applicantPartyId);
         Task<CreateAllianceRequestViewModel?> AddAsync(CreateAllianceRequestViewModel vm);
-        Task AcceptRequestAsync(int id);
-        Task RejectRequestAsync(int id);
+        Task AcceptRequestAsync(int id, int receiverPartyId);
+        Task RejectRequestAsync(int id, int receiverPartyId);
         Task DeleteAsync(int id, int partyId);
         Task<bool> HasPendingRequestAsync(int applicantId, int receiverId);
     }

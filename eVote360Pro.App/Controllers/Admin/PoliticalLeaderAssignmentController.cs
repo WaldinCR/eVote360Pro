@@ -11,33 +11,27 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
         private readonly IPoliticalLeaderAssignmentService _assignmentService;
         private readonly IPoliticalPartyService _partyService;
         private readonly IUserService _userService;
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly IUserSession _userSession;
 
         public PoliticalLeaderAssignmentController(
             IPoliticalLeaderAssignmentService assignmentService,
             IPoliticalPartyService partyService,
             IUserService userService,
-            IHttpContextAccessor httpContext)
+            IUserSession userSession)
         {
             _assignmentService = assignmentService;
             _partyService = partyService;
             _userService = userService;
-            _httpContext = httpContext;
-        }
-
-        private bool IsAdmin() =>
-            _httpContext.HttpContext!.Session.GetString("UserRole") == "Administrador";
-
-        private IActionResult AccessDenied()
-        {
-            TempData["Error"] = "No tiene permisos para acceder a esta sección.";
-            return RedirectToAction("Index", "Home", new { area = "Admin" });
+            _userSession = userSession;
         }
 
         // GET: /Admin/PoliticalLeaderAssignment
         public async Task<IActionResult> Index()
         {
-            if (!IsAdmin()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             var assignments = await _assignmentService.GetAllViewModel();
             var users = await _userService.GetAllAsync();
@@ -55,7 +49,10 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
         // GET: /Admin/PoliticalLeaderAssignment/Create
         public async Task<IActionResult> Create()
         {
-            if (!IsAdmin()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             var allAssignments = await _assignmentService.GetAllViewModel();
             await LoadCreateDropdownsAsync(allAssignments);
@@ -68,7 +65,10 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SavePoliticalLeaderAssignmentViewModel vm)
         {
-            if (!IsAdmin()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             if (!ModelState.IsValid)
             {
@@ -97,7 +97,10 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            if (!IsAdmin()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             try
             {

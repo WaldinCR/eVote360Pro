@@ -12,28 +12,21 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
     public class PoliticalPartyController : Controller
     {
         private readonly IPoliticalPartyService _partyService;
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly IUserSession _userSession;
 
-        public PoliticalPartyController(IPoliticalPartyService partyService, IHttpContextAccessor httpContext)
+        public PoliticalPartyController(IPoliticalPartyService partyService, IUserSession userSession)
         {
             _partyService = partyService;
-            _httpContext = httpContext;
-        }
-
-        // Solo administradores
-        private bool IsAdmin() =>
-            _httpContext.HttpContext!.Session.GetString("UserRole") == "Administrador";
-
-        private IActionResult AccessDenied()
-        {
-            TempData["Error"] = "No tiene permisos para acceder a esta sección.";
-            return RedirectToAction("Index", "Home", new { area = "Admin" });
+            _userSession = userSession;
         }
 
         // GET: /Admin/PoliticalParty
         public async Task<IActionResult> Index()
         {
-            if (!IsAdmin()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             var parties = await _partyService.GetAllViewModel();
             return View(parties);
@@ -42,7 +35,10 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
         // GET: /Admin/PoliticalParty/Create
         public IActionResult Create()
         {
-            if (!IsAdmin()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
             return View(new SavePoliticalPartyViewModel());
         }
 
@@ -51,7 +47,10 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SavePoliticalPartyViewModel vm)
         {
-            if (!IsAdmin()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             if (!ModelState.IsValid) return View(vm);
 
@@ -84,7 +83,10 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
         // GET: /Admin/PoliticalParty/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            if (!IsAdmin()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             var vm = await _partyService.GetByIdSaveViewModel(id);
             if (vm == null) return NotFound();
@@ -96,7 +98,10 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(SavePoliticalPartyViewModel vm)
         {
-            if (!IsAdmin()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             if (!ModelState.IsValid) return View(vm);
 
@@ -128,7 +133,10 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangeStatus(int id)
         {
-            if (!IsAdmin()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             try
             {

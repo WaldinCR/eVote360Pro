@@ -11,31 +11,27 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
         private readonly IPoliticalPartyService _partyService;
         private readonly ICandidateService _candidateService;
         private readonly IElectionService _electionService;
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly IUserSession _userSession;
 
         public HomeController(
             IPoliticalPartyService partyService,
             ICandidateService candidateService,
             IElectionService electionService,
-            IHttpContextAccessor httpContext)
+            IUserSession userSession)
         {
             _partyService = partyService;
             _candidateService = candidateService;
             _electionService = electionService;
-            _httpContext = httpContext;
+            _userSession = userSession;
         }
-
-        private bool IsAdmin() =>
-            _httpContext.HttpContext!.Session.GetString("UserRole") == "Administrador";
 
         // GET: /Admin/Home
         public async Task<IActionResult> Index(int? year)
         {
-            if (!IsAdmin())
-            {
-                TempData["Error"] = "Acceso denegado.";
-                return RedirectToAction("Index", "Home", new { area = "" });
-            }
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             var parties = await _partyService.GetAllViewModel();
             var candidates = await _candidateService.GetAllViewModel();

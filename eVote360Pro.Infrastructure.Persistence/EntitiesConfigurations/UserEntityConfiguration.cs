@@ -1,4 +1,6 @@
-﻿using eVote360Pro.Core.Domain.Entities;
+﻿using eVote360Pro.Core.Application.Helpers;
+using eVote360Pro.Core.Domain.Common.Enums;
+using eVote360Pro.Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -24,6 +26,23 @@ namespace eVote360Pro.Infrastructure.Persistence.EntitiesConfigurations
             builder.Property(u => u.Role).IsRequired().HasConversion<string>();
             builder.Property(u => u.IsActive).IsRequired().HasDefaultValue(true);
             #endregion
+
+            #region agregacion de usuario administrador
+            builder.HasData(
+            new User
+            {
+                Id = 1,
+                Name = "Administrador",
+                LastName = "Sistema",
+                Email = "admin@evote.com",
+                UserName = "admin",
+                Password = PasswordEncryptation.ComputeSha256Hash("Admin123*"),
+                Role = UserRol.Administrador,
+                IsActive = true
+            }
+            );
+            #endregion
+          
         }
     }
 }

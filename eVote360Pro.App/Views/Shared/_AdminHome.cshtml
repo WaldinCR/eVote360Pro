@@ -1,0 +1,119 @@
+@model eVote360Pro.Core.Application.ViewModels.Admin.AdminHomeViewModel
+@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+
+@{
+    var totalVotos = Model?.Elections?.Sum(e => e.CitizensVoted) ?? 0;
+}
+
+<div class="atop">
+    <p class="aptitle"><i class="ti ti-chart-bar"></i> Resumen electoral</p>
+    <div class="auser"><div class="aavat">AP</div> Admin Principal</div>
+</div>
+
+@if (Model != null)
+{
+    <form method="get" action="@Url.Action("Index", "Home", new { area = "Admin" })" class="fb">
+        <label style="font-size: 13px; color: var(--gy600); font-weight: 600;">Año electoral:</label>
+        <select name="year" class="fsel">
+            @foreach (var yr in Model.AvailableYears)
+            {
+                <!option value="@yr" @(Model.SelectedYear == yr ? "selected" : "")>@yr</!option>
+            }
+        </select>
+        <button type="submit" class="fbtn"><i class="ti ti-search"></i> Obtener Resumen Electoral</button>
+    </form>
+
+    <div class="mgrid">
+        <div class="mc blue">
+            <div class="mico"><i class="ti ti-flag"></i></div>
+            <p class="mlabel">Partidos participantes</p>
+            <p class="mval">@Model.ActiveParties</p>
+        </div>
+        <div class="mc green">
+            <div class="mico"><i class="ti ti-users"></i></div>
+            <p class="mlabel">Candidatos reales</p>
+            <p class="mval">@Model.ActiveCandidates</p>
+        </div>
+        <div class="mc teal">
+            <div class="mico"><i class="ti ti-check"></i></div>
+            <p class="mlabel">Votos válidos emitidos</p>
+            <p class="mval">@totalVotos</p>
+        </div>
+    </div>
+
+    <p class="sh">Elecciones del año @Model.SelectedYear</p>
+    <div class="tw">
+        <table class="dt">
+            <thead>
+                <tr>
+                    <th style="width: 36%;">Nombre</th>
+                    <th style="width: 16%;">Fecha de Realización</th>
+                    <th style="width: 10%;">Partidos</th>
+                    <th style="width: 13%;">Estado</th>
+                    <th style="width: 15%;">Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Elections != null && Model.Elections.Any())
+                {
+                    foreach (var item in Model.Elections)
+                    {
+                        var electionDb = DbContext.Elections.FirstOrDefault(x => x.Name == item.ElectionName && x.Year == Model.SelectedYear);
+                        var status = electionDb?.Status ?? eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Pending;
+                        var electionId = electionDb?.Id ?? 0;
+
+                        <tr>
+                            <td><strong>@item.ElectionName</strong></td>
+                            <td>@item.RealizationDate</td>
+                            <td>@item.ParticipatingParties</td>
+                            <td>
+                                @if (status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Active)
+                                {
+                                    <span class="bdg bact"><i class="ti ti-circle-check" style="font-size: 10px;"></i> Activa</span>
+                                }
+                                else if (status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Pending)
+                                {
+                                    <span class="bdg bpend"><i class="ti ti-clock" style="font-size: 10px;"></i> Pendiente</span>
+                                }
+                                else
+                                {
+                                    <span class="bdg bdone"><i class="ti ti-lock" style="font-size: 10px;"></i> Finalizada</span>
+                                }
+                            </td>
+                            <td>
+                                @if (status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Active)
+                                {
+                                    <form method="post" action="@Url.Action("Finish", "Election", new { area = "", id = electionId })" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="bsm red" onclick="return confirm('¿Está seguro de finalizar esta elección?');"><i class="ti ti-square"></i> Finalizar</button>
+                                    </form>
+                                }
+                                else if (status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Pending)
+                                {
+                                    <form method="post" action="@Url.Action("Activate", "Election", new { area = "", id = electionId })" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="bsm blue" onclick="return confirm('¿Está seguro de activar esta elección?');"><i class="ti ti-player-play"></i> Activar</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Results", "Election", new { area = "", id = electionId })" class="bsm gray"><i class="ti ti-chart-bar"></i> Ver resultados</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--gy400);">No hay elecciones registradas para este año.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p style="color: var(--r400);">Error: Datos del modelo no disponibles.</p>
+}

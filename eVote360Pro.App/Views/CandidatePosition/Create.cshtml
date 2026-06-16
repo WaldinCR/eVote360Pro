@@ -1,4 +1,58 @@
 @model eVote360Pro.Core.Application.ViewModels.CandidatePosition.SaveCandidatePositionViewModel
+@using eVote360Pro.Core.Application.ViewModels.Candidate
+@using eVote360Pro.Core.Application.ViewModels.ElectivePosition
+
 @{
     ViewData["Title"] = "Asignar Candidato";
+    var candidates = ViewBag.Candidates as List<CandidateViewModel> ?? new List<CandidateViewModel>();
+    var positions = ViewBag.Positions as List<ElectivePositionViewModel> ?? new List<ElectivePositionViewModel>();
 }
+
+<div class="atop">
+    <p class="aptitle"><i class="ti ti-plus"></i> Asignar Candidato a Puesto Electivo</p>
+    <a href="@Url.Action("Index", "CandidatePosition")" class="bo"><i class="ti ti-arrow-left"></i> Volver</a>
+</div>
+
+<div class="form-section" style="max-width: 600px; margin: 0 auto;">
+    <p class="form-section-title"><i class="ti ti-link"></i> Datos de la asignación</p>
+
+    <form method="post" action="@Url.Action("Create", "CandidatePosition")">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="PoliticalPartyId" />
+
+        <div asp-validation-summary="ModelOnly" class="ae" style="margin-bottom: 1rem;"></div>
+
+        <div class="fw">
+            <label asp-for="CandidateId" class="fl">Candidato <span class="req">*</span></label>
+            <select asp-for="CandidateId" class="fi" required>
+                <option value="">Seleccione un candidato</option>
+                @foreach (var candidate in candidates)
+                {
+                    <option value="@candidate.Id">@($"{candidate.Name} {candidate.LastName} ({candidate.PoliticalPartyName})")</option>
+                }
+            </select>
+            <span asp-validation-for="CandidateId" style="font-size: 11px; color: var(--r400);"></span>
+            <p class="fhint" style="color: var(--gy600);">Se incluyen candidatos de su propio partido y de partidos con los que se tiene una alianza activa.</p>
+        </div>
+
+        <div class="fw" style="margin-top: 1.25rem;">
+            <label asp-for="ElectivePositionId" class="fl">Puesto Electivo <span class="req">*</span></label>
+            <select asp-for="ElectivePositionId" class="fi" required>
+                <option value="">Seleccione un puesto</option>
+                @foreach (var pos in positions)
+                {
+                    <option value="@pos.Id">@pos.Name</option>
+                }
+            </select>
+            <span asp-validation-for="ElectivePositionId" style="font-size: 11px; color: var(--r400);"></span>
+            <p class="fhint" style="color: var(--gy600);">Solo se muestran los puestos electivos activos en el sistema.</p>
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:1.75rem">
+            <button type="submit" class="fbtn" style="border: none; cursor: pointer; padding: 9px 18px; font-weight: 600; border-radius: var(--rmd); background: var(--g800); color: #fff; display: inline-flex; align-items: center; gap: 5px;">
+                <i class="ti ti-check"></i> Asignar
+            </button>
+            <a href="@Url.Action("Index", "CandidatePosition")" class="bo" style="text-decoration: none;">Cancelar</a>
+        </div>
+    </form>
+</div>

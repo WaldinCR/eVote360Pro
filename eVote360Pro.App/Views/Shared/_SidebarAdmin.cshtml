@@ -1,0 +1,44 @@
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var currentArea = ViewContext.RouteData.Values["area"]?.ToString();
+}
+<nav class="sb">
+    <div class="sbbrand">
+        <p class="sbbname">eVote360 Pro</p>
+        <p class="sbbrole">Administrador del sistema</p>
+    </div>
+    <div class="sbnav">
+        <a href="@Url.Action("Index", "Home", new { area = "Admin" })" 
+           class="sbi @(currentController == "Home" && currentArea == "Admin" ? "active" : "")">
+            <i class="ti ti-home"></i> Home
+        </a>
+        <a href="@Url.Action("Index", "ElectivePosition", new { area = "" })" 
+           class="sbi @(currentController == "ElectivePosition" ? "active" : "")">
+            <i class="ti ti-briefcase"></i> Puesto Electivo
+        </a>
+        <a href="@Url.Action("Index", "Citizen", new { area = "" })" 
+           class="sbi @(currentController == "Citizen" ? "active" : "")">
+            <i class="ti ti-users"></i> Ciudadanos
+        </a>
+        <a href="@Url.Action("Index", "PoliticalParty", new { area = "Admin" })" 
+           class="sbi @(currentController == "PoliticalParty" ? "active" : "")">
+            <i class="ti ti-flag"></i> Partidos Políticos
+        </a>
+        <a href="@Url.Action("Index", "User", new { area = "Admin" })" 
+           class="sbi @(currentController == "User" ? "active" : "")">
+            <i class="ti ti-user-cog"></i> Usuarios
+        </a>
+        <a href="@Url.Action("Index", "PoliticalLeaderAssignment", new { area = "Admin" })" 
+           class="sbi @(currentController == "PoliticalLeaderAssignment" ? "active" : "")">
+            <i class="ti ti-link"></i> Asig. Dirigentes
+        </a>
+        <a href="@Url.Action("Index", "Election", new { area = "" })" 
+           class="sbi @(currentController == "Election" ? "active" : "")">
+            <i class="ti ti-calendar-event"></i> Elecciones
+        </a>
+    </div>
+    <a href="@Url.Action("Logout", "Login", new { area = "" })" class="sbfoot" style="text-decoration: none;">
+        <i class="ti ti-logout" style="font-size:15px"></i> Cerrar sesión
+    </a>
+</nav>

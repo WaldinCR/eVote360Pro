@@ -1,4 +1,44 @@
 @model eVote360Pro.Core.Application.ViewModels.Citizen.SaveCitizenViewModel
+
 @{
-    ViewData["Title"] = "Confirmar Acción";
+    var targetStatus = Model.IsActive ? "Inactivar" : "Activar";
+    var actionColor = Model.IsActive ? "var(--r400)" : "var(--g600)";
+    ViewData["Title"] = $"{targetStatus} Ciudadano";
 }
+
+<div class="atop">
+    <p class="aptitle"><i class="ti ti-users"></i> @targetStatus Ciudadano</p>
+    <a href="@Url.Action("Index", "Citizen")" class="bo"><i class="ti ti-arrow-left"></i> Volver</a>
+</div>
+
+<div class="ccard" style="max-width: 500px; margin: 2rem auto; text-align: center;">
+    <div class="cicn" style="background: @(Model.IsActive ? "var(--r50)" : "var(--g50)");">
+        <i class="ti ti-alert-triangle" style="color: @actionColor;"></i>
+    </div>
+    
+    <h2 class="ch">¿Confirmar cambio de estado?</h2>
+    
+    <p class="cs" style="margin-top: 1rem; line-height: 1.6;">
+        Está a punto de @targetStatus.ToLower() al ciudadano 
+        <strong>@Model.FirstName @Model.LastName</strong> con cédula <strong>@Model.Document</strong>.
+        @if (Model.IsActive)
+        {
+            <span>Este ciudadano no podrá participar en el proceso electoral mientras se encuentre inactivo.</span>
+        }
+        else
+        {
+            <span>Este ciudadano quedará habilitado para participar y recibir códigos de votación.</span>
+        }
+    </p>
+
+    <form method="post" action="@Url.Action("ToggleStatusPost", "Citizen", new { id = Model.Id })">
+        @Html.AntiForgeryToken()
+        
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:1.5rem">
+            <a href="@Url.Action("Index", "Citizen")" class="bo" style="justify-content: center; width: 100%; text-decoration: none;">Cancelar</a>
+            <button type="submit" class="bp" style="margin-top: 0; background: @actionColor; width: 100%; border: none; font-weight: 600; color: #fff; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 5px;">
+                <i class="ti ti-check"></i> Confirmar
+            </button>
+        </div>
+    </form>
+</div>

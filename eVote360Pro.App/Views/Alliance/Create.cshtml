@@ -1,5 +1,44 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@model eVote360Pro.Core.Application.ViewModels.Alliance.CreateAllianceRequestViewModel
+@using eVote360Pro.Core.Application.ViewModels.PoliticalParty
+
 @{
+    ViewData["Title"] = "Solicitar Alianza";
+    var availableParties = ViewBag.AvailableParties as List<PoliticalPartyViewModel> ?? new List<PoliticalPartyViewModel>();
 }
+
+<div class="atop">
+    <p class="aptitle"><i class="ti ti-plus"></i> Solicitar Alianza Política</p>
+    <a href="@Url.Action("Index", "Alliance")" class="bo"><i class="ti ti-arrow-left"></i> Volver</a>
+</div>
+
+<div class="form-section" style="max-width: 600px; margin: 0 auto;">
+    <p class="form-section-title"><i class="ti ti-handshake"></i> Datos de la solicitud</p>
+
+    <form method="post" action="@Url.Action("Create", "Alliance")">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="ApplicantPartyId" />
+
+        <div asp-validation-summary="ModelOnly" class="ae" style="margin-bottom: 1rem;"></div>
+
+        <div class="fw">
+            <label asp-for="ReceiverPartyId" class="fl">Seleccionar Partido Político <span class="req">*</span></label>
+            <select asp-for="ReceiverPartyId" class="fi" required>
+                <option value="">Seleccione un partido político</option>
+                @foreach (var party in availableParties)
+                {
+                    <option value="@party.Id">@party.Name (@party.Acronym)</option>
+                }
+            </select>
+            <span asp-validation-for="ReceiverPartyId" style="font-size: 11px; color: var(--r400);"></span>
+            <p class="fhint" style="color: var(--gy600);">Solo se muestran los partidos activos en el sistema que no son su propio partido y con los que no tiene una alianza o solicitud pendiente.</p>
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:1.75rem">
+            <button type="submit" class="fbtn" style="border: none; cursor: pointer; padding: 9px 18px; font-weight: 600; border-radius: var(--rmd); background: var(--g800); color: #fff; display: inline-flex; align-items: center; gap: 5px;">
+                <i class="ti ti-send"></i> Enviar Solicitud
+            </button>
+            <a href="@Url.Action("Index", "Alliance")" class="bo" style="text-decoration: none;">Cancelar</a>
+        </div>
+    </form>
+</div>
+

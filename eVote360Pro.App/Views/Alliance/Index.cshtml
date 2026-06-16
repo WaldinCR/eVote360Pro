@@ -1,5 +1,226 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@using eVote360Pro.Core.Application.ViewModels.Alliance
+@using eVote360Pro.Core.Domain.Common.Enums
+@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+
 @{
+    ViewData["Title"] = "Alianzas Políticas";
+    var isElectionActive = DbContext.Elections.Any(e => e.Status == ElectionStatus.Active);
+    
+    var receivedPending = ViewBag.ReceivedPending as List<AllianceRequestViewModel> ?? new List<AllianceRequestViewModel>();
+    var sentRequests = ViewBag.SentRequests as List<AllianceRequestViewModel> ?? new List<AllianceRequestViewModel>();
+    var activeAlliances = ViewBag.ActiveAlliances as List<AllianceViewModel> ?? new List<AllianceViewModel>();
+    
+    int partyId = Context.Session.GetInt32("PartyId") ?? 0;
 }
+
+<div class="atop">
+    <p class="aptitle"><i class="ti ti-handshake"></i> Alianzas Políticas</p>
+    @if (!isElectionActive)
+    {
+        <a href="@Url.Action("Create", "Alliance")" class="bnew" style="text-decoration: none;">
+            <i class="ti ti-plus"></i> Solicitar Alianza
+        </a>
+    }
+    else
+    {
+        <button class="bnew" disabled style="opacity: 0.5; cursor: not-allowed;" title="Acciones bloqueadas: Existe una elección activa.">
+            <i class="ti ti-plus"></i> Solicitar Alianza
+        </button>
+    }
+</div>
+
+@if (isElectionActive)
+{
+    <div class="ae" style="margin-bottom: 1.5rem;">
+        <i class="ti ti-alert-circle"></i>
+        <span>Acciones de alianzas bloqueadas: Existe una elección activa.</span>
+    </div>
+}
+
+<!-- SECCIÓN 1: SOLICITUDES RECIBIDAS -->
+<div style="margin-bottom: 2rem;">
+    <h3 style="color: var(--b900); border-bottom: 2px solid var(--b100); padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+        <i class="ti ti-mail-check" style="color:var(--b700)"></i> Solicitudes de Alianza Recibidas (Pendientes)
+    </h3>
+    <div class="tw">
+        <table class="dt">
+            <thead>
+                <tr>
+                    <th style="width: 50%;">Partido Solicitante</th>
+                    <th style="width: 25%;">Fecha de Solicitud</th>
+                    <th style="width: 25%;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (receivedPending.Any())
+                {
+                    foreach (var item in receivedPending)
+                    {
+                        <tr>
+                            <td><strong>@item.ApplicantPartyName</strong></td>
+                            <td>@item.RequestDate.ToString("dd/MM/yyyy hh:mm tt")</td>
+                            <td>
+                                @if (!isElectionActive)
+                                {
+                                    <form method="post" action="@Url.Action("Accept", "Alliance", new { id = item.Id })" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="bsm green" onclick="return confirm('¿Está seguro de aceptar esta alianza?');">
+                                            <i class="ti ti-check"></i> Aceptar
+                                        </button>
+                                    </form>
+                                    <form method="post" action="@Url.Action("Reject", "Alliance", new { id = item.Id })" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="bsm red" onclick="return confirm('¿Está seguro de rechazar esta alianza?');">
+                                            <i class="ti ti-ban"></i> Rechazar
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <button class="bsm green" disabled style="opacity: 0.4; cursor: not-allowed;">Aceptar</button>
+                                    <button class="bsm red" disabled style="opacity: 0.4; cursor: not-allowed;">Rechazar</button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="3" style="text-align: center; color: var(--gy400); padding: 1.5rem;">No tiene solicitudes pendientes de responder.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- SECCIÓN 2: SOLICITUDES ENVIADAS -->
+<div style="margin-bottom: 2rem;">
+    <h3 style="color: var(--b900); border-bottom: 2px solid var(--b100); padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+        <i class="ti ti-send" style="color:var(--b700)"></i> Solicitudes de Alianza Enviadas
+    </h3>
+    <div class="tw">
+        <table class="dt">
+            <thead>
+                <tr>
+                    <th style="width: 40%;">Partido Destinatario</th>
+                    <th style="width: 25%;">Fecha de Envío</th>
+                    <th style="width: 15%;">Estado</th>
+                    <th style="width: 20%;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (sentRequests.Any())
+                {
+                    foreach (var item in sentRequests)
+                    {
+                        <tr>
+                            <td><strong>@item.ReceiverPartyName</strong></td>
+                            <td>@item.RequestDate.ToString("dd/MM/yyyy hh:mm tt")</td>
+                            <td>
+                                @if (item.Status == AllianceRequestStatus.Pending)
+                                {
+                                    <span class="bdg bpend">Pendiente</span>
+                                }
+                                else if (item.Status == AllianceRequestStatus.Accepted)
+                                {
+                                    <span class="bdg bact">Aceptada</span>
+                                }
+                                else
+                                {
+                                    <span class="bdg binact">Rechazada</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.Status == AllianceRequestStatus.Pending)
+                                {
+                                    @if (!isElectionActive)
+                                    {
+                                        <form method="post" action="@Url.Action("DeleteRequest", "Alliance", new { id = item.Id })" style="display:inline;">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="bsm red" onclick="return confirm('¿Está seguro de cancelar esta solicitud?');">
+                                                <i class="ti ti-trash"></i> Cancelar
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <button class="bsm red" disabled style="opacity: 0.4; cursor: not-allowed;">Cancelar</button>
+                                    }
+                                }
+                                else
+                                {
+                                    <span>—</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: var(--gy400); padding: 1.5rem;">No ha enviado ninguna solicitud de alianza.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- SECCIÓN 3: ALIANZAS POLÍTICAS ACTIVAS -->
+<div>
+    <h3 style="color: var(--b900); border-bottom: 2px solid var(--b100); padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+        <i class="ti ti-circle-check" style="color:var(--b700)"></i> Alianzas Políticas Activas (Vigentes)
+    </h3>
+    <div class="tw">
+        <table class="dt">
+            <thead>
+                <tr>
+                    <th style="width: 50%;">Partido Aliado</th>
+                    <th style="width: 30%;">Fecha de Consolidación</th>
+                    <th style="width: 20%;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (activeAlliances.Any())
+                {
+                    foreach (var item in activeAlliances)
+                    {
+                        var alliedPartyName = item.Party1Id == partyId ? item.Party2Name : item.Party1Name;
+                        <tr>
+                            <td>
+                                <span class="chip" style="background:var(--g50); color:var(--g800); border-color:var(--g200)">
+                                    <i class="ti ti-flag" style="font-size:10px"></i> @alliedPartyName
+                                </span>
+                            </td>
+                            <td>@item.CreationDate.ToString("dd/MM/yyyy hh:mm tt")</td>
+                            <td>
+                                @if (!isElectionActive)
+                                {
+                                    <form method="post" action="@Url.Action("DeleteAlliance", "Alliance", new { id = item.Id })" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="bsm red" onclick="return confirm('¿Está seguro de disolver esta alianza política? Se eliminarán todas las asignaciones cruzadas de candidatos.');">
+                                            <i class="ti ti-trash"></i> Disolver
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <button class="bsm red" disabled style="opacity: 0.4; cursor: not-allowed;" title="Acción bloqueada: Existe una elección activa.">Disolver</button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="3" style="text-align: center; color: var(--gy400); padding: 1.5rem;">No cuenta con alianzas políticas activas.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

@@ -1,5 +1,95 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@model eVote360Pro.Core.Application.ViewModels.Candidate.SaveCandidateViewModel
+
 @{
+    ViewData["Title"] = "Nuevo Candidato";
 }
+
+<div class="atop">
+    <p class="aptitle"><i class="ti ti-plus"></i> Nuevo Candidato</p>
+    <a href="@Url.Action("Index", "Candidate")" class="bo"><i class="ti ti-arrow-left"></i> Volver</a>
+</div>
+
+<div class="form-section" style="max-width: 600px; margin: 0 auto;">
+    <p class="form-section-title"><i class="ti ti-edit"></i> Datos del candidato</p>
+    
+    <form method="post" action="@Url.Action("Create", "Candidate")" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="PoliticalPartyId" />
+        <input type="hidden" asp-for="IsActive" />
+        
+        <div asp-validation-summary="ModelOnly" class="ae" style="margin-bottom: 1rem;"></div>
+
+        <div class="row2">
+            <div class="fw">
+                <label asp-for="Name" class="fl">Nombre <span class="req">*</span></label>
+                <input asp-for="Name" class="fi" type="text" placeholder="Ej. Carlos" required />
+                <span asp-validation-for="Name" style="font-size: 11px; color: var(--r400);"></span>
+            </div>
+            <div class="fw">
+                <label asp-for="LastName" class="fl">Apellido <span class="req">*</span></label>
+                <input asp-for="LastName" class="fi" type="text" placeholder="Ej. Méndez" required />
+                <span asp-validation-for="LastName" style="font-size: 11px; color: var(--r400);"></span>
+            </div>
+        </div>
+
+        <div class="fw" style="margin-top: 1.25rem;">
+            <label class="fl">Foto del Candidato <span class="req">*</span></label>
+            <div class="upz" id="uploadZone" onclick="document.getElementById('photoInput').click()">
+                <i class="ti ti-photo" id="uploadIcon"></i>
+                <p class="upm" id="uploadText">Arrastre la foto del candidato aquí</p>
+                <p class="ups" id="uploadSubtext">o haga clic para seleccionar (Máx: 2MB, JPG/PNG)</p>
+                <input type="file" id="photoInput" name="PhotoFile" style="display:none;" accept=".jpg,.jpeg,.png" required />
+            </div>
+            <span asp-validation-for="PhotoFile" style="font-size: 11px; color: var(--r400);"></span>
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:1.75rem">
+            <button type="submit" class="fbtn" style="border: none; cursor: pointer; padding: 9px 18px; font-weight: 600; border-radius: var(--rmd); background: var(--g800); color: #fff; display: inline-flex; align-items: center; gap: 5px;">
+                <i class="ti ti-check"></i> Guardar
+            </button>
+            <a href="@Url.Action("Index", "Candidate")" class="bo" style="text-decoration: none;">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const input = document.getElementById('photoInput');
+        const zone = document.getElementById('uploadZone');
+        const text = document.getElementById('uploadText');
+        const subtext = document.getElementById('uploadSubtext');
+        const icon = document.getElementById('uploadIcon');
+
+        input.addEventListener('change', function() {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                text.textContent = file.name;
+                subtext.textContent = (file.size / 1024 / 1024).toFixed(2) + " MB";
+                icon.className = "ti ti-circle-check";
+                icon.style.color = "var(--g600)";
+            }
+        });
+
+        // drag and drop events
+        zone.addEventListener('dragover', e => {
+            e.preventDefault();
+            zone.style.background = "#d4e6f5";
+        });
+        zone.addEventListener('dragleave', () => {
+            zone.style.background = "var(--b50)";
+        });
+        zone.addEventListener('drop', e => {
+            e.preventDefault();
+            zone.style.background = "var(--b50)";
+            if (e.dataTransfer.files.length) {
+                input.files = e.dataTransfer.files;
+                const file = input.files[0];
+                text.textContent = file.name;
+                subtext.textContent = (file.size / 1024 / 1024).toFixed(2) + " MB";
+                icon.className = "ti ti-circle-check";
+                icon.style.color = "var(--g600)";
+            }
+        });
+    </script>
+}
+

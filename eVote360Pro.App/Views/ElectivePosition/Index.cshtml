@@ -1,4 +1,150 @@
-@model IEnumerable<eVote360Pro.Core.Application.ViewModels.ElectivePosition.ElectivePositionViewModel>
+@model List<eVote360Pro.Core.Application.ViewModels.ElectivePosition.ElectivePositionViewModel>
+@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+
 @{
     ViewData["Title"] = "Puestos Electivos";
+    var isElectionActive = DbContext.Elections.Any(e => e.Status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Active);
+}
+
+<div class="atop">
+    <p class="aptitle"><i class="ti ti-briefcase"></i> Puestos Electivos</p>
+    @if (!isElectionActive)
+    {
+        <a href="@Url.Action("Create", "ElectivePosition")" class="bnew" style="text-decoration: none;">
+            <i class="ti ti-plus"></i> Nuevo puesto
+        </a>
+    }
+    else
+    {
+        <button class="bnew" disabled style="opacity: 0.5; cursor: not-allowed;" title="Acciones bloqueadas: Existe una elección activa.">
+            <i class="ti ti-plus"></i> Nuevo puesto
+        </button>
+    }
+</div>
+
+@if (isElectionActive)
+{
+    <div class="ae" style="margin-bottom: 1rem;">
+        <i class="ti ti-alert-circle"></i>
+        <span>Acciones de creación, edición y activación/inactivación bloqueadas: Existe una elección activa.</span>
+    </div>
+}
+
+<div class="fb">
+    <input class="finp" type="text" placeholder="Buscar puesto..." style="width:200px" id="positionSearch">
+    <select class="fsel" id="statusFilter">
+        <option value="">Todos</option>
+        <option value="Activo">Activos</option>
+        <option value="Inactivo">Inactivos</option>
+    </select>
+</div>
+
+<div class="tw">
+    <table class="dt" id="positionsTable">
+        <thead>
+            <tr>
+                <th style="width:30%">Nombre del puesto</th>
+                <th style="width:25%">Descripción</th>
+                <th style="width:15%">Estado</th>
+                <th style="width:15%">Restricciones</th>
+                <th style="width:15%">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr data-name="@item.Name?.ToLower()" data-status="@(item.IsActive ? "Activo" : "Inactivo")">
+                        <td><strong>@item.Name</strong></td>
+                        <td style="white-space: normal; overflow: visible; text-overflow: clip;">@item.Description</td>
+                        <td>
+                            @if (item.IsActive)
+                            {
+                                <span class="bdg bact">Activo</span>
+                            }
+                            else
+                            {
+                                <span class="bdg binact">Inactivo</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.HasParticipatedInElection)
+                            {
+                                <span style="font-size:11px;color:var(--r800)"><i class="ti ti-lock" style="font-size:11px"></i> Nombre bloqueado</span>
+                            }
+                            else
+                            {
+                                <span>—</span>
+                            }
+                        </td>
+                        <td>
+                            @if (isElectionActive)
+                            {
+                                <button class="bsm gray" disabled style="opacity: 0.5; cursor: not-allowed;"><i class="ti ti-edit"></i> Editar</button>
+                                @if (item.IsActive)
+                                {
+                                    <button class="bsm red" disabled style="opacity: 0.5; cursor: not-allowed;">Inactivar</button>
+                                }
+                                else
+                                {
+                                    <button class="bsm green" disabled style="opacity: 0.5; cursor: not-allowed;">Activar</button>
+                                }
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Edit", "ElectivePosition", new { id = item.Id })" class="bsm gray"><i class="ti ti-edit"></i> Editar</a>
+                                <form method="post" action="@Url.Action("ToggleStatus", "ElectivePosition", new { id = item.Id })" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    @if (item.IsActive)
+                                    {
+                                        <button type="submit" class="bsm red" onclick="return confirm('¿Está seguro de inactivar este puesto?');">Inactivar</button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" class="bsm green" onclick="return confirm('¿Está seguro de activar este puesto?');">Activar</button>
+                                    }
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--gy400);">No hay puestos registrados.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<p class="tfoot">@Model.Count puestos registrados</p>
+
+@section Scripts {
+    <script>
+        document.getElementById('positionSearch').addEventListener('input', filterTable);
+        document.getElementById('statusFilter').addEventListener('change', filterTable);
+
+        function filterTable() {
+            var searchVal = document.getElementById('positionSearch').value.toLowerCase();
+            var statusVal = document.getElementById('statusFilter').value;
+            var rows = document.querySelectorAll('#positionsTable tbody tr');
+
+            rows.forEach(function(row) {
+                var name = row.getAttribute('data-name');
+                var status = row.getAttribute('data-status');
+
+                var nameMatch = !name || name.indexOf(searchVal) > -1;
+                var statusMatch = !statusVal || status === statusVal;
+
+                if (nameMatch && statusMatch) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    </script>
 }

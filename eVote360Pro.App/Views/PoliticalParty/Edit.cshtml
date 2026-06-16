@@ -1,5 +1,144 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@model eVote360Pro.Core.Application.ViewModels.PoliticalParty.SavePoliticalPartyViewModel
+@inject eVote360Pro.Infrastructure.Persistence.Contexts.eVote360ProDbContext DbContext
+
 @{
+    ViewData["Title"] = "Editar Partido Político";
+    var hasParticipated = DbContext.Candidates.Any(c => c.PoliticalPartyId == Model.Id && c.ParticipatedInElection);
+}
+
+<div class="atop">
+    <p class="aptitle"><i class="ti ti-edit"></i> Editar Partido Político</p>
+    <a href="@Url.Action("Index", "PoliticalParty")" class="bo"><i class="ti ti-arrow-left"></i> Volver</a>
+</div>
+
+<div class="form-section" style="max-width: 600px; margin: 0 auto;">
+    <p class="form-section-title"><i class="ti ti-edit"></i> Datos del partido político</p>
+    
+    <form method="post" action="@Url.Action("Edit", "PoliticalParty")" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="LogoUrl" />
+        <input type="hidden" asp-for="IsActive" />
+
+        <div asp-validation-summary="ModelOnly" class="ae" style="margin-bottom: 1rem;"></div>
+
+        <div class="row2">
+            <div class="fw">
+                <label asp-for="Name" class="fl">Nombre Oficial <span class="req">*</span></label>
+                @if (hasParticipated)
+                {
+                    <input asp-for="Name" class="fi" type="text" readonly style="background: var(--gy50); color: var(--gy600);" />
+                }
+                else
+                {
+                    <input asp-for="Name" class="fi" type="text" placeholder="Ej. Partido de la Unión" required />
+                }
+                <span asp-validation-for="Name" style="font-size: 11px; color: var(--r400);"></span>
+            </div>
+            <div class="fw">
+                <label asp-for="Acronym" class="fl">Siglas <span class="req">*</span></label>
+                @if (hasParticipated)
+                {
+                    <input asp-for="Acronym" class="fi" type="text" readonly style="background: var(--gy50); color: var(--gy600);" />
+                }
+                else
+                {
+                    <input asp-for="Acronym" class="fi" type="text" placeholder="Ej. PDU" maxlength="10" required />
+                }
+                <span asp-validation-for="Acronym" style="font-size: 11px; color: var(--r400);"></span>
+            </div>
+        </div>
+
+        <div class="fw">
+            <label asp-for="Description" class="fl">Descripción</label>
+            <textarea asp-for="Description" class="fi" placeholder="Describa el partido..." style="min-height: 80px;"></textarea>
+            <span asp-validation-for="Description" style="font-size: 11px; color: var(--r400);"></span>
+        </div>
+
+        <div class="fw">
+            <label class="fl">Logo del Partido</label>
+            
+            @if (hasParticipated)
+            {
+                <div style="display:flex; align-items:center; gap:1.5rem; background: var(--gy50); border: 1px dashed var(--gy200); border-radius: var(--rlg); padding: 1rem;">
+                    @if (!string.IsNullOrEmpty(Model.LogoUrl))
+                    {
+                        <img src="@Model.LogoUrl" alt="Logo" style="width: 50px; height: 50px; object-fit: contain; border-radius: var(--rmd);" />
+                    }
+                    <p style="font-size: 12px; color: var(--r800); margin: 0;"><i class="ti ti-lock"></i> El logo está bloqueado porque este partido ha participado en elecciones.</p>
+                </div>
+            }
+            else
+            {
+                <div style="display:flex; align-items:center; gap:1.5rem; margin-bottom:1rem;">
+                    @if (!string.IsNullOrEmpty(Model.LogoUrl))
+                    {
+                        <div>
+                            <p class="fl" style="margin-bottom:4px;">Logo actual:</p>
+                            <img src="@Model.LogoUrl" alt="Logo" style="width: 50px; height: 50px; object-fit: contain; border-radius: var(--rmd); border: 1px solid var(--gy200);" />
+                        </div>
+                    }
+                </div>
+                
+                <div class="upz" id="uploadZone" onclick="document.getElementById('logoInput').click()">
+                    <i class="ti ti-photo" id="uploadIcon"></i>
+                    <p class="upm" id="uploadText">Seleccionar un nuevo logo para reemplazar el anterior</p>
+                    <p class="ups" id="uploadSubtext">Formatos: .jpg, .png | Máx. 2MB</p>
+                    <input type="file" id="logoInput" name="LogoFile" style="display:none;" accept=".jpg,.jpeg,.png" />
+                </div>
+                <span asp-validation-for="LogoFile" style="font-size: 11px; color: var(--r400);"></span>
+            }
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:1.5rem">
+            <button type="submit" class="fbtn" style="border: none; cursor: pointer; padding: 9px 18px; font-weight: 600; border-radius: var(--rmd); background: var(--g800); color: #fff; display: inline-flex; align-items: center; gap: 5px;">
+                <i class="ti ti-check"></i> Guardar
+            </button>
+            <a href="@Url.Action("Index", "PoliticalParty")" class="bo" style="text-decoration: none;">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@if (!hasParticipated)
+{
+    @section Scripts {
+        <script>
+            const input = document.getElementById('logoInput');
+            const zone = document.getElementById('uploadZone');
+            const text = document.getElementById('uploadText');
+            const subtext = document.getElementById('uploadSubtext');
+            const icon = document.getElementById('uploadIcon');
+
+            input.addEventListener('change', function() {
+                if (input.files && input.files[0]) {
+                    const file = input.files[0];
+                    text.textContent = file.name;
+                    subtext.textContent = (file.size / 1024 / 1024).toFixed(2) + " MB";
+                    icon.className = "ti ti-circle-check";
+                    icon.style.color = "var(--g600)";
+                }
+            });
+
+            // drag and drop events
+            zone.addEventListener('dragover', e => {
+                e.preventDefault();
+                zone.style.background = "#d4e6f5";
+            });
+            zone.addEventListener('dragleave', () => {
+                zone.style.background = "var(--b50)";
+            });
+            zone.addEventListener('drop', e => {
+                e.preventDefault();
+                zone.style.background = "var(--b50)";
+                if (e.dataTransfer.files.length) {
+                    input.files = e.dataTransfer.files;
+                    const file = input.files[0];
+                    text.textContent = file.name;
+                    subtext.textContent = (file.size / 1024 / 1024).toFixed(2) + " MB";
+                    icon.className = "ti ti-circle-check";
+                    icon.style.color = "var(--g600)";
+                }
+            });
+        </script>
+    }
 }

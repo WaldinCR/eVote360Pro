@@ -19,17 +19,20 @@ namespace eVote360Pro.Core.Application.Services
         private readonly IPoliticalPartyRepository _partyRepository;
         private readonly IGenericRepository<Election> _electionRepository;
         private readonly ICandidateRepository _candidateRepository;
+        private readonly IPoliticalLeaderAssignmentRepository _assignmentRepository;
         private readonly IMapper _mapper;
 
         public PoliticalPartyService(
             IPoliticalPartyRepository partyRepository,
             IGenericRepository<Election> electionRepository,
             ICandidateRepository candidateRepository,
+            IPoliticalLeaderAssignmentRepository assignmentRepository,
             IMapper mapper) : base(partyRepository, mapper)
         {
             _partyRepository = partyRepository;
             _electionRepository = electionRepository;
             _candidateRepository = candidateRepository;
+            _assignmentRepository = assignmentRepository;
             _mapper = mapper;
         }
 
@@ -174,6 +177,17 @@ namespace eVote360Pro.Core.Application.Services
 
             var entity = await _partyRepository.GetByIdAsync(id);
             if (entity == null) throw new Exception("Partido no encontrado.");
+
+            if (entity.IsActive)
+            {
+                var candidates = await _candidateRepository.GetAllAsync();
+                if (candidates.Any(c => c.PoliticalPartyId == id && c.IsActive))
+                    throw new Exception("No se puede desactivar este partido político porque tiene candidatos activos registrados.");
+
+                var assignments = await _assignmentRepository.GetAllAsync();
+                if (assignments.Any(a => a.PoliticalPartyId == id))
+                    throw new Exception("No se puede desactivar este partido político porque tiene un dirigente político activo asignado.");
+            }
 
             entity.IsActive = !entity.IsActive;
             await _partyRepository.UpdateAsync(entity);

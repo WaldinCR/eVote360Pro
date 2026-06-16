@@ -1,0 +1,32 @@
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var currentArea = ViewContext.RouteData.Values["area"]?.ToString();
+}
+<nav class="sb">
+    <div class="sbbrand">
+        <p class="sbbname">eVote360 Pro</p>
+        <p class="sbbrole">Portal del dirigente</p>
+    </div>
+    <div class="sbnav">
+        <a href="@Url.Action("Index", "Home", new { area = "Leader" })" 
+           class="sbi @(currentController == "Home" && currentArea == "Leader" ? "active" : "")">
+            <i class="ti ti-home"></i> Home
+        </a>
+        <a href="@Url.Action("Index", "Candidate", new { area = "Leader" })" 
+           class="sbi @(currentController == "Candidate" ? "active" : "")">
+            <i class="ti ti-users"></i> Candidatos
+        </a>
+        <a href="@Url.Action("Index", "CandidatePosition", new { area = "Leader" })" 
+           class="sbi @(currentController == "CandidatePosition" ? "active" : "")">
+            <i class="ti ti-link"></i> Asignar candidato
+        </a>
+        <a href="@Url.Action("Index", "Alliance", new { area = "Leader" })" 
+           class="sbi @(currentController == "Alliance" ? "active" : "")">
+            <i class="ti ti-handshake"></i> Alianzas políticas
+        </a>
+    </div>
+    <a href="@Url.Action("Logout", "Login", new { area = "" })" class="sbfoot" style="text-decoration: none;">
+        <i class="ti ti-logout"></i> Cerrar sesión
+    </a>
+</nav>

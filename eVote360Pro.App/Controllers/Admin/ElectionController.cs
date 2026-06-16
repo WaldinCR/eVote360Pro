@@ -11,15 +11,21 @@ namespace eVote360Pro.App.Controllers.Admin
     {
         private readonly IElectionService _electionService;
         private readonly IMapper _mapper;
+        private readonly IUserSession _userSession;
 
-        public ElectionController(IElectionService electionService, IMapper mapper)
+        public ElectionController(IElectionService electionService, IMapper mapper, IUserSession userSession)
         {
             _electionService = electionService;
             _mapper = mapper;
+            _userSession = userSession;
         }
 
         public async Task<IActionResult> Index()
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
             var dtos = await _electionService.GetAllAsync();
             
             var list = _mapper.Map<List<ElectionViewModel>>(dtos);
@@ -35,6 +41,12 @@ namespace eVote360Pro.App.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> Create(SaveElectionViewModel vm)
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
+
             if (!ModelState.IsValid) return View("Save", vm);
 
             var error = await _electionService.AddAsync(vm);
@@ -51,6 +63,12 @@ namespace eVote360Pro.App.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> Activate(int id)
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
+
             var error = await _electionService.ActivateElectionAsync(id);
             if (!string.IsNullOrEmpty(error))
             {
@@ -66,6 +84,12 @@ namespace eVote360Pro.App.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> Finish(int id)
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
+
             var error = await _electionService.FinishElectionAsync(id);
             if (!string.IsNullOrEmpty(error))
             {
@@ -80,6 +104,12 @@ namespace eVote360Pro.App.Controllers.Admin
 
         public async Task<IActionResult> Results(int id)
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
+                
             var results = await _electionService.GetResultsAsync(id);
             if (results == null)
             {

@@ -15,17 +15,20 @@ namespace eVote360Pro.App.Controllers.Leader
         private readonly ICandidateService _candidateService;
         private readonly IElectivePositionService _positionService;
         private readonly IAllianceService _allianceService;
+        private readonly IUserSession _userSession;
 
         public CandidatePositionController(
             ICandidatePositionService candidatePositionService,
             ICandidateService candidateService,
             IElectivePositionService positionService,
-            IAllianceService allianceService)
+            IAllianceService allianceService,
+            IUserSession userSession)
         {
             _candidatePositionService = candidatePositionService;
             _candidateService = candidateService;
             _positionService = positionService;
             _allianceService = allianceService;
+            _userSession = userSession;
         }
 
         private bool IsLeader() =>
@@ -42,6 +45,12 @@ namespace eVote360Pro.App.Controllers.Leader
 
         public async Task<IActionResult> Index()
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsDirigente())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
+
             if (!IsLeader()) return AccessDenied();
 
             int partyId = GetPartyId();
@@ -68,6 +77,12 @@ namespace eVote360Pro.App.Controllers.Leader
         [HttpGet]
         public async Task<IActionResult> Create()
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsDirigente())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
+
             if (!IsLeader()) return AccessDenied();
 
             int partyId = GetPartyId();
@@ -80,6 +95,12 @@ namespace eVote360Pro.App.Controllers.Leader
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SaveCandidatePositionViewModel vm)
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsDirigente())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
+
             if (!IsLeader()) return AccessDenied();
 
             int partyId = GetPartyId();
@@ -107,6 +128,11 @@ namespace eVote360Pro.App.Controllers.Leader
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsDirigente())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
             if (!IsLeader()) return AccessDenied();
 
             var error = await _candidatePositionService.DeleteAsync(id);

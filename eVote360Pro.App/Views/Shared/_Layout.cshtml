@@ -1,130 +1,94 @@
+@using Microsoft.AspNetCore.Http
+@{
+    var userRole = Context.Session.GetString("UserRole");
+    var userName = Context.Session.GetString("UserName") ?? "Usuario";
+    var initials = "";
+    if (!string.IsNullOrWhiteSpace(userName))
+    {
+        var parts = userName.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length >= 2)
+            initials = (parts[0][0].ToString() + parts[1][0].ToString()).ToUpper();
+        else if (parts.Length == 1)
+            initials = parts[0][0].ToString().ToUpper();
+    }
+    else
+    {
+        initials = "U";
+    }
+}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - eVote360 Pro</title>
+    
+    <!-- Fuente Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    
+    <!-- Estilos de eVote360 Pro -->
+    <link rel="stylesheet" href="~/css/evote-variables.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/evote-icons.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/evote-layout.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/eVote360Pro.App.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
-<body class="bg-light">
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                @if (Context.Session.GetString("UserRole") == "Administrador")
-                {
-                    <a class="navbar-brand fw-bold text-primary" asp-area="Admin" asp-controller="Home" asp-action="Index">
-                        <i class="bi bi-shield-check"></i> eVote360 Pro
-                    </a>
-                }
-                else if (Context.Session.GetString("UserRole") == "DirigentePolitico")
-                {
-                    <a class="navbar-brand fw-bold text-primary" asp-area="Leader" asp-controller="Home" asp-action="Index">
-                        <i class="bi bi-shield-check"></i> eVote360 Pro
-                    </a>
-                }
-                else
-                {
-                    <a class="navbar-brand fw-bold text-primary" asp-area="" asp-controller="Home" asp-action="Index">
-                        <i class="bi bi-shield-check"></i> eVote360 Pro
-                    </a>
-                }
-                <button class="navbar-brand navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-expand navbar-nav flex-grow-1">
-                        @{
-                            var userRole = Context.Session.GetString("UserRole") ?? "Administrador"; 
-                        }
+<body style="font-family: var(--font); background: #F8FAFC; color: var(--gy900); min-height: 100vh; margin: 0; padding: 0;">
 
-                        <li class="nav-item">
-                            @if (userRole == "Administrador")
-                            {
-                                <a class="nav-link text-white" asp-area="Admin" asp-controller="Home" asp-action="Index">Inicio</a>
-                            }
-                            else if (userRole == "DirigentePolitico")
-                            {
-                                <a class="nav-link text-white" asp-area="Leader" asp-controller="Home" asp-action="Index">Inicio</a>
-                            }
-                            else
-                            {
-                                <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
-                            }
-                        </li>
-
-                        @if (userRole == "Administrador")
-                        {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white fw-semibold" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-gear-fill me-1"></i> Administración
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="adminDropdown">
-                                    <li><h6 class="dropdown-header text-primary">Configuración Electoral</h6></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="ElectivePosition" asp-action="Index"><i class="bi bi-list-task me-2"></i>Puestos Electivos</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Citizen" asp-action="Index"><i class="bi bi-people-fill me-2"></i>Ciudadanos</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Election" asp-action="Index"><i class="bi bi-trophy-fill me-2"></i>Gestión de Elecciones</a></li>
-                                    
-                                    <li><hr class="dropdown-divider"></li>
-                                    
-                                    <li><h6 class="dropdown-header text-muted">Gestión de Partidos e Identidad</h6></li>
-                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="PoliticalParty" asp-action="Index"><i class="bi bi-flag-fill me-2"></i>Partidos Políticos</a></li>
-                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="Index"><i class="bi bi-person-badge-fill me-2"></i>Usuarios</a></li>
-                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="PoliticalLeaderAssignment" asp-action="Index"><i class="bi bi-person-lines-fill me-2"></i>Dirigentes Políticos</a></li>
-                                </ul>
-                            </li>
-                        }
-                        else if (userRole == "DirigentePolitico")
-                        {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white fw-semibold" href="#" id="leaderDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-flag-fill me-1"></i> Operaciones Partido
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="leaderDropdown">
-                                    <li><h6 class="dropdown-header text-primary">Postulaciones</h6></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="CandidatePosition" asp-action="Index"><i class="bi bi-person-check-fill me-2"></i>Asignar Candidato a Puesto</a></li>
-                                    
-                                    <li><hr class="dropdown-divider"></li>
-                                    
-                                    <li><h6 class="dropdown-header text-muted">Gestión del Partido</h6></li>
-                                    <li><a class="dropdown-item" asp-area="Leader" asp-controller="Candidate" asp-action="Index"><i class="bi bi-person-fill me-2"></i>Mantenimiento de Candidatos</a></li>
-                                    <li><a class="dropdown-item" asp-area="Leader" asp-controller="Alliance" asp-action="Index"><i class="bi bi-diagram-3-fill me-2"></i>Alianzas Políticas</a></li>
-                                </ul>
-                            </li>
-                        }
-                    </ul>
-                    
-                    <div class="d-flex align-items-center">
-                        <span class="navbar-text text-white-50 me-3">
-                            <i class="bi bi-person-circle text-white me-1"></i> @(Context.Session.GetString("UserName") ?? "Usuario") (@(userRole == "Administrador" ? "Admin" : "Dirigente"))
-                        </span>
-                        <a class="btn btn-outline-danger btn-sm" asp-area="" asp-controller="Login" asp-action="Logout"><i class="bi bi-box-arrow-right"></i> Salir</a>
+    @if (!string.IsNullOrEmpty(userRole))
+    {
+        <!-- Panel con Sidebar Fijo de Dos Columnas -->
+        <div class="ash" style="border: none; border-radius: 0; box-shadow: none; min-height: 100vh; display: flex; align-items: stretch;">
+            
+            @if (userRole == "Administrador")
+            {
+                @await Html.PartialAsync("_SidebarAdmin")
+            }
+            else if (userRole == "DirigentePolitico")
+            {
+                @await Html.PartialAsync("_SidebarDirigente")
+            }
+            
+            <!-- Contenido Principal -->
+            <main class="am" style="flex: 1; padding: 1.5rem; display: flex; flex-direction: column; overflow-y: auto; background: #F8FAFC;">
+                <!-- Barra Superior -->
+                <div class="atop" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid #E2E8F0; flex-shrink: 0;">
+                    <p class="aptitle" style="margin: 0; font-size: 16px; font-weight: 700; color: var(--b800);">
+                        <i class="ti ti-shield-check"></i> eVote360 Pro
+                    </p>
+                    <div class="auser" style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gy600); font-weight: 500;">
+                        <div class="aavat" style="width: 30px; height: 30px; border-radius: 50%; background: var(--b50); color: var(--b800); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;">
+                            @initials
+                        </div>
+                        <span>@userName (@(userRole == "Administrador" ? "Admin" : "Dirigente"))</span>
                     </div>
                 </div>
-            </div>
-        </nav>
-    </header>
-    
-    <div class="container">
-        <main role="main" class="pb-3">
-            <partial name="_Notification" />
-            
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted bg-white position-fixed bottom-0 start-0 w-100 py-2 shadow-sm">
-        <div class="container text-center text-sm-start">
-            &copy; 2026 - eVote360 Pro - <span class="text-dark fw-medium">Panel de Aliandy</span>
+                <div style="flex: 1;">
+                    <partial name="_Notification" />
+                    @RenderBody()
+                </div>
+            </main>
         </div>
-    </footer>
+    }
+    else
+    {
+        <!-- Vista Simple para Páginas Públicas / No Autenticadas -->
+        <div class="container py-4">
+            <main role="main" class="pb-3">
+                <partial name="_Notification" />
+                @RenderBody()
+            </main>
+        </div>
+    }
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/evote-ui.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

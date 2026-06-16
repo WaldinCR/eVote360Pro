@@ -1,0 +1,5 @@
+@inject eVote360Pro.Core.Application.Interfaces.IElectionService ElectionService
+@{
+    var elections = await ElectionService.GetAllAsync();
+    var activeElection = elections.FirstOrDefault(e => e.Status == eVote360Pro.Core.Domain.Common.Enums.ElectionStatus.Active);
+}

@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eVote360 Pro — Wireframes UI/UX Completos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── INLINE SVG ICONS (no CDN needed) ── */
+[class^="ti "], [class*=" ti "] {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1em;
+  font-size: inherit;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  mask-position: center;
+  font-style: normal;
+  line-height: 1;
+}
+.ti-alert-circle { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Cline%20x1%3D%2212%22%20y1%3D%228%22%20x2%3D%2212%22%20y2%3D%2212%22%2F%3E%3Cpoint%20x1%3D%2212%22%20y1%3D%2216%22%20x2%3D%2212.01%22%20y2%3D%2216%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Cline%20x1%3D%2212%22%20y1%3D%228%22%20x2%3D%2212%22%20y2%3D%2212%22%2F%3E%3Cpoint%20x1%3D%2212%22%20y1%3D%2216%22%20x2%3D%2212.01%22%20y2%3D%2216%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-alert-triangle { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%209v4%22%2F%3E%3Cpath%20d%3D%22M10.363%203.591l-8.106%2013.534a1.914%201.914%200%200%200%201.636%202.871h16.214a1.914%201.914%200%200%200%201.636%20-2.87l-8.106%20-13.536a1.914%201.914%200%200%200%20-3.274%200z%22%2F%3E%3Cpath%20d%3D%22M12%2016h.01%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%209v4%22%2F%3E%3Cpath%20d%3D%22M10.363%203.591l-8.106%2013.534a1.914%201.914%200%200%200%201.636%202.871h16.214a1.914%201.914%200%200%200%201.636%20-2.87l-8.106%20-13.536a1.914%201.914%200%200%200%20-3.274%200z%22%2F%3E%3Cpath%20d%3D%22M12%2016h.01%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-arrow-left { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5%2012l14%200%22%2F%3E%3Cpath%20d%3D%22M5%2012l6%206%22%2F%3E%3Cpath%20d%3D%22M5%2012l6%20-6%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5%2012l14%200%22%2F%3E%3Cpath%20d%3D%22M5%2012l6%206%22%2F%3E%3Cpath%20d%3D%22M5%2012l6%20-6%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-arrow-right { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5%2012l14%200%22%2F%3E%3Cpath%20d%3D%22M15%2012l-6%206%22%2F%3E%3Cpath%20d%3D%22M15%2012l-6%20-6%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5%2012l14%200%22%2F%3E%3Cpath%20d%3D%22M15%2012l-6%206%22%2F%3E%3Cpath%20d%3D%22M15%2012l-6%20-6%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-arrows-right { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%2012l16%200%22%2F%3E%3Cpath%20d%3D%22M15%2016l4%20-4l-4%20-4%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%2012l16%200%22%2F%3E%3Cpath%20d%3D%22M15%2016l4%20-4l-4%20-4%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-ban { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Cline%20x1%3D%225.7%22%20y1%3D%225.7%22%20x2%3D%2218.3%22%20y2%3D%2218.3%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Cline%20x1%3D%225.7%22%20y1%3D%225.7%22%20x2%3D%2218.3%22%20y2%3D%2218.3%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-bell { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M10%205a2%202%200%201%201%204%200a7%207%200%200%201%204%206v3a4%204%200%200%200%202%203h-16a4%204%200%200%200%202%20-3v-3a7%207%200%200%201%204%20-6%22%2F%3E%3Cpath%20d%3D%22M9%2017v1a3%203%200%200%200%206%200v-1%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M10%205a2%202%200%201%201%204%200a7%207%200%200%201%204%206v3a4%204%200%200%200%202%203h-16a4%204%200%200%200%202%20-3v-3a7%207%200%200%201%204%20-6%22%2F%3E%3Cpath%20d%3D%22M9%2017v1a3%203%200%200%200%206%200v-1%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-briefcase { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M3%209a2%202%200%200%201%202%20-2h14a2%202%200%200%201%202%202v9a2%202%200%200%201%20-2%202h-14a2%202%200%200%201%20-2%20-2v-9z%22%2F%3E%3Cpath%20d%3D%22M8%207v-2a2%202%200%200%201%202%20-2h4a2%202%200%200%201%202%202v2%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M3%209a2%202%200%200%201%202%20-2h14a2%202%200%200%201%202%202v9a2%202%200%200%201%20-2%202h-14a2%202%200%200%201%20-2%20-2v-9z%22%2F%3E%3Cpath%20d%3D%22M8%207v-2a2%202%200%200%201%202%20-2h4a2%202%200%200%201%202%202v2%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-calendar { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%224%22%20y%3D%225%22%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%222%22%2F%3E%3Cline%20x1%3D%2216%22%20y1%3D%223%22%20x2%3D%2216%22%20y2%3D%227%22%2F%3E%3Cline%20x1%3D%228%22%20y1%3D%223%22%20x2%3D%228%22%20y2%3D%227%22%2F%3E%3Cline%20x1%3D%224%22%20y1%3D%2211%22%20x2%3D%2220%22%20y2%3D%2211%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%224%22%20y%3D%225%22%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%222%22%2F%3E%3Cline%20x1%3D%2216%22%20y1%3D%223%22%20x2%3D%2216%22%20y2%3D%227%22%2F%3E%3Cline%20x1%3D%228%22%20y1%3D%223%22%20x2%3D%228%22%20y2%3D%227%22%2F%3E%3Cline%20x1%3D%224%22%20y1%3D%2211%22%20x2%3D%2220%22%20y2%3D%2211%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-calendar-event { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%224%22%20y%3D%225%22%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%222%22%2F%3E%3Cline%20x1%3D%2216%22%20y1%3D%223%22%20x2%3D%2216%22%20y2%3D%227%22%2F%3E%3Cline%20x1%3D%228%22%20y1%3D%223%22%20x2%3D%228%22%20y2%3D%227%22%2F%3E%3Cline%20x1%3D%224%22%20y1%3D%2211%22%20x2%3D%2220%22%20y2%3D%2211%22%2F%3E%3Crect%20x%3D%228%22%20y%3D%2215%22%20width%3D%222%22%20height%3D%222%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%224%22%20y%3D%225%22%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%222%22%2F%3E%3Cline%20x1%3D%2216%22%20y1%3D%223%22%20x2%3D%2216%22%20y2%3D%227%22%2F%3E%3Cline%20x1%3D%228%22%20y1%3D%223%22%20x2%3D%228%22%20y2%3D%227%22%2F%3E%3Cline%20x1%3D%224%22%20y1%3D%2211%22%20x2%3D%2220%22%20y2%3D%2211%22%2F%3E%3Crect%20x%3D%228%22%20y%3D%2215%22%20width%3D%222%22%20height%3D%222%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-chart-bar { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%223%22%20y%3D%2212%22%20width%3D%224%22%20height%3D%228%22%20rx%3D%221%22%2F%3E%3Crect%20x%3D%229%22%20y%3D%228%22%20width%3D%224%22%20height%3D%2212%22%20rx%3D%221%22%2F%3E%3Crect%20x%3D%2215%22%20y%3D%224%22%20width%3D%224%22%20height%3D%2216%22%20rx%3D%221%22%2F%3E%3Cline%20x1%3D%223%22%20y1%3D%2220%22%20x2%3D%2221%22%20y2%3D%2220%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%223%22%20y%3D%2212%22%20width%3D%224%22%20height%3D%228%22%20rx%3D%221%22%2F%3E%3Crect%20x%3D%229%22%20y%3D%228%22%20width%3D%224%22%20height%3D%2212%22%20rx%3D%221%22%2F%3E%3Crect%20x%3D%2215%22%20y%3D%224%22%20width%3D%224%22%20height%3D%2216%22%20rx%3D%221%22%2F%3E%3Cline%20x1%3D%223%22%20y1%3D%2220%22%20x2%3D%2221%22%20y2%3D%2220%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-check { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5%2012l5%205l10%20-10%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5%2012l5%205l10%20-10%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-circle { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-circle-check { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Cpath%20d%3D%22M9%2012l2%202l4%20-4%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Cpath%20d%3D%22M9%2012l2%202l4%20-4%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-clipboard-check { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M9%205h-2a2%202%200%200%200%20-2%202v12a2%202%200%200%200%202%202h10a2%202%200%200%200%202%20-2v-12a2%202%200%200%200%20-2%20-2h-2%22%2F%3E%3Cpath%20d%3D%22M9%203m0%202a2%202%200%200%201%202%20-2h2a2%202%200%200%201%202%202v0a2%202%200%200%201%20-2%202h-2a2%202%200%200%201%20-2%20-2z%22%2F%3E%3Cpath%20d%3D%22M9%2014l2%202l4%20-4%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M9%205h-2a2%202%200%200%200%20-2%202v12a2%202%200%200%200%202%202h10a2%202%200%200%200%202%20-2v-12a2%202%200%200%200%20-2%20-2h-2%22%2F%3E%3Cpath%20d%3D%22M9%203m0%202a2%202%200%200%201%202%20-2h2a2%202%200%200%201%202%202v0a2%202%200%200%201%20-2%202h-2a2%202%200%200%201%20-2%20-2z%22%2F%3E%3Cpath%20d%3D%22M9%2014l2%202l4%20-4%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-clipboard-list { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M9%205h-2a2%202%200%200%200%20-2%202v12a2%202%200%200%200%202%202h10a2%202%200%200%200%202%20-2v-12a2%202%200%200%200%20-2%20-2h-2%22%2F%3E%3Cpath%20d%3D%22M9%203m0%202a2%202%200%200%201%202%20-2h2a2%202%200%200%201%202%202v0a2%202%200%200%201%20-2%202h-2a2%202%200%200%201%20-2%20-2z%22%2F%3E%3Cline%20x1%3D%229%22%20y1%3D%2212%22%20x2%3D%229.01%22%20y2%3D%2212%22%2F%3E%3Cline%20x1%3D%2213%22%20y1%3D%2212%22%20x2%3D%2215%22%20y2%3D%2212%22%2F%3E%3Cline%20x1%3D%229%22%20y1%3D%2216%22%20x2%3D%229.01%22%20y2%3D%2216%22%2F%3E%3Cline%20x1%3D%2213%22%20y1%3D%2216%22%20x2%3D%2215%22%20y2%3D%2216%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M9%205h-2a2%202%200%200%200%20-2%202v12a2%202%200%200%200%202%202h10a2%202%200%200%200%202%20-2v-12a2%202%200%200%200%20-2%20-2h-2%22%2F%3E%3Cpath%20d%3D%22M9%203m0%202a2%202%200%200%201%202%20-2h2a2%202%200%200%201%202%202v0a2%202%200%200%201%20-2%202h-2a2%202%200%200%201%20-2%20-2z%22%2F%3E%3Cline%20x1%3D%229%22%20y1%3D%2212%22%20x2%3D%229.01%22%20y2%3D%2212%22%2F%3E%3Cline%20x1%3D%2213%22%20y1%3D%2212%22%20x2%3D%2215%22%20y2%3D%2212%22%2F%3E%3Cline%20x1%3D%229%22%20y1%3D%2216%22%20x2%3D%229.01%22%20y2%3D%2216%22%2F%3E%3Cline%20x1%3D%2213%22%20y1%3D%2216%22%20x2%3D%2215%22%20y2%3D%2216%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-clock { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Cpolyline%20points%3D%2212%207%2012%2012%2015%2015%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Cpolyline%20points%3D%2212%207%2012%2012%2015%2015%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-device-floppy { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M6%204h10l4%204v10a2%202%200%200%201%20-2%202h-12a2%202%200%200%201%20-2%20-2v-12a2%202%200%200%201%202%20-2%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2214%22%20r%3D%222%22%2F%3E%3Cpolyline%20points%3D%2214%204%2014%208%208%208%208%204%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M6%204h10l4%204v10a2%202%200%200%201%20-2%202h-12a2%202%200%200%201%20-2%20-2v-12a2%202%200%200%201%202%20-2%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2214%22%20r%3D%222%22%2F%3E%3Cpolyline%20points%3D%2214%204%2014%208%208%208%208%204%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-edit { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M7%207h-1a2%202%200%200%200%20-2%202v9a2%202%200%200%200%202%202h9a2%202%200%200%200%202%20-2v-1%22%2F%3E%3Cpath%20d%3D%22M20.385%206.585a2.1%202.1%200%200%200%20-2.97%20-2.97l-8.415%208.385v3h3l8.385%20-8.415z%22%2F%3E%3Cpath%20d%3D%22M16%205l3%203%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M7%207h-1a2%202%200%200%200%20-2%202v9a2%202%200%200%200%202%202h9a2%202%200%200%200%202%20-2v-1%22%2F%3E%3Cpath%20d%3D%22M20.385%206.585a2.1%202.1%200%200%200%20-2.97%20-2.97l-8.415%208.385v3h3l8.385%20-8.415z%22%2F%3E%3Cpath%20d%3D%22M16%205l3%203%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-equal { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cline%20x1%3D%225%22%20y1%3D%2210%22%20x2%3D%2219%22%20y2%3D%2210%22%2F%3E%3Cline%20x1%3D%225%22%20y1%3D%2214%22%20x2%3D%2219%22%20y2%3D%2214%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cline%20x1%3D%225%22%20y1%3D%2210%22%20x2%3D%2219%22%20y2%3D%2210%22%2F%3E%3Cline%20x1%3D%225%22%20y1%3D%2214%22%20x2%3D%2219%22%20y2%3D%2214%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-flag { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5%205a5%205%200%200%201%207%200a5%205%200%200%200%207%200v9a5%205%200%200%201%20-7%200a5%205%200%200%200%20-7%200v-9z%22%2F%3E%3Cline%20x1%3D%225%22%20y1%3D%2221%22%20x2%3D%225%22%20y2%3D%2214%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5%205a5%205%200%200%201%207%200a5%205%200%200%200%207%200v9a5%205%200%200%201%20-7%200a5%205%200%200%200%20-7%200v-9z%22%2F%3E%3Cline%20x1%3D%225%22%20y1%3D%2221%22%20x2%3D%225%22%20y2%3D%2214%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-handshake { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M19.5%2012.572l-7.5%207.428l-7.5%20-7.428a5%205%200%201%201%207.5%20-6.566a5%205%200%201%201%207.5%206.572%22%2F%3E%3Cpath%20d%3D%22M12%206l-3.293%203.293a1%201%200%200%200%200%201.414l.543%20.543c.69%20.69%201.81%20.69%202.5%200l1%20-1a3.182%203.182%200%200%201%204.5%200l2.25%202.25%22%2F%3E%3Cpath%20d%3D%22M12.5%2015.5l2%202%22%2F%3E%3Cpath%20d%3D%22M15%2013l2%202%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M19.5%2012.572l-7.5%207.428l-7.5%20-7.428a5%205%200%201%201%207.5%20-6.566a5%205%200%201%201%207.5%206.572%22%2F%3E%3Cpath%20d%3D%22M12%206l-3.293%203.293a1%201%200%200%200%200%201.414l.543%20.543c.69%20.69%201.81%20.69%202.5%200l1%20-1a3.182%203.182%200%200%201%204.5%200l2.25%202.25%22%2F%3E%3Cpath%20d%3D%22M12.5%2015.5l2%202%22%2F%3E%3Cpath%20d%3D%22M15%2013l2%202%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-home { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5%2012l-2%200l9%20-9l9%209l-2%200%22%2F%3E%3Cpath%20d%3D%22M5%2012v7a2%202%200%200%200%202%202h10a2%202%200%200%200%202%20-2v-7%22%2F%3E%3Cpath%20d%3D%22M9%2021v-6a2%202%200%200%201%202%20-2h2a2%202%200%200%201%202%202v6%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5%2012l-2%200l9%20-9l9%209l-2%200%22%2F%3E%3Cpath%20d%3D%22M5%2012v7a2%202%200%200%200%202%202h10a2%202%200%200%200%202%20-2v-7%22%2F%3E%3Cpath%20d%3D%22M9%2021v-6a2%202%200%200%201%202%20-2h2a2%202%200%200%201%202%202v6%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-id { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%223%22%20y%3D%224%22%20width%3D%2218%22%20height%3D%2216%22%20rx%3D%223%22%2F%3E%3Ccircle%20cx%3D%229%22%20cy%3D%2210%22%20r%3D%222%22%2F%3E%3Cline%20x1%3D%2215%22%20y1%3D%228%22%20x2%3D%2217%22%20y2%3D%228%22%2F%3E%3Cline%20x1%3D%2215%22%20y1%3D%2212%22%20x2%3D%2217%22%20y2%3D%2212%22%2F%3E%3Cline%20x1%3D%227%22%20y1%3D%2216%22%20x2%3D%2217%22%20y2%3D%2216%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%223%22%20y%3D%224%22%20width%3D%2218%22%20height%3D%2216%22%20rx%3D%223%22%2F%3E%3Ccircle%20cx%3D%229%22%20cy%3D%2210%22%20r%3D%222%22%2F%3E%3Cline%20x1%3D%2215%22%20y1%3D%228%22%20x2%3D%2217%22%20y2%3D%228%22%2F%3E%3Cline%20x1%3D%2215%22%20y1%3D%2212%22%20x2%3D%2217%22%20y2%3D%2212%22%2F%3E%3Cline%20x1%3D%227%22%20y1%3D%2216%22%20x2%3D%2217%22%20y2%3D%2216%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-info-circle { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Cline%20x1%3D%2212%22%20y1%3D%228%22%20x2%3D%2212.01%22%20y2%3D%228%22%2F%3E%3Cpolyline%20points%3D%2211%2012%2012%2012%2012%2016%2013%2016%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Cline%20x1%3D%2212%22%20y1%3D%228%22%20x2%3D%2212.01%22%20y2%3D%228%22%2F%3E%3Cpolyline%20points%3D%2211%2012%2012%2012%2012%2016%2013%2016%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-link { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M10%2014a3.5%203.5%200%200%200%205%200l4%20-4a3.5%203.5%200%200%200%20-5%20-5l-1.5%201.5%22%2F%3E%3Cpath%20d%3D%22M14%2010a3.5%203.5%200%200%200%20-5%200l-4%204a3.5%203.5%200%200%200%205%205l1.5%20-1.5%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M10%2014a3.5%203.5%200%200%200%205%200l4%20-4a3.5%203.5%200%200%200%20-5%20-5l-1.5%201.5%22%2F%3E%3Cpath%20d%3D%22M14%2010a3.5%203.5%200%200%200%20-5%200l-4%204a3.5%203.5%200%200%200%205%205l1.5%20-1.5%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-lock { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%225%22%20y%3D%2211%22%20width%3D%2214%22%20height%3D%2210%22%20rx%3D%222%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2216%22%20r%3D%221%22%2F%3E%3Cpath%20d%3D%22M8%2011v-4a4%204%200%200%201%208%200v4%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%225%22%20y%3D%2211%22%20width%3D%2214%22%20height%3D%2210%22%20rx%3D%222%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2216%22%20r%3D%221%22%2F%3E%3Cpath%20d%3D%22M8%2011v-4a4%204%200%200%201%208%200v4%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-login { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M14%208v-2a2%202%200%200%200%20-2%20-2h-7a2%202%200%200%200%20-2%202v12a2%202%200%200%200%202%202h7a2%202%200%200%200%202%20-2v-2%22%2F%3E%3Cpath%20d%3D%22M20%2012h-13l3%20-3m0%206l-3%20-3%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M14%208v-2a2%202%200%200%200%20-2%20-2h-7a2%202%200%200%200%20-2%202v12a2%202%200%200%200%202%202h7a2%202%200%200%200%202%20-2v-2%22%2F%3E%3Cpath%20d%3D%22M20%2012h-13l3%20-3m0%206l-3%20-3%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-logout { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M14%208v-2a2%202%200%200%200%20-2%20-2h-7a2%202%200%200%200%20-2%202v12a2%202%200%200%200%202%202h7a2%202%200%200%200%202%20-2v-2%22%2F%3E%3Cpath%20d%3D%22M9%2012h13l-3%20-3m0%206l3%20-3%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M14%208v-2a2%202%200%200%200%20-2%20-2h-7a2%202%200%200%200%20-2%202v12a2%202%200%200%200%202%202h7a2%202%200%200%200%202%20-2v-2%22%2F%3E%3Cpath%20d%3D%22M9%2012h13l-3%20-3m0%206l3%20-3%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-mail { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%223%22%20y%3D%225%22%20width%3D%2218%22%20height%3D%2214%22%20rx%3D%222%22%2F%3E%3Cpolyline%20points%3D%223%207%2012%2013%2021%207%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%223%22%20y%3D%225%22%20width%3D%2218%22%20height%3D%2214%22%20rx%3D%222%22%2F%3E%3Cpolyline%20points%3D%223%207%2012%2013%2021%207%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-mail-check { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M11%2019h-6a2%202%200%200%201%20-2%20-2v-10a2%202%200%200%201%202%20-2h14a2%202%200%200%201%202%202v6%22%2F%3E%3Cpolyline%20points%3D%223%207%2012%2013%2021%207%22%2F%3E%3Cpath%20d%3D%22M15%2019l2%202l4%20-4%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M11%2019h-6a2%202%200%200%201%20-2%20-2v-10a2%202%200%200%201%202%20-2h14a2%202%200%200%201%202%202v6%22%2F%3E%3Cpolyline%20points%3D%223%207%2012%2013%2021%207%22%2F%3E%3Cpath%20d%3D%22M15%2019l2%202l4%20-4%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-photo { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cline%20x1%3D%2215%22%20y1%3D%228%22%20x2%3D%2215.01%22%20y2%3D%228%22%2F%3E%3Crect%20x%3D%224%22%20y%3D%224%22%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%223%22%2F%3E%3Cpath%20d%3D%22M4%2015l4%20-4a3%205%200%200%201%203%200l5%205%22%2F%3E%3Cpath%20d%3D%22M14%2014l1%20-1a3%205%200%200%201%203%200l2%202%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cline%20x1%3D%2215%22%20y1%3D%228%22%20x2%3D%2215.01%22%20y2%3D%228%22%2F%3E%3Crect%20x%3D%224%22%20y%3D%224%22%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%223%22%2F%3E%3Cpath%20d%3D%22M4%2015l4%20-4a3%205%200%200%201%203%200l5%205%22%2F%3E%3Cpath%20d%3D%22M14%2014l1%20-1a3%205%200%200%201%203%200l2%202%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-player-play { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M7%204v16l13%20-8z%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M7%204v16l13%20-8z%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-plus { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cline%20x1%3D%2212%22%20y1%3D%225%22%20x2%3D%2212%22%20y2%3D%2219%22%2F%3E%3Cline%20x1%3D%225%22%20y1%3D%2212%22%20x2%3D%2219%22%20y2%3D%2212%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cline%20x1%3D%2212%22%20y1%3D%225%22%20x2%3D%2212%22%20y2%3D%2219%22%2F%3E%3Cline%20x1%3D%225%22%20y1%3D%2212%22%20x2%3D%2219%22%20y2%3D%2212%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-progress { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M10%2020.777a8.942%208.942%200%200%201%20-2.48%20-.969%22%2F%3E%3Cpath%20d%3D%22M14%203.223a9.003%209.003%200%200%201%200%2017.554%22%2F%3E%3Cpath%20d%3D%22M4.579%2017.093a8.961%208.961%200%200%201%20-1.227%20-2.592%22%2F%3E%3Cpath%20d%3D%22M3.124%2010.5c.16%20-.95%20.468%20-1.85%20.9%20-2.675l.169%20-.305%22%2F%3E%3Cpath%20d%3D%22M6.907%204.579a8.954%208.954%200%200%201%203.093%20-1.356%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M10%2020.777a8.942%208.942%200%200%201%20-2.48%20-.969%22%2F%3E%3Cpath%20d%3D%22M14%203.223a9.003%209.003%200%200%201%200%2017.554%22%2F%3E%3Cpath%20d%3D%22M4.579%2017.093a8.961%208.961%200%200%201%20-1.227%20-2.592%22%2F%3E%3Cpath%20d%3D%22M3.124%2010.5c.16%20-.95%20.468%20-1.85%20.9%20-2.675l.169%20-.305%22%2F%3E%3Cpath%20d%3D%22M6.907%204.579a8.954%208.954%200%200%201%203.093%20-1.356%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-scan { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%207v-1a2%202%200%200%201%202%20-2h2%22%2F%3E%3Cpath%20d%3D%22M4%2017v1a2%202%200%200%200%202%202h2%22%2F%3E%3Cpath%20d%3D%22M16%204h2a2%202%200%200%201%202%202v1%22%2F%3E%3Cpath%20d%3D%22M16%2020h2a2%202%200%200%200%202%20-2v-1%22%2F%3E%3Cline%20x1%3D%225%22%20y1%3D%2212%22%20x2%3D%2219%22%20y2%3D%2212%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%207v-1a2%202%200%200%201%202%20-2h2%22%2F%3E%3Cpath%20d%3D%22M4%2017v1a2%202%200%200%200%202%202h2%22%2F%3E%3Cpath%20d%3D%22M16%204h2a2%202%200%200%201%202%202v1%22%2F%3E%3Cpath%20d%3D%22M16%2020h2a2%202%200%200%200%202%20-2v-1%22%2F%3E%3Cline%20x1%3D%225%22%20y1%3D%2212%22%20x2%3D%2219%22%20y2%3D%2212%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-search { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2210%22%20cy%3D%2210%22%20r%3D%227%22%2F%3E%3Cline%20x1%3D%2221%22%20y1%3D%2221%22%20x2%3D%2215%22%20y2%3D%2215%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2210%22%20cy%3D%2210%22%20r%3D%227%22%2F%3E%3Cline%20x1%3D%2221%22%20y1%3D%2221%22%20x2%3D%2215%22%20y2%3D%2215%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-send { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cline%20x1%3D%2210%22%20y1%3D%2214%22%20x2%3D%2221%22%20y2%3D%223%22%2F%3E%3Cpath%20d%3D%22M21%203l-6.5%2018a0.55%20.55%200%200%201%20-1%200l-3.5%20-7l-7%20-3.5a0.55%20.55%200%200%201%200%20-1l18%20-6.5%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cline%20x1%3D%2210%22%20y1%3D%2214%22%20x2%3D%2221%22%20y2%3D%223%22%2F%3E%3Cpath%20d%3D%22M21%203l-6.5%2018a0.55%20.55%200%200%201%20-1%200l-3.5%20-7l-7%20-3.5a0.55%20.55%200%200%201%200%20-1l18%20-6.5%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-settings { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M10.325%204.317c.426%20-1.756%202.924%20-1.756%203.35%200a1.724%201.724%200%200%200%202.573%201.066c1.543%20-.94%203.31%20.826%202.37%202.37a1.724%201.724%200%200%200%201.065%202.572c1.756%20.426%201.756%202.924%200%203.35a1.724%201.724%200%200%200%20-1.066%202.573c.94%201.543%20-.826%203.31%20-2.37%202.37a1.724%201.724%200%200%200%20-2.572%201.065c-.426%201.756%20-2.924%201.756%20-3.35%200a1.724%201.724%200%200%200%20-2.573%20-1.066c-1.543%20.94%20-3.31%20-.826%20-2.37%20-2.37a1.724%201.724%200%200%200%20-1.065%20-2.572c-1.756%20-.426%20-1.756%20-2.924%200%20-3.35a1.724%201.724%200%200%200%201.066%20-2.573c-.94%20-1.543%20.826%20-3.31%202.37%20-2.37c1%20.608%202.296%20.07%202.572%20-1.065z%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%223%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M10.325%204.317c.426%20-1.756%202.924%20-1.756%203.35%200a1.724%201.724%200%200%200%202.573%201.066c1.543%20-.94%203.31%20.826%202.37%202.37a1.724%201.724%200%200%200%201.065%202.572c1.756%20.426%201.756%202.924%200%203.35a1.724%201.724%200%200%200%20-1.066%202.573c.94%201.543%20-.826%203.31%20-2.37%202.37a1.724%201.724%200%200%200%20-2.572%201.065c-.426%201.756%20-2.924%201.756%20-3.35%200a1.724%201.724%200%200%200%20-2.573%20-1.066c-1.543%20.94%20-3.31%20-.826%20-2.37%20-2.37a1.724%201.724%200%200%200%20-1.065%20-2.572c-1.756%20-.426%20-1.756%20-2.924%200%20-3.35a1.724%201.724%200%200%200%201.066%20-2.573c-.94%20-1.543%20.826%20-3.31%202.37%20-2.37c1%20.608%202.296%20.07%202.572%20-1.065z%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%223%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-shield { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%203a12%2012%200%200%200%208.5%203a12%2012%200%200%201%20-8.5%2015a12%2012%200%200%201%20-8.5%20-15a12%2012%200%200%200%208.5%20-3%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%203a12%2012%200%200%200%208.5%203a12%2012%200%200%201%20-8.5%2015a12%2012%200%200%201%20-8.5%20-15a12%2012%200%200%200%208.5%20-3%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-shield-check { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%203a12%2012%200%200%200%208.5%203a12%2012%200%200%201%20-8.5%2015a12%2012%200%200%201%20-8.5%20-15a12%2012%200%200%200%208.5%20-3%22%2F%3E%3Cpath%20d%3D%22M9%2012l2%202l4%20-4%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%203a12%2012%200%200%200%208.5%203a12%2012%200%200%201%20-8.5%2015a12%2012%200%200%201%20-8.5%20-15a12%2012%200%200%200%208.5%20-3%22%2F%3E%3Cpath%20d%3D%22M9%2012l2%202l4%20-4%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-shield-lock { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%203a12%2012%200%200%200%208.5%203a12%2012%200%200%201%20-8.5%2015a12%2012%200%200%201%20-8.5%20-15a12%2012%200%200%200%208.5%20-3%22%2F%3E%3Crect%20x%3D%2210%22%20y%3D%2211%22%20width%3D%224%22%20height%3D%224%22%20rx%3D%221%22%2F%3E%3Cpath%20d%3D%22M11%2011v-2a1%201%200%200%201%202%200v2%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%203a12%2012%200%200%200%208.5%203a12%2012%200%200%201%20-8.5%2015a12%2012%200%200%201%20-8.5%20-15a12%2012%200%200%200%208.5%20-3%22%2F%3E%3Crect%20x%3D%2210%22%20y%3D%2211%22%20width%3D%224%22%20height%3D%224%22%20rx%3D%221%22%2F%3E%3Cpath%20d%3D%22M11%2011v-2a1%201%200%200%201%202%200v2%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-shield-off { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cline%20x1%3D%223%22%20y1%3D%223%22%20x2%3D%2221%22%20y2%3D%2221%22%2F%3E%3Cpath%20d%3D%22M19.118%2019.118a12%2012%200%200%201%20-7.118%202.882a12%2012%200%200%201%20-8.5%20-15c.99%20.301%202.01%20.467%203.032%20.5%22%2F%3E%3Cpath%20d%3D%22M8.37%204.671a12%2012%200%200%200%203.63%20-1.671a12%2012%200%200%200%208.5%203a12%2012%200%200%201%20-.507%208.24%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cline%20x1%3D%223%22%20y1%3D%223%22%20x2%3D%2221%22%20y2%3D%2221%22%2F%3E%3Cpath%20d%3D%22M19.118%2019.118a12%2012%200%200%201%20-7.118%202.882a12%2012%200%200%201%20-8.5%20-15c.99%20.301%202.01%20.467%203.032%20.5%22%2F%3E%3Cpath%20d%3D%22M8.37%204.671a12%2012%200%200%200%203.63%20-1.671a12%2012%200%200%200%208.5%203a12%2012%200%200%201%20-.507%208.24%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-square { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%224%22%20y%3D%224%22%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%222%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%224%22%20y%3D%224%22%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%222%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-star { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%2017.75l-6.172%203.245l1.179%20-6.873l-5%20-4.867l6.9%20-1l3.086%20-6.253l3.086%206.253l6.9%201l-5%204.867l1.179%206.873z%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%2017.75l-6.172%203.245l1.179%20-6.873l-5%20-4.867l6.9%20-1l3.086%20-6.253l3.086%206.253l6.9%201l-5%204.867l1.179%206.873z%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-trash { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cline%20x1%3D%224%22%20y1%3D%227%22%20x2%3D%2220%22%20y2%3D%227%22%2F%3E%3Cline%20x1%3D%2210%22%20y1%3D%2211%22%20x2%3D%2210%22%20y2%3D%2217%22%2F%3E%3Cline%20x1%3D%2214%22%20y1%3D%2211%22%20x2%3D%2214%22%20y2%3D%2217%22%2F%3E%3Cpath%20d%3D%22M5%207l1%2012a2%202%200%200%200%202%202h8a2%202%200%200%200%202%20-2l1%20-12%22%2F%3E%3Cpath%20d%3D%22M9%207v-3h6v3%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cline%20x1%3D%224%22%20y1%3D%227%22%20x2%3D%2220%22%20y2%3D%227%22%2F%3E%3Cline%20x1%3D%2210%22%20y1%3D%2211%22%20x2%3D%2210%22%20y2%3D%2217%22%2F%3E%3Cline%20x1%3D%2214%22%20y1%3D%2211%22%20x2%3D%2214%22%20y2%3D%2217%22%2F%3E%3Cpath%20d%3D%22M5%207l1%2012a2%202%200%200%200%202%202h8a2%202%200%200%200%202%20-2l1%20-12%22%2F%3E%3Cpath%20d%3D%22M9%207v-3h6v3%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-trophy { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cline%20x1%3D%228%22%20y1%3D%2221%22%20x2%3D%2216%22%20y2%3D%2221%22%2F%3E%3Cline%20x1%3D%2212%22%20y1%3D%2217%22%20x2%3D%2212%22%20y2%3D%2221%22%2F%3E%3Cline%20x1%3D%227%22%20y1%3D%224%22%20x2%3D%2217%22%20y2%3D%224%22%2F%3E%3Cpath%20d%3D%22M17%204v8a5%205%200%200%201%20-10%200v-8%22%2F%3E%3Cpolyline%20points%3D%225%209%204%209%204%206%207%206%22%2F%3E%3Cpolyline%20points%3D%2219%209%2020%209%2020%206%2017%206%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cline%20x1%3D%228%22%20y1%3D%2221%22%20x2%3D%2216%22%20y2%3D%2221%22%2F%3E%3Cline%20x1%3D%2212%22%20y1%3D%2217%22%20x2%3D%2212%22%20y2%3D%2221%22%2F%3E%3Cline%20x1%3D%227%22%20y1%3D%224%22%20x2%3D%2217%22%20y2%3D%224%22%2F%3E%3Cpath%20d%3D%22M17%204v8a5%205%200%200%201%20-10%200v-8%22%2F%3E%3Cpolyline%20points%3D%225%209%204%209%204%206%207%206%22%2F%3E%3Cpolyline%20points%3D%2219%209%2020%209%2020%206%2017%206%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-upload { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%2017v2a2%202%200%200%200%202%202h12a2%202%200%200%200%202%20-2v-2%22%2F%3E%3Cpolyline%20points%3D%227%209%2012%204%2017%209%22%2F%3E%3Cline%20x1%3D%2212%22%20y1%3D%224%22%20x2%3D%2212%22%20y2%3D%2216%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%2017v2a2%202%200%200%200%202%202h12a2%202%200%200%200%202%20-2v-2%22%2F%3E%3Cpolyline%20points%3D%227%209%2012%204%2017%209%22%2F%3E%3Cline%20x1%3D%2212%22%20y1%3D%224%22%20x2%3D%2212%22%20y2%3D%2216%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-user { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%227%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M6%2021v-2a4%204%200%200%201%204%20-4h4a4%204%200%200%201%204%204v2%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%227%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M6%2021v-2a4%204%200%200%201%204%20-4h4a4%204%200%200%201%204%204v2%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-user-cog { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%229%22%20cy%3D%227%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M3%2021v-2a4%204%200%200%201%204%20-4h4a4%204%200%200%201%204%204v2%22%2F%3E%3Ccircle%20cx%3D%2219%22%20cy%3D%2215%22%20r%3D%222%22%2F%3E%3Cpath%20d%3D%22M19%2013v-1%22%2F%3E%3Cpath%20d%3D%22M19%2017v1%22%2F%3E%3Cpath%20d%3D%22M17.268%2014l-.866%20-.5%22%2F%3E%3Cpath%20d%3D%22M21.598%2016.5l-.866%20-.5%22%2F%3E%3Cpath%20d%3D%22M17.268%2016l-.866%20.5%22%2F%3E%3Cpath%20d%3D%22M21.598%2013.5l-.866%20.5%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%229%22%20cy%3D%227%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M3%2021v-2a4%204%200%200%201%204%20-4h4a4%204%200%200%201%204%204v2%22%2F%3E%3Ccircle%20cx%3D%2219%22%20cy%3D%2215%22%20r%3D%222%22%2F%3E%3Cpath%20d%3D%22M19%2013v-1%22%2F%3E%3Cpath%20d%3D%22M19%2017v1%22%2F%3E%3Cpath%20d%3D%22M17.268%2014l-.866%20-.5%22%2F%3E%3Cpath%20d%3D%22M21.598%2016.5l-.866%20-.5%22%2F%3E%3Cpath%20d%3D%22M17.268%2016l-.866%20.5%22%2F%3E%3Cpath%20d%3D%22M21.598%2013.5l-.866%20.5%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-users { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%229%22%20cy%3D%227%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M3%2021v-2a4%204%200%200%201%204%20-4h4a4%204%200%200%201%204%204v2%22%2F%3E%3Cpath%20d%3D%22M16%203.13a4%204%200%200%201%200%207.75%22%2F%3E%3Cpath%20d%3D%22M21%2021v-2a4%204%200%200%200%20-3%20-3.85%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%229%22%20cy%3D%227%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M3%2021v-2a4%204%200%200%201%204%20-4h4a4%204%200%200%201%204%204v2%22%2F%3E%3Cpath%20d%3D%22M16%203.13a4%204%200%200%201%200%207.75%22%2F%3E%3Cpath%20d%3D%22M21%2021v-2a4%204%200%200%200%20-3%20-3.85%22%2F%3E%3C%2Fsvg%3E"); }
+.ti-x { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cline%20x1%3D%2218%22%20y1%3D%226%22%20x2%3D%226%22%20y2%3D%2218%22%2F%3E%3Cline%20x1%3D%226%22%20y1%3D%226%22%20x2%3D%2218%22%20y2%3D%2218%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cline%20x1%3D%2218%22%20y1%3D%226%22%20x2%3D%226%22%20y2%3D%2218%22%2F%3E%3Cline%20x1%3D%226%22%20y1%3D%226%22%20x2%3D%2218%22%20y2%3D%2218%22%2F%3E%3C%2Fsvg%3E"); }
+</style>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#F0F4FA;color:#1A202C;min-height:100vh}
+
+/* TOKENS */
+:root{
+  --b50:#E6F1FB;--b100:#B5D4F4;--b200:#85B7EB;--b400:#378ADD;--b600:#185FA5;--b800:#0C447C;--b900:#042C53;
+  --g50:#EAF3DE;--g200:#97C459;--g600:#3B6D11;--g800:#27500A;
+  --gy50:#F1EFE8;--gy100:#D3D1C7;--gy200:#B4B2A9;--gy400:#888780;--gy600:#5F5E5A;--gy800:#444441;
+  --a50:#FAEEDA;--a400:#BA7517;--a800:#633806;
+  --r50:#FCEBEB;--r400:#E24B4A;--r800:#791F1F;
+  --t50:#E1F5EE;--t400:#1D9E75;--t800:#085041;
+  --rmd:8px;--rlg:12px;--rxl:16px;
+}
+
+/* SHELL */
+.shell-header{background:#fff;border-bottom:1px solid #E2E8F0;padding:0 1.5rem;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.shell-logo{font-size:19px;font-weight:700;color:var(--b800)}
+.shell-logo span{color:var(--b400)}
+.shell-sub{font-size:11px;color:var(--gy400);margin-top:1px}
+.shell-meta{font-size:11px;color:var(--gy400);text-align:right;line-height:1.5}
+
+/* TABS */
+.tab-shell{background:#fff;border-bottom:1px solid #E2E8F0;position:sticky;top:58px;z-index:199;padding:.625rem 1.5rem;display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.tg{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gy400);padding:0 4px;margin-left:4px;white-space:nowrap}
+.tb{padding:5px 11px;border:1px solid var(--gy100);border-radius:var(--rmd);background:#fff;color:var(--gy600);font-size:11.5px;font-weight:500;cursor:pointer;transition:all .14s;font-family:'Inter',sans-serif;white-space:nowrap}
+.tb:hover{background:var(--b50);border-color:var(--b400);color:var(--b800)}
+.tb.active{background:var(--b800);color:#fff;border-color:var(--b800)}
+
+/* SCREENS */
+.screen{display:none;padding:1.5rem;max-width:1120px;margin:0 auto}
+.screen.active{display:block}
+.sbadge{display:inline-flex;align-items:center;gap:6px;background:var(--b50);color:var(--b800);border-radius:100px;padding:4px 12px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem}
+.stitle{font-size:21px;font-weight:700;color:var(--b800);margin-bottom:.2rem}
+.sdesc{font-size:13px;color:var(--gy600);margin-bottom:1.25rem;line-height:1.5}
+
+/* MOCKUP */
+.mframe{background:#fff;border-radius:var(--rxl);border:1px solid #E2E8F0;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.09)}
+.mtopbar{background:#F4F6FA;padding:8px 12px;display:flex;align-items:center;gap:6px;border-bottom:1px solid #E2E8F0}
+.mdot{width:10px;height:10px;border-radius:50%}
+.mdot.r{background:#FC5F57}.mdot.y{background:#FDBC2C}.mdot.g{background:#34C749}
+.murl{margin-left:8px;background:#fff;border:1px solid #E2E8F0;border-radius:5px;padding:3px 10px;font-size:11px;color:var(--gy400);flex:1;max-width:340px}
+
+/* NAVBAR */
+.enav{background:var(--b800);padding:0 1.5rem;height:52px;display:flex;align-items:center;justify-content:space-between}
+.elogo{font-size:17px;font-weight:700;color:#fff;letter-spacing:-.3px}
+.elogo span{color:var(--b200)}
+.navpill{color:var(--b100);font-size:13px;padding:5px 12px;border:1px solid rgba(255,255,255,.25);border-radius:var(--rmd);text-decoration:none;display:flex;align-items:center;gap:5px}
+.navtxt{color:var(--b200);font-size:13px}
+
+/* CONTENT AREA */
+.ca{padding:2rem 1.5rem;background:var(--b50);min-height:380px}
+.ca.wh{background:#fff}
+
+/* CENTERED CARD */
+.ccard{max-width:440px;margin:0 auto;background:#fff;border-radius:var(--rxl);border:1px solid #E2E8F0;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.cicn{width:52px;height:52px;background:var(--b50);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
+.cicn i{font-size:26px;color:var(--b800)}
+.ch{font-size:18px;font-weight:700;text-align:center;color:#1A202C;margin-bottom:.25rem}
+.cs{font-size:13px;color:var(--gy600);text-align:center;margin-bottom:1.5rem;line-height:1.5}
+
+/* FORM */
+.fw{margin-bottom:.875rem}
+.fl{display:block;font-size:12px;font-weight:600;color:var(--gy600);margin-bottom:5px}
+.fi{width:100%;padding:9px 12px;border:1px solid var(--gy100);border-radius:var(--rmd);font-size:14px;color:#1A202C;background:#fff;font-family:'Inter',sans-serif;outline:none;transition:border .14s}
+.fi:focus{border-color:var(--b400);box-shadow:0 0 0 3px var(--b50)}
+.fhint{font-size:11px;color:var(--gy400);margin-top:3px}
+.req{color:var(--r400)}
+
+/* BUTTONS */
+.bp{width:100%;padding:11px;background:var(--b800);color:#fff;border:none;border-radius:var(--rmd);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Inter',sans-serif;margin-top:.5rem;transition:background .14s}
+.bp:hover{background:var(--b600)}
+.be{width:100%;padding:11px;background:var(--g800);color:#fff;border:none;border-radius:var(--rmd);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Inter',sans-serif;margin-top:.75rem}
+.bo{padding:7px 14px;background:#fff;color:var(--b800);border:1px solid var(--b400);border-radius:var(--rmd);font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif}
+.bsm{padding:5px 12px;border-radius:var(--rmd);font-size:12px;font-weight:600;border:1px solid;cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-family:'Inter',sans-serif}
+.bsm.blue{border-color:var(--b400);color:var(--b800);background:var(--b50)}
+.bsm.red{border-color:var(--r400);color:var(--r800);background:var(--r50)}
+.bsm.gray{border-color:var(--gy100);color:var(--gy800);background:#fff}
+.bsm.green{border-color:#C0DD97;color:var(--g800);background:var(--g50)}
+.bsm.amber{border-color:#FAC775;color:var(--a800);background:var(--a50)}
+.bnew{padding:7px 14px;background:var(--g800);color:#fff;border:none;border-radius:var(--rmd);font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif}
+
+/* ALERTS */
+.ai{background:var(--b50);border:1px solid var(--b100);border-radius:var(--rmd);padding:.75rem 1rem;font-size:12px;color:var(--b800);display:flex;gap:7px;align-items:flex-start;margin-top:.875rem}
+.aw{background:var(--a50);border:1px solid #FAC775;border-radius:var(--rmd);padding:.75rem 1rem;font-size:12px;color:var(--a800);display:flex;gap:7px;align-items:flex-start;margin-top:.875rem}
+.ae{background:var(--r50);border:1px solid #F7C1C1;border-radius:var(--rmd);padding:.75rem 1rem;font-size:12px;color:var(--r800);display:flex;gap:7px;align-items:center;margin-bottom:.875rem}
+.as{background:var(--t50);border:1px solid #9FE1CB;border-radius:var(--rmd);padding:.75rem 1rem;font-size:12px;color:var(--t800);display:flex;gap:7px;align-items:center;margin-bottom:.875rem}
+
+/* WIZARD */
+.wiz{display:flex;margin-bottom:1.75rem;position:relative}
+.ws{flex:1;text-align:center;font-size:11px;color:var(--gy400);position:relative;padding-top:30px}
+.ws::before{content:attr(data-n);position:absolute;top:0;left:50%;transform:translateX(-50%);width:24px;height:24px;border-radius:50%;background:var(--gy100);color:var(--gy600);font-size:11px;font-weight:700;line-height:24px}
+.ws::after{content:'';position:absolute;top:12px;left:50%;width:100%;height:1px;background:var(--gy100)}
+.ws:last-child::after{display:none}
+.ws.done::before{background:var(--t400);color:#fff}
+.ws.active::before{background:var(--b800);color:#fff;box-shadow:0 0 0 4px var(--b50)}
+.ws.active{color:var(--b800);font-weight:600}
+
+/* UPLOAD */
+.upz{border:2px dashed var(--b400);border-radius:var(--rlg);padding:2rem 1.5rem;text-align:center;background:var(--b50);cursor:pointer;transition:all .14s}
+.upz:hover{background:#d4e6f5;border-color:var(--b600)}
+.upz i{font-size:36px;color:var(--b400);display:block;margin-bottom:.75rem}
+.upm{font-size:14px;font-weight:600;color:#1A202C;margin-bottom:4px}
+.ups{font-size:12px;color:var(--gy600);margin-bottom:.875rem}
+.upf{font-size:11px;color:var(--gy400);margin-top:.75rem}
+
+/* OTP */
+.otpg{display:flex;gap:10px;justify-content:center;margin:1.5rem 0 .5rem}
+.ob{width:46px;height:56px;border:1.5px solid var(--gy100);border-radius:var(--rmd);text-align:center;font-size:24px;font-weight:700;color:var(--b800);background:#fff;font-family:'Inter',sans-serif;transition:border .14s}
+.ob:focus{border-color:var(--b400);outline:none;box-shadow:0 0 0 3px var(--b50)}
+.timerrow{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:1.25rem}
+.timerbadge{display:inline-flex;align-items:center;gap:6px;background:var(--a50);color:var(--a800);border-radius:var(--rmd);padding:7px 14px;font-size:14px;font-weight:700}
+.timerhint{font-size:12px;color:var(--gy400)}
+.timerhint a{color:var(--b600);text-decoration:none}
+
+/* PUESTOS */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:12px}
+.pc{background:#fff;border:1px solid #E2E8F0;border-radius:var(--rlg);padding:1rem;position:relative;cursor:pointer;transition:all .14s}
+.pc.sel{border-color:var(--t400);background:var(--t50)}
+.pc:hover:not(.sel){border-color:var(--b400);box-shadow:0 2px 8px rgba(12,68,124,.1)}
+.sdot{position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.sdot.ok{background:var(--t400)}.sdot.ok i{font-size:12px;color:#fff}
+.sdot.pend{background:var(--gy100)}.sdot.pend i{font-size:12px;color:var(--gy400)}
+.pn{font-size:15px;font-weight:700;color:#1A202C;margin-bottom:.625rem;padding-right:24px}
+.pm{font-size:12px;color:var(--gy600);margin-bottom:3px}
+.pm strong{color:#1A202C}
+.phead{display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem}
+.plabel{font-size:15px;font-weight:700;color:#1A202C}
+.psub{font-size:13px;color:var(--gy600);margin-top:2px}
+.pctr{background:var(--b50);color:var(--b800);border-radius:var(--rmd);padding:6px 14px;font-size:13px;font-weight:700}
+.pbar{background:var(--gy100);border-radius:100px;height:6px;margin-bottom:1rem}
+.pbarf{background:var(--t400);border-radius:100px;height:6px;width:50%}
+
+/* BADGES */
+.bdg{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:100px;font-size:11px;font-weight:700;margin-top:.5rem}
+.bsel{background:var(--t50);color:var(--t800);border:1px solid #9FE1CB}
+.bpend{background:var(--a50);color:var(--a800);border:1px solid #FAC775}
+.bact{background:var(--g50);color:var(--g800);border:1px solid #C0DD97}
+.bdone{background:var(--r50);color:var(--r800);border:1px solid #F7C1C1}
+.binact{background:var(--gy50);color:var(--gy800);border:1px solid var(--gy200)}
+
+/* BALLOT */
+.bhead{background:var(--b800);border-radius:var(--rlg);padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between}
+.btitle{font-size:16px;font-weight:700;color:#fff}
+.bsub{font-size:12px;color:var(--b100);margin-top:2px}
+.bback{color:var(--b100);font-size:13px;display:flex;align-items:center;gap:4px;text-decoration:none}
+.bgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1rem}
+.ccard2{border:1px solid #E2E8F0;border-radius:var(--rlg);padding:.875rem .75rem;text-align:center;cursor:pointer;background:#fff;transition:all .14s;position:relative}
+.ccard2:hover{border-color:var(--b400)}
+.ccard2.sel2{border-color:var(--b800);background:var(--b50)}
+.ccard2.sel2::after{content:'✓';position:absolute;top:8px;right:8px;width:20px;height:20px;background:var(--b800);color:#fff;border-radius:50%;font-size:11px;font-weight:700;line-height:20px;text-align:center}
+.ccard2.ning{border-style:dashed;border-color:var(--gy200)}
+.ccard2.ning:hover{border-color:var(--gy400)}
+.cavat{width:56px;height:56px;border-radius:50%;background:var(--gy100);margin:0 auto .625rem;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--gy600)}
+.cnam{font-size:12px;font-weight:700;color:#1A202C;line-height:1.3;margin-bottom:4px}
+.ppill{display:inline-block;background:var(--b50);color:var(--b800);border-radius:100px;padding:2px 8px;font-size:10px;font-weight:600}
+.ppill.gray{background:var(--gy50);color:var(--gy600)}
+
+/* ADMIN SHELL */
+.ash{display:flex;background:#fff;border-radius:var(--rxl);border:1px solid #E2E8F0;overflow:hidden;min-height:520px;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+.sb{width:210px;background:var(--b900);flex-shrink:0;display:flex;flex-direction:column}
+.sbbrand{padding:1.25rem 1rem;border-bottom:1px solid rgba(255,255,255,.1)}
+.sbbname{color:#fff;font-size:14px;font-weight:700}
+.sbbrole{color:var(--b200);font-size:11px;margin-top:2px}
+.sbnav{padding:.5rem 0;flex:1}
+.sbi{padding:9px 1rem;display:flex;align-items:center;gap:9px;color:var(--b200);font-size:13px;cursor:pointer;border-left:3px solid transparent;transition:all .12s;text-decoration:none}
+.sbi:hover{background:rgba(255,255,255,.07);color:#fff}
+.sbi.active{background:rgba(255,255,255,.12);color:#fff;border-left-color:var(--b200)}
+.sbi i{font-size:17px;opacity:.85}
+.sbfoot{padding:.875rem 1rem;border-top:1px solid rgba(255,255,255,.1);font-size:12px;color:var(--b200);display:flex;align-items:center;gap:7px;cursor:pointer}
+
+/* ADMIN MAIN */
+.am{flex:1;padding:1.5rem;overflow:hidden;background:#F8FAFC}
+.atop{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid #E2E8F0}
+.aptitle{font-size:17px;font-weight:700;color:var(--b800)}
+.auser{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gy600)}
+.aavat{width:30px;height:30px;border-radius:50%;background:var(--b50);color:var(--b800);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+
+/* METRICS */
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem}
+.mc{border-radius:var(--rlg);padding:.875rem 1rem}
+.mc.blue{background:var(--b50)}.mc.green{background:var(--g50)}.mc.teal{background:var(--t50)}.mc.amber{background:var(--a50)}.mc.gray{background:var(--gy50)}
+.mico{font-size:20px;margin-bottom:.5rem}
+.mc.blue .mico{color:var(--b600)}.mc.green .mico{color:var(--g600)}.mc.teal .mico{color:var(--t400)}.mc.amber .mico{color:var(--a400)}.mc.gray .mico{color:var(--gy600)}
+.mlabel{font-size:11px;color:var(--gy600);margin-bottom:4px;font-weight:600}
+.mval{font-size:26px;font-weight:700}
+.mc.blue .mval{color:var(--b800)}.mc.green .mval{color:var(--g800)}.mc.teal .mval{color:var(--t800)}.mc.amber .mval{color:var(--a800)}.mc.gray .mval{color:var(--gy800)}
+
+/* FILTER */
+.fb{display:flex;gap:8px;align-items:center;margin-bottom:1rem;flex-wrap:wrap}
+.fsel,.finp{padding:7px 10px;border:1px solid var(--gy100);border-radius:var(--rmd);font-size:13px;color:#1A202C;background:#fff;font-family:'Inter',sans-serif}
+.fbtn{padding:7px 14px;background:var(--b800);color:#fff;border:none;border-radius:var(--rmd);font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:'Inter',sans-serif}
+
+/* TABLE */
+.tw{overflow-x:auto}
+.dt{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
+.dt th{text-align:left;padding:7px 10px;border-bottom:2px solid #E2E8F0;color:var(--gy600);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.04em;background:#F8FAFC}
+.dt td{padding:9px 10px;border-bottom:1px solid #F1F5F9;color:#1A202C;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:#F0F6FF}
+.tfoot{font-size:11px;color:var(--gy400);margin-top:.75rem}
+
+/* DIRIGENTE */
+.phero{background:linear-gradient(135deg,var(--b800) 0%,var(--b600) 100%);border-radius:var(--rlg);padding:1.25rem;display:flex;align-items:center;gap:1.25rem;margin-bottom:1rem;color:#fff}
+.plogobox{width:68px;height:68px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:var(--rlg);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;flex-shrink:0;letter-spacing:-.5px}
+.pname{font-size:17px;font-weight:700}
+.pdirig{color:var(--b100);font-size:13px;margin-top:3px}
+.psiglas{font-size:10px;color:var(--b200);letter-spacing:.1em;text-transform:uppercase;margin-top:5px;font-weight:700}
+
+/* KPI */
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px}
+.kc{border-radius:var(--rlg);padding:1rem;text-align:center}
+.kc.blue{background:var(--b50)}.kc.gray{background:var(--gy50)}.kc.green{background:var(--g50)}.kc.amber{background:var(--a50)}.kc.teal{background:var(--t50)}
+.kval{font-size:32px;font-weight:700;line-height:1}
+.kc.blue .kval{color:var(--b800)}.kc.gray .kval{color:var(--gy800)}.kc.green .kval{color:var(--g800)}.kc.amber .kval{color:var(--a800)}.kc.teal .kval{color:var(--t800)}
+.klabel{font-size:11px;color:var(--gy600);margin-top:6px;line-height:1.4;font-weight:600}
+
+/* MISC */
+.sh{font-size:11px;font-weight:700;color:var(--gy600);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem}
+.minis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+.ministat{background:#fff;border:1px solid #E2E8F0;border-radius:var(--rmd);padding:.875rem}
+.ministat-val{font-size:22px;font-weight:700;color:#1A202C}
+.ministat-label{font-size:11px;color:var(--gy600);margin-top:3px}
+.abanner{border-radius:var(--rmd);padding:.875rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:.875rem}
+.abanner.blue{background:var(--b50);border:1px solid var(--b100)}
+.abanner strong{font-size:13px;color:var(--b800);display:block;margin-bottom:2px}
+.abanner span{font-size:12px;color:var(--b600)}
+.fstrip{background:var(--b800);color:var(--b200);font-size:11px;text-align:center;padding:.625rem}
+.rule-box{padding:.875rem 1rem;background:var(--b50);border-radius:var(--rmd);border:1px solid var(--b100);margin-top:1rem}
+.rule-box p{font-size:12px;font-weight:700;color:var(--b800);margin-bottom:.4rem}
+.rule-box ul{font-size:12px;color:var(--b800);padding-left:1.25rem;line-height:1.9}
+.chip{display:inline-flex;align-items:center;gap:4px;background:var(--b50);color:var(--b800);border-radius:100px;padding:3px 10px;font-size:11px;font-weight:600;border:1px solid var(--b100)}
+.sep{height:1px;background:#E2E8F0;margin:1rem 0}
+.form-section{background:#fff;border:1px solid #E2E8F0;border-radius:var(--rlg);padding:1.25rem;margin-bottom:1rem}
+.form-section-title{font-size:13px;font-weight:700;color:var(--b800);margin-bottom:.875rem;display:flex;align-items:center;gap:6px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--gy100);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="shell-header">
+  <div>
+    <div class="shell-logo">e<span>Vote</span>360 Pro</div>
+    <div class="shell-sub">Sistema de Votación Electrónica · ITLA 2026</div>
+  </div>
+  <div class="shell-meta">Wireframes UI/UX — Completos v2.0<br>Documento funcional de referencia</div>
+</header>
+
+<!-- TAB BAR -->
+<div class="tab-shell">
+  <span class="tg">Elector</span>
+  <button class="tb active" onclick="show('s1')">1 · Documento</button>
+  <button class="tb" onclick="show('s2')">2 · OCR Cédula</button>
+  <button class="tb" onclick="show('s3')">3 · Código OTP</button>
+  <button class="tb" onclick="show('s4')">4 · Puestos</button>
+  <button class="tb" onclick="show('s5')">5 · Boleta</button>
+  <button class="tb" onclick="show('s6')">6 · Confirmación</button>
+  <span class="tg">Administrador</span>
+  <button class="tb" onclick="show('s7')">7 · Admin Home</button>
+  <button class="tb" onclick="show('s8')">8 · Elecciones</button>
+  <button class="tb" onclick="show('s9')">9 · Puestos Electivos</button>
+  <button class="tb" onclick="show('s10')">10 · Ciudadanos</button>
+  <button class="tb" onclick="show('s11')">11 · Partidos</button>
+  <button class="tb" onclick="show('s12')">12 · Usuarios</button>
+  <button class="tb" onclick="show('s13')">13 · Asig. Dirigentes</button>
+  <button class="tb" onclick="show('s14')">14 · Resultados</button>
+  <span class="tg">Dirigente</span>
+  <button class="tb" onclick="show('s15')">15 · Dirigente Home</button>
+  <button class="tb" onclick="show('s16')">16 · Candidatos</button>
+  <button class="tb" onclick="show('s17')">17 · Asignar Puesto</button>
+  <button class="tb" onclick="show('s18')">18 · Alianzas</button>
+  <span class="tg">Sistema</span>
+  <button class="tb" onclick="show('s19')">19 · Login</button>
+  <button class="tb" onclick="show('s20')">20 · Voto Exitoso</button>
+  <button class="tb" onclick="show('s21')">21 · Acceso Denegado</button>
+  <button class="tb" onclick="show('s22')">22 · Bloqueo Activa</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S1 · DOCUMENTO -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen active" id="s1">
+  <p class="sbadge"><i class="ti ti-user"></i> Flujo del Elector</p>
+  <h1 class="stitle">Pantalla 1 — Entrada de Documento</h1>
+  <p class="sdesc">Landing inicial no autenticada. El ciudadano ingresa su número de documento de identidad para iniciar. El sistema valida existencia de elección activa, ciudadano registrado/activo/no votado antes de continuar.</p>
+  <div class="mframe">
+    <div class="mtopbar"><div class="mdot r"></div><div class="mdot y"></div><div class="mdot g"></div><div class="murl">evote360.gob.do</div></div>
+    <div class="enav">
+      <span class="elogo">e<span>Vote</span>360 Pro</span>
+      <a class="navpill" href="#"><i class="ti ti-login"></i> Acceder</a>
+    </div>
+    <div class="ca">
+      <div class="ccard">
+        <div class="cicn"><i class="ti ti-shield-check"></i></div>
+        <h2 class="ch">Bienvenido al proceso electoral</h2>
+        <p class="cs">Ingrese su número de documento de identidad para iniciar su participación en la elección activa.</p>
+        <div class="fw">
+          <label class="fl" for="doc1">Número de documento de identidad <span class="req">*</span></label>
+          <input class="fi" type="text" id="doc1" placeholder="Ej. 00112345678" maxlength="11">
+          <p class="fhint"><i class="ti ti-info-circle" style="font-size:11px"></i> Se trata como texto; puede contener ceros al inicio.</p>
+        </div>
+        <button class="bp"><i class="ti ti-check"></i> Votar</button>
+        <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid #F1F5F9;text-align:center">
+          <p style="font-size:11px;color:var(--gy400)"><i class="ti ti-lock" style="font-size:12px"></i> Proceso confidencial y seguro · © ITLA 2026</p>
+        </div>
+      </div>
+      <div style="max-width:440px;margin:1rem auto 0">
+        <p class="sh">Mensajes de validación</p>
+        <div class="ae"><i class="ti ti-alert-circle"></i> No hay ningún proceso electoral activo en este momento.</div>
+        <div class="ae"><i class="ti ti-alert-circle"></i> Ciudadano no registrado con este número de documento.</div>
+        <div class="ae"><i class="ti ti-alert-circle"></i> Este ciudadano se encuentra inactivo.</div>
+        <div class="ae"><i class="ti ti-alert-circle"></i> Usted ya ejerció su derecho al voto en esta elección.</div>
+      </div>
+    </div>
+    <div class="fstrip"><i class="ti ti-shield"></i> eVote360 Pro · Sistema Electoral Certificado</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S2 · OCR -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s2">
+  <p class="sbadge"><i class="ti ti-user"></i> Flujo del Elector · Paso 2</p>
+  <h1 class="stitle">Pantalla 2 — Validación de Identidad (OCR)</h1>
+  <p class="sdesc">El ciudadano carga imagen de la cédula. El sistema usa OCR para extraer el número de documento y compararlo con el ingresado en el paso 1. Acepta .jpg, .jpeg, .png.</p>
+  <div class="mframe">
+    <div class="mtopbar"><div class="mdot r"></div><div class="mdot y"></div><div class="mdot g"></div><div class="murl">evote360.gob.do/identidad</div></div>
+    <div class="enav"><span class="elogo">e<span>Vote</span>360 Pro</span><span class="navtxt">Verificación de identidad</span></div>
+    <div class="ca">
+      <div class="ccard">
+        <div class="wiz">
+          <div class="ws done" data-n="✓">Documento</div>
+          <div class="ws active" data-n="2">Identidad</div>
+          <div class="ws" data-n="3">Código</div>
+          <div class="ws" data-n="4">Votación</div>
+        </div>
+        <h2 class="ch" style="text-align:left;font-size:16px;margin-bottom:.25rem">Validación de identidad</h2>
+        <p class="cs" style="text-align:left;font-size:13px;margin-bottom:1.25rem">Cargue una foto clara de la parte <strong>frontal</strong> de su cédula. El sistema extraerá su número automáticamente.</p>
+        <div class="upz">
+          <i class="ti ti-id"></i>
+          <p class="upm">Arrastre la imagen aquí</p>
+          <p class="ups">o haga clic para seleccionar desde su dispositivo</p>
+          <button class="bo"><i class="ti ti-upload"></i> Seleccionar imagen</button>
+          <p class="upf"><i class="ti ti-photo"></i> Formatos aceptados: .jpg · .jpeg · .png</p>
+        </div>
+        <div class="ai"><i class="ti ti-info-circle" style="flex-shrink:0;margin-top:1px"></i><span>Asegúrese de que el número de documento sea claramente legible y la imagen esté bien iluminada.</span></div>
+        <button class="bp" style="margin-top:1rem"><i class="ti ti-scan"></i> Validar identidad</button>
+      </div>
+      <div style="max-width:440px;margin:1rem auto 0">
+        <p class="sh">Mensajes de error OCR</p>
+        <div class="ae"><i class="ti ti-alert-circle"></i> Debe subir una imagen de su cédula para continuar.</div>
+        <div class="ae"><i class="ti ti-alert-circle"></i> El archivo no tiene un formato de imagen válido.</div>
+        <div class="ae"><i class="ti ti-alert-circle"></i> No fue posible leer el número de documento. Suba una imagen más clara.</div>
+        <div class="ae"><i class="ti ti-alert-circle"></i> Los datos de la foto no coinciden con el documento ingresado.</div>
+      </div>
+    </div>
+    <div class="fstrip"><i class="ti ti-shield"></i> Procesamiento OCR seguro</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S3 · OTP -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s3">
+  <p class="sbadge"><i class="ti ti-user"></i> Flujo del Elector · Paso 3</p>
+  <h1 class="stitle">Pantalla 3 — Código de Verificación (OTP)</h1>
+  <p class="sdesc">Código de 6 dígitos enviado al correo registrado del ciudadano. Válido 5 minutos, un solo uso. El sistema valida que el código sea vigente, correcto y no utilizado.</p>
+  <div class="mframe">
+    <div class="mtopbar"><div class="mdot r"></div><div class="mdot y"></div><div class="mdot g"></div><div class="murl">evote360.gob.do/verificacion</div></div>
+    <div class="enav"><span class="elogo">e<span>Vote</span>360 Pro</span><span class="navtxt">Verificación de código</span></div>
+    <div class="ca">
+      <div class="ccard">
+        <div class="wiz">
+          <div class="ws done" data-n="✓">Documento</div>
+          <div class="ws done" data-n="✓">Identidad</div>
+          <div class="ws active" data-n="3">Código</div>
+          <div class="ws" data-n="4">Votación</div>
+        </div>
+        <div class="cicn"><i class="ti ti-mail-check"></i></div>
+        <h2 class="ch">Código de verificación</h2>
+        <p class="cs">Hemos enviado un código de 6 dígitos a su correo registrado. Ingréselo para continuar.</p>
+        <div class="otpg">
+          <input class="ob" maxlength="1" type="text" inputmode="numeric" aria-label="Dígito 1">
+          <input class="ob" maxlength="1" type="text" inputmode="numeric" aria-label="Dígito 2">
+          <input class="ob" maxlength="1" type="text" inputmode="numeric" aria-label="Dígito 3">
+          <input class="ob" maxlength="1" type="text" inputmode="numeric" aria-label="Dígito 4">
+          <input class="ob" maxlength="1" type="text" inputmode="numeric" aria-label="Dígito 5">
+          <input class="ob" maxlength="1" type="text" inputmode="numeric" aria-label="Dígito 6">
+        </div>
+        <div class="timerrow">
+          <div class="timerbadge"><i class="ti ti-clock"></i> <span id="otp-timer">04:59</span> restantes</div>
+          <p class="timerhint">Código válido por 5 minutos · <a href="#">Reenviar código</a></p>
+        </div>
+        <button class="bp"><i class="ti ti-shield-check"></i> Validar código</button>
+      </div>
+      <div style="max-width:440px;margin:1rem auto 0">
+        <p class="sh">Mensajes de error</p>
+        <div class="ae"><i class="ti ti-alert-circle"></i> El código ingresado no es correcto.</div>
+        <div class="ae"><i class="ti ti-alert-circle"></i> El código ha expirado. Solicite uno nuevo.</div>
+        <div class="ae"><i class="ti ti-alert-circle"></i> Este código ya fue utilizado.</div>
+      </div>
+    </div>
+    <div class="fstrip"><i class="ti ti-shield"></i> Código de uso único · expira en 5 minutos</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S4 · PUESTOS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s4">
+  <p class="sbadge"><i class="ti ti-user"></i> Flujo del Elector · Paso 4</p>
+  <h1 class="stitle">Pantalla 4 — Panel de Puestos Electivos</h1>
+  <p class="sdesc">Vista general de todos los puestos de la elección activa. El elector puede hacer clic en cada uno para ir a su boleta. Puede regresar y modificar antes de finalizar. El botón "Finalizar" solo se habilita cuando todos están seleccionados.</p>
+  <div class="mframe">
+    <div class="mtopbar"><div class="mdot r"></div><div class="mdot y"></div><div class="mdot g"></div><div class="murl">evote360.gob.do/puestos</div></div>
+    <div class="enav"><span class="elogo">e<span>Vote</span>360 Pro</span><span class="navtxt"><i class="ti ti-progress"></i> Proceso de votación activo</span></div>
+    <div class="ca wh" style="padding:1.5rem">
+      <div class="wiz" style="max-width:500px;margin:0 auto 1.5rem">
+        <div class="ws done" data-n="✓">Documento</div>
+        <div class="ws done" data-n="✓">Identidad</div>
+        <div class="ws done" data-n="✓">Código</div>
+        <div class="ws active" data-n="4">Votación</div>
+      </div>
+      <div class="phead">
+        <div><p class="plabel">Seleccione un candidato por cada puesto</p><p class="psub">Debe completar todos los puestos para finalizar su votación.</p></div>
+        <div class="pctr">2 / 4 seleccionados</div>
+      </div>
+      <div class="pbar"><div class="pbarf"></div></div>
+      <div class="pgrid">
+        <div class="pc sel"><div class="sdot ok"><i class="ti ti-check"></i></div><p class="pn">Presidente</p><p class="pm">Partidos: <strong>4</strong></p><p class="pm">Candidatos: <strong>4</strong></p><span class="bdg bsel"><i class="ti ti-check" style="font-size:10px"></i> Seleccionado</span></div>
+        <div class="pc sel"><div class="sdot ok"><i class="ti ti-check"></i></div><p class="pn">Senador</p><p class="pm">Partidos: <strong>3</strong></p><p class="pm">Candidatos: <strong>6</strong></p><span class="bdg bsel"><i class="ti ti-check" style="font-size:10px"></i> Seleccionado</span></div>
+        <div class="pc"><div class="sdot pend"><i class="ti ti-circle"></i></div><p class="pn">Diputado</p><p class="pm">Partidos: <strong>5</strong></p><p class="pm">Candidatos: <strong>8</strong></p><span class="bdg bpend">Pendiente</span></div>
+        <div class="pc"><div class="sdot pend"><i class="ti ti-circle"></i></div><p class="pn">Alcalde</p><p class="pm">Partidos: <strong>3</strong></p><p class="pm">Candidatos: <strong>3</strong></p><span class="bdg bpend">Pendiente</span></div>
+      </div>
+      <div class="aw"><i class="ti ti-alert-triangle" style="flex-shrink:0;margin-top:1px"></i><span>Puede regresar a un puesto ya seleccionado para <strong>modificar su elección</strong> antes de finalizar el proceso.</span></div>
+      <button class="bp" style="max-width:440px;margin:1rem auto 0;opacity:.5;cursor:not-allowed"><i class="ti ti-send"></i> Finalizar votación <span style="font-size:11px;opacity:.8">(complete todos los puestos)</span></button>
+    </div>
+    <div class="fstrip"><i class="ti ti-shield"></i> Sus selecciones son privadas y confidenciales</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S5 · BOLETA -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s5">
+  <p class="sbadge"><i class="ti ti-user"></i> Flujo del Elector · Paso 5</p>
+  <h1 class="stitle">Pantalla 5 — Boleta Electoral Digital</h1>
+  <p class="sdesc">Selección de candidato para un puesto específico. Candidatos propios y aliados del partido. Opción "Ninguno" siempre visible. Al guardar regresa al panel de puestos.</p>
+  <div class="mframe">
+    <div class="mtopbar"><div class="mdot r"></div><div class="mdot y"></div><div class="mdot g"></div><div class="murl">evote360.gob.do/boleta/diputado</div></div>
+    <div class="enav"><span class="elogo">e<span>Vote</span>360 Pro</span><span class="navtxt"><i class="ti ti-progress"></i> 3 / 4 puestos</span></div>
+    <div class="ca wh" style="padding:1.25rem">
+      <div class="bhead">
+        <div><p class="btitle"><i class="ti ti-briefcase"></i> Puesto: Diputado</p><p class="bsub">Seleccione exactamente un candidato o la opción "Ninguno"</p></div>
+        <a class="bback" href="#"><i class="ti ti-arrow-left"></i> Volver</a>
+      </div>
+      <div class="bgrid">
+        <div class="ccard2 sel2"><div class="cavat" style="background:var(--b50);color:var(--b800)">JM</div><p class="cnam">Juan Martínez Peña</p><div class="ppill"><i class="ti ti-flag" style="font-size:10px"></i> Partido Nacional</div></div>
+        <div class="ccard2"><div class="cavat" style="background:var(--g50);color:var(--g800)">SA</div><p class="cnam">Sofía Arias López</p><div class="ppill"><i class="ti ti-flag" style="font-size:10px"></i> Frente Popular</div></div>
+        <div class="ccard2"><div class="cavat" style="background:var(--t50);color:var(--t800)">CR</div><p class="cnam">Carlos Reyes Díaz</p><div class="ppill"><i class="ti ti-flag" style="font-size:10px"></i> Unión Cívica</div></div>
+        <div class="ccard2"><div class="cavat" style="background:var(--a50);color:var(--a800)">LV</div><p class="cnam">Laura Vásquez <span style="font-size:9px;color:var(--b600)">(Aliada)</span></p><div class="ppill"><i class="ti ti-flag" style="font-size:10px"></i> Alianza Verde</div></div>
+        <div class="ccard2 ning"><div class="cavat" style="background:var(--gy50);color:var(--gy400)"><i class="ti ti-ban" style="font-size:22px"></i></div><p class="cnam" style="color:var(--gy600)">Ninguno</p><div class="ppill gray">Voto en blanco</div></div>
+      </div>
+      <button class="be"><i class="ti ti-device-floppy"></i> Guardar voto del puesto</button>
+      <div class="ae" style="margin-top:.875rem;display:none"><i class="ti ti-alert-circle"></i> Debe seleccionar un candidato o "Ninguno" para continuar.</div>
+    </div>
+    <div class="fstrip"><i class="ti ti-shield"></i> Su voto es secreto y no puede ser rastreado</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S6 · CONFIRMACION VOTACION -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s6">
+  <p class="sbadge"><i class="ti ti-user"></i> Flujo del Elector · Paso 6</p>
+  <h1 class="stitle">Pantalla 6 — Confirmación y Finalización del Voto</h1>
+  <p class="sdesc">Resumen de todas las selecciones antes de confirmar. Al finalizar, se envía correo con resumen de votación y el sistema registra el voto como emitido. El ciudadano ya no puede volver a votar.</p>
+  <div class="mframe">
+    <div class="mtopbar"><div class="mdot r"></div><div class="mdot y"></div><div class="mdot g"></div><div class="murl">evote360.gob.do/confirmacion</div></div>
+    <div class="enav"><span class="elogo">e<span>Vote</span>360 Pro</span><span class="navtxt"><i class="ti ti-progress"></i> Confirmación final</span></div>
+    <div class="ca wh" style="padding:1.5rem">
+      <div style="max-width:560px;margin:0 auto">
+        <div style="text-align:center;margin-bottom:1.5rem">
+          <div style="width:56px;height:56px;background:var(--g50);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .75rem"><i class="ti ti-clipboard-check" style="font-size:28px;color:var(--g800)"></i></div>
+          <h2 style="font-size:18px;font-weight:700;color:#1A202C;margin-bottom:.25rem">Revise sus selecciones</h2>
+          <p style="font-size:13px;color:var(--gy600)">Una vez confirme no podrá modificar su voto. Verifique cada opción.</p>
+        </div>
+        <div class="form-section">
+          <p class="form-section-title"><i class="ti ti-clipboard-list"></i> Resumen de votación — Elección General 2026</p>
+          <div class="tw">
+            <table class="dt" style="table-layout:auto">
+              <thead><tr><th>Puesto</th><th>Candidato seleccionado</th><th>Partido</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Presidente</strong></td><td>María García Torres</td><td><span class="ppill"><i class="ti ti-flag" style="font-size:10px"></i> Partido Nacional</span></td></tr>
+                <tr><td><strong>Senador</strong></td><td>Pedro Montero Ruiz</td><td><span class="ppill"><i class="ti ti-flag" style="font-size:10px"></i> Unión Cívica</span></td></tr>
+                <tr><td><strong>Diputado</strong></td><td>Juan Martínez Peña</td><td><span class="ppill"><i class="ti ti-flag" style="font-size:10px"></i> Partido Nacional</span></td></tr>
+                <tr><td><strong>Alcalde</strong></td><td style="color:var(--gy600);font-style:italic">Ninguno (voto en blanco)</td><td>—</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="aw" style="margin-top:0"><i class="ti ti-alert-triangle" style="flex-shrink:0"></i><span>Esta acción es <strong>irreversible</strong>. Una vez confirme, su voto quedará registrado y no podrá repetir el proceso.</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:1rem">
+          <button class="bo" style="justify-content:center;width:100%"><i class="ti ti-arrow-left"></i> Modificar selección</button>
+          <button class="bp" style="margin-top:0;background:var(--g800)"><i class="ti ti-send"></i> Confirmar y votar</button>
+        </div>
+        <div class="ai" style="margin-top:.875rem"><i class="ti ti-mail" style="flex-shrink:0"></i><span>Al finalizar recibirá un correo electrónico con el resumen de su votación como comprobante.</span></div>
+      </div>
+    </div>
+    <div class="fstrip"><i class="ti ti-shield"></i> Su voto es secreto · Confidencialidad garantizada</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S7 · ADMIN HOME -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s7">
+  <p class="sbadge"><i class="ti ti-settings"></i> Panel Administrador</p>
+  <h1 class="stitle">Pantalla 7 — Home del Administrador</h1>
+  <p class="sdesc">Dashboard principal. Filtro por año electoral. Métricas de partidos participantes, candidatos reales y votos emitidos. Listado de elecciones del año. Sidebar con los 6 módulos.</p>
+  <div class="ash">
+    <nav class="sb">
+      <div class="sbbrand"><p class="sbbname">eVote360 Pro</p><p class="sbbrole">Administrador del sistema</p></div>
+      <div class="sbnav">
+        <div class="sbi active"><i class="ti ti-home"></i> Home</div>
+        <div class="sbi"><i class="ti ti-briefcase"></i> Puesto Electivo</div>
+        <div class="sbi"><i class="ti ti-users"></i> Ciudadanos</div>
+        <div class="sbi"><i class="ti ti-flag"></i> Partidos Políticos</div>
+        <div class="sbi"><i class="ti ti-user-cog"></i> Usuarios</div>
+        <div class="sbi"><i class="ti ti-link"></i> Asig. Dirigentes</div>
+        <div class="sbi"><i class="ti ti-calendar-event"></i> Elecciones</div>
+      </div>
+      <div class="sbfoot"><i class="ti ti-logout" style="font-size:15px"></i> Cerrar sesión</div>
+    </nav>
+    <main class="am">
+      <div class="atop">
+        <p class="aptitle"><i class="ti ti-chart-bar"></i> Resumen electoral</p>
+        <div class="auser"><div class="aavat">AP</div> Admin Principal</div>
+      </div>
+      <div class="fb">
+        <label style="font-size:13px;color:var(--gy600);font-weight:600">Año electoral:</label>
+        <select class="fsel"><option>2026</option><option>2025</option><option>2024</option></select>
+        <button class="fbtn"><i class="ti ti-search"></i> Obtener Resumen Electoral</button>
+      </div>
+      <div class="mgrid">
+        <div class="mc blue"><div class="mico"><i class="ti ti-flag"></i></div><p class="mlabel">Partidos participantes</p><p class="mval">5</p></div>
+        <div class="mc green"><div class="mico"><i class="ti ti-users"></i></div><p class="mlabel">Candidatos reales</p><p class="mval">28</p></div>
+        <div class="mc teal"><div class="mico"><i class="ti ti-check"></i></div><p class="mlabel">Votos válidos emitidos</p><p class="mval">14,302</p></div>
+      </div>
+      <p class="sh">Elecciones del año 2026</p>
+      <div class="tw">
+        <table class="dt">
+          <thead><tr><th style="width:36%">Nombre</th><th style="width:16%">Fecha</th><th style="width:10%">Partidos</th><th style="width:13%">Estado</th><th style="width:15%">Acción</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Elección General 2026</strong></td><td>15/05/2026</td><td>5</td><td><span class="bdg bact"><i class="ti ti-circle-check" style="font-size:10px"></i> Activa</span></td><td><button class="bsm red"><i class="ti ti-square"></i> Finalizar</button></td></tr>
+            <tr><td>Elección Municipal 2026</td><td>10/03/2026</td><td>3</td><td><span class="bdg bpend"><i class="ti ti-clock" style="font-size:10px"></i> Pendiente</span></td><td><button class="bsm blue"><i class="ti ti-player-play"></i> Activar</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S8 · ELECCIONES CRUD -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s8">
+  <p class="sbadge"><i class="ti ti-settings"></i> Panel Administrador</p>
+  <h1 class="stitle">Pantalla 8 — Control de Elecciones (CRUD)</h1>
+  <p class="sdesc">Gestión completa de elecciones. Solo una activa a la vez. La activación valida configuración completa. Resultados solo visibles en finalizadas. Ordenadas de más reciente a más antigua.</p>
+  <div class="ash">
+    <nav class="sb">
+      <div class="sbbrand"><p class="sbbname">eVote360 Pro</p><p class="sbbrole">Administrador</p></div>
+      <div class="sbnav">
+        <div class="sbi"><i class="ti ti-home"></i> Home</div>
+        <div class="sbi"><i class="ti ti-briefcase"></i> Puesto Electivo</div>
+        <div class="sbi"><i class="ti ti-users"></i> Ciudadanos</div>
+        <div class="sbi"><i class="ti ti-flag"></i> Partidos Políticos</div>
+        <div class="sbi"><i class="ti ti-user-cog"></i> Usuarios</div>
+        <div class="sbi"><i class="ti ti-link"></i> Asig. Dirigentes</div>
+        <div class="sbi active"><i class="ti ti-calendar-event"></i> Elecciones</div>
+      </div>
+      <div class="sbfoot"><i class="ti ti-logout" style="font-size:15px"></i> Cerrar sesión</div>
+    </nav>
+    <main class="am">
+      <div class="atop">
+        <p class="aptitle"><i class="ti ti-calendar-event"></i> Control de elecciones</p>
+        <button class="bnew"><i class="ti ti-plus"></i> Nueva elección</button>
+      </div>
+      <div class="fb">
+        <input class="finp" type="text" placeholder="Buscar..." style="width:160px">
+        <select class="fsel"><option>Todos los estados</option><option>Pendiente</option><option>Activa</option><option>Finalizada</option></select>
+        <select class="fsel"><option>Todos los años</option><option>2026</option><option>2024</option><option>2022</option></select>
+      </div>
+      <div class="tw">
+        <table class="dt">
+          <thead><tr><th style="width:26%">Nombre</th><th style="width:12%">Fecha</th><th style="width:9%">Partidos</th><th style="width:9%">Puestos</th><th style="width:14%">Participación</th><th style="width:12%">Estado</th><th style="width:18%">Acciones</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Elección General 2026</strong></td><td>15/05/2026</td><td>5</td><td>4</td><td>14,302 votos</td><td><span class="bdg bact">Activa</span></td><td><button class="bsm red"><i class="ti ti-square"></i> Finalizar</button></td></tr>
+            <tr><td>Elección Municipal 2026</td><td>10/03/2026</td><td>3</td><td>2</td><td>—</td><td><span class="bdg bpend">Pendiente</span></td><td><button class="bsm blue"><i class="ti ti-player-play"></i> Activar</button></td></tr>
+            <tr><td>Elección Congresional 2024</td><td>18/05/2024</td><td>4</td><td>3</td><td>9,841 votos</td><td><span class="bdg bdone">Finalizada</span></td><td><button class="bsm gray"><i class="ti ti-chart-bar"></i> Ver resultados</button></td></tr>
+            <tr><td>Elección Presidencial 2022</td><td>22/05/2022</td><td>5</td><td>4</td><td>11,230 votos</td><td><span class="bdg bdone">Finalizada</span></td><td><button class="bsm gray"><i class="ti ti-chart-bar"></i> Ver resultados</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tfoot">4 elecciones · de más reciente a más antigua</p>
+      <div class="rule-box">
+        <p><i class="ti ti-shield-lock"></i> Reglas críticas</p>
+        <ul>
+          <li>Solo puede existir <strong>una elección activa</strong> a la vez.</li>
+          <li>Al activar se valida configuración completa (puestos, partidos, candidatos).</li>
+          <li>Resultados solo visibles para elecciones <strong>Finalizadas</strong>.</li>
+          <li>Se permiten <strong>múltiples pendientes</strong> simultáneamente.</li>
+          <li>Campos críticos bloqueados si participó en elección activa o finalizada.</li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S9 · PUESTOS ELECTIVOS CRUD -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s9">
+  <p class="sbadge"><i class="ti ti-settings"></i> Panel Administrador</p>
+  <h1 class="stitle">Pantalla 9 — Mantenimiento de Puestos Electivos</h1>
+  <p class="sdesc">CRUD de puestos. Nombre único. Activar/inactivar. No se puede editar nombre si participó en elección activa o finalizada. Acciones bloqueadas si hay elección activa.</p>
+  <div class="ash">
+    <nav class="sb">
+      <div class="sbbrand"><p class="sbbname">eVote360 Pro</p><p class="sbbrole">Administrador</p></div>
+      <div class="sbnav">
+        <div class="sbi"><i class="ti ti-home"></i> Home</div>
+        <div class="sbi active"><i class="ti ti-briefcase"></i> Puesto Electivo</div>
+        <div class="sbi"><i class="ti ti-users"></i> Ciudadanos</div>
+        <div class="sbi"><i class="ti ti-flag"></i> Partidos Políticos</div>
+        <div class="sbi"><i class="ti ti-user-cog"></i> Usuarios</div>
+        <div class="sbi"><i class="ti ti-link"></i> Asig. Dirigentes</div>
+        <div class="sbi"><i class="ti ti-calendar-event"></i> Elecciones</div>
+      </div>
+      <div class="sbfoot"><i class="ti ti-logout"></i> Cerrar sesión</div>
+    </nav>
+    <main class="am">
+      <div class="atop">
+        <p class="aptitle"><i class="ti ti-briefcase"></i> Puestos Electivos</p>
+        <button class="bnew"><i class="ti ti-plus"></i> Nuevo puesto</button>
+      </div>
+      <div class="fb"><input class="finp" type="text" placeholder="Buscar puesto..." style="width:200px"><select class="fsel"><option>Todos</option><option>Activo</option><option>Inactivo</option></select></div>
+      <div class="tw">
+        <table class="dt">
+          <thead><tr><th style="width:40%">Nombre del puesto</th><th style="width:15%">Estado</th><th style="width:25%">Restricciones</th><th style="width:20%">Acciones</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Presidente</strong></td><td><span class="bdg bact">Activo</span></td><td><span style="font-size:11px;color:var(--r800)"><i class="ti ti-lock" style="font-size:11px"></i> Nombre bloqueado</span></td><td><button class="bsm red">Inactivar</button></td></tr>
+            <tr><td><strong>Senador</strong></td><td><span class="bdg bact">Activo</span></td><td><span style="font-size:11px;color:var(--r800)"><i class="ti ti-lock" style="font-size:11px"></i> Nombre bloqueado</span></td><td><button class="bsm red">Inactivar</button></td></tr>
+            <tr><td>Diputado</td><td><span class="bdg bact">Activo</span></td><td>—</td><td><button class="bsm gray"><i class="ti ti-edit"></i> Editar</button> <button class="bsm red">Inactivar</button></td></tr>
+            <tr><td>Alcalde</td><td><span class="bdg binact">Inactivo</span></td><td>—</td><td><button class="bsm green">Activar</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tfoot">4 puestos registrados</p>
+      <div style="margin-top:1rem">
+        <p class="sh">Formulario — Nuevo / Editar Puesto</p>
+        <div class="form-section">
+          <p class="form-section-title"><i class="ti ti-edit"></i> Datos del puesto electivo</p>
+          <div class="fw"><label class="fl">Nombre del puesto <span class="req">*</span></label><input class="fi" type="text" placeholder="Ej. Regidor"><p class="fhint">Debe ser único en el sistema.</p></div>
+          <div style="display:flex;gap:8px;margin-top:.5rem"><button class="fbtn"><i class="ti ti-check"></i> Guardar</button> <button class="bo">Cancelar</button></div>
+          <div class="ae" style="margin-top:.875rem;margin-bottom:0"><i class="ti ti-alert-circle"></i> Ya existe un puesto con este nombre.</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S10 · CIUDADANOS CRUD -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s10">
+  <p class="sbadge"><i class="ti ti-settings"></i> Panel Administrador</p>
+  <h1 class="stitle">Pantalla 10 — Mantenimiento de Ciudadanos</h1>
+  <p class="sdesc">CRUD de ciudadanos. Documento y correo únicos. No modificar documento si ya participó en elección. Acciones bloqueadas si hay elección activa.</p>
+  <div class="ash">
+    <nav class="sb">
+      <div class="sbbrand"><p class="sbbname">eVote360 Pro</p><p class="sbbrole">Administrador</p></div>
+      <div class="sbnav">
+        <div class="sbi"><i class="ti ti-home"></i> Home</div>
+        <div class="sbi"><i class="ti ti-briefcase"></i> Puesto Electivo</div>
+        <div class="sbi active"><i class="ti ti-users"></i> Ciudadanos</div>
+        <div class="sbi"><i class="ti ti-flag"></i> Partidos Políticos</div>
+        <div class="sbi"><i class="ti ti-user-cog"></i> Usuarios</div>
+        <div class="sbi"><i class="ti ti-link"></i> Asig. Dirigentes</div>
+        <div class="sbi"><i class="ti ti-calendar-event"></i> Elecciones</div>
+      </div>
+      <div class="sbfoot"><i class="ti ti-logout"></i> Cerrar sesión</div>
+    </nav>
+    <main class="am">
+      <div class="atop">
+        <p class="aptitle"><i class="ti ti-users"></i> Ciudadanos</p>
+        <button class="bnew"><i class="ti ti-plus"></i> Nuevo ciudadano</button>
+      </div>
+      <div class="fb"><input class="finp" type="text" placeholder="Buscar por nombre o documento..." style="width:240px"><select class="fsel"><option>Todos</option><option>Activo</option><option>Inactivo</option></select></div>
+      <div class="tw">
+        <table class="dt">
+          <thead><tr><th style="width:18%">Documento</th><th style="width:28%">Nombre completo</th><th style="width:25%">Correo</th><th style="width:10%">Estado</th><th style="width:19%">Acciones</th></tr></thead>
+          <tbody>
+            <tr><td>00112345678</td><td>Ana López Martínez</td><td>ana@email.com</td><td><span class="bdg bact">Activo</span></td><td><button class="bsm gray"><i class="ti ti-edit"></i> Editar</button> <button class="bsm red">Inactivar</button></td></tr>
+            <tr><td>00198765432</td><td>Carlos Pérez Ruiz</td><td>carlos@email.com</td><td><span class="bdg bact">Activo</span></td><td><button class="bsm gray"><i class="ti ti-edit"></i> Editar</button> <button class="bsm red">Inactivar</button></td></tr>
+            <tr><td>00145678901</td><td>María Gómez Torres</td><td>maria@email.com</td><td><span class="bdg binact">Inactivo</span></td><td><button class="bsm green">Activar</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tfoot">3 ciudadanos registrados</p>
+      <div style="margin-top:1rem">
+        <p class="sh">Formulario — Nuevo / Editar Ciudadano</p>
+        <div class="form-section">
+          <p class="form-section-title"><i class="ti ti-edit"></i> Datos del ciudadano</p>
+          <div class="row2">
+            <div class="fw"><label class="fl">Primer nombre <span class="req">*</span></label><input class="fi" type="text" placeholder="Ana"></div>
+            <div class="fw"><label class="fl">Apellido <span class="req">*</span></label><input class="fi" type="text" placeholder="López"></div>
+            <div class="fw"><label class="fl">Número de documento <span class="req">*</span></label><input class="fi" type="text" placeholder="00112345678"><p class="fhint">Único. No editable si ya participó en elección.</p></div>
+            <div class="fw"><label class="fl">Correo electrónico <span class="req">*</span></label><input class="fi" type="email" placeholder="ana@email.com"><p class="fhint">Único. Se usa para envío de OTP.</p></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:.5rem"><button class="fbtn"><i class="ti ti-check"></i> Guardar</button> <button class="bo">Cancelar</button></div>
+          <div class="ae" style="margin-top:.875rem;margin-bottom:0"><i class="ti ti-alert-circle"></i> Ya existe un ciudadano con este número de documento.</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S11 · PARTIDOS POLÍTICOS CRUD -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s11">
+  <p class="sbadge"><i class="ti ti-settings"></i> Panel Administrador</p>
+  <h1 class="stitle">Pantalla 11 — Mantenimiento de Partidos Políticos</h1>
+  <p class="sdesc">CRUD de partidos. Siglas únicas. Logo gestionado correctamente. No editar nombre, siglas ni logo si participó en elección activa o finalizada. Bloqueo si hay elección activa.</p>
+  <div class="ash">
+    <nav class="sb">
+      <div class="sbbrand"><p class="sbbname">eVote360 Pro</p><p class="sbbrole">Administrador</p></div>
+      <div class="sbnav">
+        <div class="sbi"><i class="ti ti-home"></i> Home</div>
+        <div class="sbi"><i class="ti ti-briefcase"></i> Puesto Electivo</div>
+        <div class="sbi"><i class="ti ti-users"></i> Ciudadanos</div>
+        <div class="sbi active"><i class="ti ti-flag"></i> Partidos Políticos</div>
+        <div class="sbi"><i class="ti ti-user-cog"></i> Usuarios</div>
+        <div class="sbi"><i class="ti ti-link"></i> Asig. Dirigentes</div>
+        <div class="sbi"><i class="ti ti-calendar-event"></i> Elecciones</div>
+      </div>
+      <div class="sbfoot"><i class="ti ti-logout"></i> Cerrar sesión</div>
+    </nav>
+    <main class="am">
+      <div class="atop">
+        <p class="aptitle"><i class="ti ti-flag"></i> Partidos Políticos</p>
+        <button class="bnew"><i class="ti ti-plus"></i> Nuevo partido</button>
+      </div>
+      <div class="tw">
+        <table class="dt">
+          <thead><tr><th style="width:12%">Logo</th><th style="width:30%">Nombre</th><th style="width:12%">Siglas</th><th style="width:12%">Estado</th><th style="width:14%">Restricciones</th><th style="width:20%">Acciones</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><div style="width:32px;height:32px;background:var(--b50);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--b800)">PN</div></td>
+              <td><strong>Partido Nacional</strong></td><td>PNR</td>
+              <td><span class="bdg bact">Activo</span></td>
+              <td><span style="font-size:11px;color:var(--r800)"><i class="ti ti-lock" style="font-size:10px"></i> Bloqueado</span></td>
+              <td><button class="bsm red">Inactivar</button></td>
+            </tr>
+            <tr>
+              <td><div style="width:32px;height:32px;background:var(--g50);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--g800)">FP</div></td>
+              <td>Frente Popular</td><td>FPD</td>
+              <td><span class="bdg bact">Activo</span></td>
+              <td>—</td>
+              <td><button class="bsm gray"><i class="ti ti-edit"></i> Editar</button> <button class="bsm red">Inactivar</button></td>
+            </tr>
+            <tr>
+              <td><div style="width:32px;height:32px;background:var(--gy50);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--gy600)">UC</div></td>
+              <td>Unión Cívica</td><td>UCD</td>
+              <td><span class="bdg binact">Inactivo</span></td>
+              <td>—</td>
+              <td><button class="bsm green">Activar</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:1rem">
+        <p class="sh">Formulario — Nuevo / Editar Partido</p>
+        <div class="form-section">
+          <p class="form-section-title"><i class="ti ti-edit"></i> Datos del partido político</p>
+          <div class="row2">
+            <div class="fw"><label class="fl">Nombre oficial <span class="req">*</span></label><input class="fi" type="text" placeholder="Partido Nacional Democrático"><p class="fhint">Bloqueado si participó en elección activa/finalizada.</p></div>
+            <div class="fw"><label class="fl">Siglas <span class="req">*</span></label><input class="fi" type="text" placeholder="PND" maxlength="10"><p class="fhint">Únicas. Bloqueadas si participó en elección.</p></div>
+          </div>
+          <div class="fw"><label class="fl">Logo del partido</label>
+            <div class="upz" style="padding:1rem;display:flex;align-items:center;gap:1rem;text-align:left">
+              <div style="width:60px;height:60px;background:var(--gy50);border-radius:var(--rmd);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--gy400);flex-shrink:0"><i class="ti ti-photo"></i></div>
+              <div><p class="upm" style="font-size:13px">Seleccionar imagen del logo</p><p class="ups" style="font-size:11px;margin-bottom:.5rem">Formatos: .jpg, .png | Máx. 2MB</p><button class="bo" style="font-size:12px;padding:5px 10px"><i class="ti ti-upload"></i> Subir logo</button></div>
+            </div>
+            <p class="fhint">El logo se muestra en la boleta electoral junto al candidato. Bloqueado si participó en elección.</p>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:.5rem"><button class="fbtn"><i class="ti ti-check"></i> Guardar</button><button class="bo">Cancelar</button></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S12 · USUARIOS CRUD -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s12">
+  <p class="sbadge"><i class="ti ti-settings"></i> Panel Administrador</p>
+  <h1 class="stitle">Pantalla 12 — Mantenimiento de Usuarios del Sistema</h1>
+  <p class="sdesc">Gestión de usuarios internos con roles Administrador y Dirigente político. Username y correo únicos. Validación de contraseña y confirmación. No desactivar el único administrador activo.</p>
+  <div class="ash">
+    <nav class="sb">
+      <div class="sbbrand"><p class="sbbname">eVote360 Pro</p><p class="sbbrole">Administrador</p></div>
+      <div class="sbnav">
+        <div class="sbi"><i class="ti ti-home"></i> Home</div>
+        <div class="sbi"><i class="ti ti-briefcase"></i> Puesto Electivo</div>
+        <div class="sbi"><i class="ti ti-users"></i> Ciudadanos</div>
+        <div class="sbi"><i class="ti ti-flag"></i> Partidos Políticos</div>
+        <div class="sbi active"><i class="ti ti-user-cog"></i> Usuarios</div>
+        <div class="sbi"><i class="ti ti-link"></i> Asig. Dirigentes</div>
+        <div class="sbi"><i class="ti ti-calendar-event"></i> Elecciones</div>
+      </div>
+      <div class="sbfoot"><i class="ti ti-logout"></i> Cerrar sesión</div>
+    </nav>
+    <main class="am">
+      <div class="atop">
+        <p class="aptitle"><i class="ti ti-user-cog"></i> Usuarios del sistema</p>
+        <button class="bnew"><i class="ti ti-plus"></i> Nuevo usuario</button>
+      </div>
+      <div class="tw">
+        <table class="dt">
+          <thead><tr><th style="width:20%">Username</th><th style="width:26%">Correo</th><th style="width:14%">Rol</th><th style="width:10%">Estado</th><th style="width:20%">Acciones</th></tr></thead>
+          <tbody>
+            <tr><td><strong>admin</strong></td><td>admin@evote.do</td><td><span class="chip"><i class="ti ti-shield" style="font-size:10px"></i> Administrador</span></td><td><span class="bdg bact">Activo</span></td><td><button class="bsm gray"><i class="ti ti-edit"></i> Editar</button> <button class="bsm red" disabled style="opacity:.4;cursor:not-allowed">Inactivar</button></td></tr>
+            <tr><td>dirigente01</td><td>roberto@evote.do</td><td><span class="chip" style="background:var(--g50);color:var(--g800);border-color:var(--g200)"><i class="ti ti-star" style="font-size:10px"></i> Dirigente</span></td><td><span class="bdg bact">Activo</span></td><td><button class="bsm gray"><i class="ti ti-edit"></i> Editar</button> <button class="bsm red">Inactivar</button></td></tr>
+            <tr><td>dirigente02</td><td>sofia@evote.do</td><td><span class="chip" style="background:var(--g50);color:var(--g800);border-color:var(--g200)"><i class="ti ti-star" style="font-size:10px"></i> Dirigente</span></td><td><span class="bdg binact">Inactivo</span></td><td><button class="bsm green">Activar</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:1rem">
+        <p class="sh">Formulario — Nuevo / Editar Usuario</p>
+        <div class="form-section">
+          <p class="form-section-title"><i class="ti ti-edit"></i> Datos del usuario</p>
+          <div class="row2">
+            <div class="fw"><label class="fl">Nombre de usuario <span class="req">*</span></label><input class="fi" type="text" placeholder="dirigente01"><p class="fhint">Único en el sistema.</p></div>
+            <div class="fw"><label class="fl">Correo electrónico <span class="req">*</span></label><input class="fi" type="email" placeholder="usuario@evote.do"><p class="fhint">Único en el sistema.</p></div>
+            <div class="fw"><label class="fl">Contraseña <span class="req">*</span></label><input class="fi" type="password" placeholder="••••••••"></div>
+            <div class="fw"><label class="fl">Confirmar contraseña <span class="req">*</span></label><input class="fi" type="password" placeholder="••••••••"></div>
+          </div>
+          <div class="fw"><label class="fl">Rol <span class="req">*</span></label><select class="fi"><option>Seleccione un rol</option><option>Administrador</option><option>Dirigente político</option></select></div>
+          <div style="display:flex;gap:8px;margin-top:.5rem"><button class="fbtn"><i class="ti ti-check"></i> Guardar</button><button class="bo">Cancelar</button></div>
+          <div class="ae" style="margin-top:.875rem;margin-bottom:0"><i class="ti ti-alert-circle"></i> Las contraseñas no coinciden.</div>
+          <div class="ae" style="margin-bottom:0"><i class="ti ti-alert-circle"></i> No puede inactivar al único administrador activo del sistema.</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S13 · ASIGNACION DE DIRIGENTES -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s13">
+  <p class="sbadge"><i class="ti ti-settings"></i> Panel Administrador</p>
+  <h1 class="stitle">Pantalla 13 — Asignación de Dirigentes Políticos</h1>
+  <p class="sdesc">Relación uno-a-uno entre usuario dirigente y partido político. Crear y eliminar asignaciones. Ambos deben estar activos. Bloqueado si hay elección activa.</p>
+  <div class="ash">
+    <nav class="sb">
+      <div class="sbbrand"><p class="sbbname">eVote360 Pro</p><p class="sbbrole">Administrador</p></div>
+      <div class="sbnav">
+        <div class="sbi"><i class="ti ti-home"></i> Home</div>
+        <div class="sbi"><i class="ti ti-briefcase"></i> Puesto Electivo</div>
+        <div class="sbi"><i class="ti ti-users"></i> Ciudadanos</div>
+        <div class="sbi"><i class="ti ti-flag"></i> Partidos Políticos</div>
+        <div class="sbi"><i class="ti ti-user-cog"></i> Usuarios</div>
+        <div class="sbi active"><i class="ti ti-link"></i> Asig. Dirigentes</div>
+        <div class="sbi"><i class="ti ti-calendar-event"></i> Elecciones</div>
+      </div>
+      <div class="sbfoot"><i class="ti ti-logout"></i> Cerrar sesión</div>
+    </nav>
+    <main class="am">
+      <div class="atop">
+        <p class="aptitle"><i class="ti ti-link"></i> Asignación de Dirigentes</p>
+        <button class="bnew"><i class="ti ti-plus"></i> Nueva asignación</button>
+      </div>
+      <div class="tw">
+        <table class="dt">
+          <thead><tr><th style="width:30%">Usuario Dirigente</th><th style="width:35%">Partido asignado</th><th style="width:15%">Estado</th><th style="width:20%">Acciones</th></tr></thead>
+          <tbody>
+            <tr><td><strong>dirigente01</strong><br><span style="font-size:11px;color:var(--gy400)">roberto@evote.do</span></td><td><span style="display:flex;align-items:center;gap:6px"><div style="width:24px;height:24px;background:var(--b50);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--b800)">PN</div>Partido Nacional</span></td><td><span class="bdg bact">Activo</span></td><td><button class="bsm red"><i class="ti ti-trash"></i> Eliminar</button></td></tr>
+            <tr><td><strong>dirigente02</strong><br><span style="font-size:11px;color:var(--gy400)">sofia@evote.do</span></td><td><span style="display:flex;align-items:center;gap:6px"><div style="width:24px;height:24px;background:var(--g50);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--g800)">FP</div>Frente Popular</span></td><td><span class="bdg binact">Inactivo</span></td><td><button class="bsm red"><i class="ti ti-trash"></i> Eliminar</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:1rem">
+        <p class="sh">Formulario — Nueva asignación</p>
+        <div class="form-section">
+          <p class="form-section-title"><i class="ti ti-link"></i> Crear asignación dirigente ↔ partido</p>
+          <div class="row2">
+            <div class="fw"><label class="fl">Usuario dirigente <span class="req">*</span></label><select class="fi"><option>Seleccione un dirigente activo</option><option>dirigente03 — carlos@evote.do</option></select><p class="fhint">Solo usuarios activos con rol Dirigente sin partido asignado.</p></div>
+            <div class="fw"><label class="fl">Partido político <span class="req">*</span></label><select class="fi"><option>Seleccione un partido activo</option><option>Unión Cívica (UC)</option></select><p class="fhint">Solo partidos activos sin dirigente asignado.</p></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:.5rem"><button class="fbtn"><i class="ti ti-check"></i> Crear asignación</button><button class="bo">Cancelar</button></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S14 · RESULTADOS ELECTORALES -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s14">
+  <p class="sbadge"><i class="ti ti-settings"></i> Panel Administrador</p>
+  <h1 class="stitle">Pantalla 14 — Resultados Electorales</h1>
+  <p class="sdesc">Solo visible para elecciones Finalizadas. Muestra votos y porcentajes por puesto, incluye opción Ninguno. Indica ganador o empate. Conserva resultados aunque entidades sean inactivadas.</p>
+  <div class="ash">
+    <nav class="sb">
+      <div class="sbbrand"><p class="sbbname">eVote360 Pro</p><p class="sbbrole">Administrador</p></div>
+      <div class="sbnav">
+        <div class="sbi"><i class="ti ti-home"></i> Home</div>
+        <div class="sbi"><i class="ti ti-briefcase"></i> Puesto Electivo</div>
+        <div class="sbi"><i class="ti ti-users"></i> Ciudadanos</div>
+        <div class="sbi"><i class="ti ti-flag"></i> Partidos Políticos</div>
+        <div class="sbi"><i class="ti ti-user-cog"></i> Usuarios</div>
+        <div class="sbi"><i class="ti ti-link"></i> Asig. Dirigentes</div>
+        <div class="sbi active"><i class="ti ti-calendar-event"></i> Elecciones</div>
+      </div>
+      <div class="sbfoot"><i class="ti ti-logout"></i> Cerrar sesión</div>
+    </nav>
+    <main class="am">
+      <div class="atop">
+        <p class="aptitle"><i class="ti ti-chart-bar"></i> Resultados — Elección Congresional 2024</p>
+        <span class="bdg bdone"><i class="ti ti-lock" style="font-size:10px"></i> Finalizada · 18/05/2024</span>
+      </div>
+      <div class="mgrid">
+        <div class="mc blue"><div class="mico"><i class="ti ti-users"></i></div><p class="mlabel">Total votos emitidos</p><p class="mval">9,841</p></div>
+        <div class="mc green"><div class="mico"><i class="ti ti-flag"></i></div><p class="mlabel">Partidos participantes</p><p class="mval">4</p></div>
+        <div class="mc teal"><div class="mico"><i class="ti ti-briefcase"></i></div><p class="mlabel">Puestos en disputa</p><p class="mval">3</p></div>
+      </div>
+
+      <!-- PUESTO 1 -->
+      <div class="form-section">
+        <p class="form-section-title"><i class="ti ti-briefcase"></i> Presidente <span class="bdg bact" style="margin-top:0;margin-left:.5rem">Ganador determinado</span></p>
+        <div class="tw">
+          <table class="dt" style="table-layout:auto">
+            <thead><tr><th>Candidato</th><th>Partido</th><th>Votos</th><th>Porcentaje</th><th>Resultado</th></tr></thead>
+            <tbody>
+              <tr style="background:var(--g50)"><td><strong>María García Torres</strong></td><td>Partido Nacional</td><td><strong>4,820</strong></td><td><div style="display:flex;align-items:center;gap:8px"><div style="width:80px;height:8px;background:var(--gy100);border-radius:100px"><div style="width:49%;height:100%;background:var(--g600);border-radius:100px"></div></div><strong>49%</strong></div></td><td><span class="bdg bact"><i class="ti ti-trophy" style="font-size:10px"></i> Ganadora</span></td></tr>
+              <tr><td>Luis Fernández Cruz</td><td>Frente Popular</td><td>3,210</td><td><div style="display:flex;align-items:center;gap:8px"><div style="width:80px;height:8px;background:var(--gy100);border-radius:100px"><div style="width:33%;height:100%;background:var(--b400);border-radius:100px"></div></div>33%</div></td><td>—</td></tr>
+              <tr><td>Pedro Soto Méndez</td><td>Unión Cívica</td><td>1,320</td><td><div style="display:flex;align-items:center;gap:8px"><div style="width:80px;height:8px;background:var(--gy100);border-radius:100px"><div style="width:13%;height:100%;background:var(--a400);border-radius:100px"></div></div>13%</div></td><td>—</td></tr>
+              <tr><td><em style="color:var(--gy600)">Ninguno</em></td><td>—</td><td>491</td><td><div style="display:flex;align-items:center;gap:8px"><div style="width:80px;height:8px;background:var(--gy100);border-radius:100px"><div style="width:5%;height:100%;background:var(--gy400);border-radius:100px"></div></div>5%</div></td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PUESTO 2 con empate -->
+      <div class="form-section">
+        <p class="form-section-title"><i class="ti ti-briefcase"></i> Senador <span class="bdg bpend" style="margin-top:0;margin-left:.5rem"><i class="ti ti-equal" style="font-size:10px"></i> Empate</span></p>
+        <div class="tw">
+          <table class="dt" style="table-layout:auto">
+            <thead><tr><th>Candidato</th><th>Partido</th><th>Votos</th><th>Porcentaje</th><th>Resultado</th></tr></thead>
+            <tbody>
+              <tr style="background:var(--a50)"><td><strong>Carlos Reyes Díaz</strong></td><td>Unión Cívica</td><td><strong>3,200</strong></td><td><div style="display:flex;align-items:center;gap:8px"><div style="width:80px;height:8px;background:var(--gy100);border-radius:100px"><div style="width:32.5%;height:100%;background:var(--a400);border-radius:100px"></div></div><strong>32.5%</strong></div></td><td><span class="bdg bpend"><i class="ti ti-equal" style="font-size:10px"></i> Empate</span></td></tr>
+              <tr style="background:var(--a50)"><td><strong>Sofía Arias López</strong></td><td>Frente Popular</td><td><strong>3,200</strong></td><td><div style="display:flex;align-items:center;gap:8px"><div style="width:80px;height:8px;background:var(--gy100);border-radius:100px"><div style="width:32.5%;height:100%;background:var(--a400);border-radius:100px"></div></div><strong>32.5%</strong></div></td><td><span class="bdg bpend"><i class="ti ti-equal" style="font-size:10px"></i> Empate</span></td></tr>
+              <tr><td><em style="color:var(--gy600)">Ninguno</em></td><td>—</td><td>3,441</td><td>35%</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S15 · DIRIGENTE HOME -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s15">
+  <p class="sbadge"><i class="ti ti-star"></i> Portal del Dirigente</p>
+  <h1 class="stitle">Pantalla 15 — Home del Dirigente Político</h1>
+  <p class="sdesc">Portal personalizado. Valida que el dirigente esté activo y tenga partido asignado activo. Muestra perfil del partido: logo, nombre oficial, siglas. Sidebar con 3 módulos del dirigente.</p>
+  <div class="ash">
+    <nav class="sb">
+      <div class="sbbrand"><p class="sbbname">eVote360 Pro</p><p class="sbbrole">Portal del dirigente</p></div>
+      <div class="sbnav">
+        <div class="sbi active"><i class="ti ti-home"></i> Home</div>
+        <div class="sbi"><i class="ti ti-users"></i> Candidatos</div>
+        <div class="sbi"><i class="ti ti-link"></i> Asignar candidato</div>
+        <div class="sbi"><i class="ti ti-handshake"></i> Alianzas políticas</div>
+      </div>
+      <div class="sbfoot"><i class="ti ti-logout"></i> Cerrar sesión</div>
+    </nav>
+    <main class="am">
+      <div class="atop">
+        <p class="aptitle"><i class="ti ti-home"></i> Mi partido</p>
+        <div class="auser"><div class="aavat" style="background:var(--g50);color:var(--g800)">RJ</div> Roberto Jiménez</div>
+      </div>
+      <div class="phero">
+        <div class="plogobox">PND</div>
+        <div><p class="pname">Partido Nacional Democrático</p><p class="pdirig"><i class="ti ti-user"></i> Dirigente: Roberto Jiménez Peña</p><p class="psiglas">SIGLAS: PND</p></div>
+      </div>
+      <div class="kgrid" style="margin-bottom:1rem">
+        <div class="kc blue"><p class="kval">12</p><p class="klabel">Candidatos activos</p></div>
+        <div class="kc gray"><p class="kval">3</p><p class="klabel">Candidatos inactivos</p></div>
+        <div class="kc green"><p class="kval">2</p><p class="klabel">Alianzas aprobadas</p></div>
+        <div class="kc amber"><p class="kval">1</p><p class="klabel">Solicitudes pendientes</p></div>
+        <div class="kc teal"><p class="kval">8</p><p class="klabel">Candidatos asignados a puesto</p></div>
+      </div>
+      <div class="abanner blue">
+        <div><strong><i class="ti ti-bell"></i> Solicitudes de alianza pendientes</strong><span>Tiene 1 solicitud esperando su respuesta</span></div>
+        <button class="fbtn"><i class="ti ti-arrow-right"></i> Revisar</button>
+      </div>
+      <div class="aw"><i class="ti ti-alert-triangle" style="flex-shrink:0"></i><span><strong>Sin elección activa.</strong> Las acciones de candidatos, asignaciones y alianzas están habilitadas actualmente.</span></div>
+    </main>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S16 · CANDIDATOS CRUD (DIRIGENTE) -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s16">
+  <p class="sbadge"><i class="ti ti-star"></i> Portal del Dirigente</p>
+  <h1 class="stitle">Pantalla 16 — Mantenimiento de Candidatos</h1>
+  <p class="sdesc">El dirigente gestiona los candidatos de su propio partido. Foto gestionada correctamente. No editar nombre, apellido ni foto si participó en elección activa/finalizada. No inactivar si está asignado a un puesto.</p>
+  <div class="ash">
+    <nav class="sb">
+      <div class="sbbrand"><p class="sbbname">eVote360 Pro</p><p class="sbbrole">Portal del dirigente</p></div>
+      <div class="sbnav">
+        <div class="sbi"><i class="ti ti-home"></i> Home</div>
+        <div class="sbi active"><i class="ti ti-users"></i> Candidatos</div>
+        <div class="sbi"><i class="ti ti-link"></i> Asignar candidato</div>
+        <div class="sbi"><i class="ti ti-handshake"></i> Alianzas políticas</div>
+      </div>
+      <div class="sbfoot"><i class="ti ti-logout"></i> Cerrar sesión</div>
+    </nav>
+    <main class="am">
+      <div class="atop">
+        <p class="aptitle"><i class="ti ti-users"></i> Candidatos del partido</p>
+        <button class="bnew"><i class="ti ti-plus"></i> Nuevo candidato</button>
+      </div>
+      <div class="fb"><input class="finp" type="text" placeholder="Buscar candidato..." style="width:200px"><select class="fsel"><option>Todos</option><option>Activo</option><option>Inactivo</option></select></div>
+      <div class="tw">
+        <table class="dt">
+          <thead><tr><th style="width:12%">Foto</th><th style="width:28%">Nombre completo</th><th style="width:20%">Puesto asignado</th><th style="width:12%">Estado</th><th style="width:13%">Restricción</th><th style="width:15%">Acciones</th></tr></thead>
+          <tbody>
+            <tr><td><div class="cavat" style="width:32px;height:32px;font-size:11px;margin:0;background:var(--b50);color:var(--b800)">MG</div></td><td><strong>María García Torres</strong></td><td>Presidente</td><td><span class="bdg bact">Activo</span></td><td><span style="font-size:11px;color:var(--r800)"><i class="ti ti-lock" style="font-size:10px"></i> Bloqueado</span></td><td><button class="bsm red" disabled style="opacity:.4;cursor:not-allowed">Inactivar</button></td></tr>
+            <tr><td><div class="cavat" style="width:32px;height:32px;font-size:11px;margin:0;background:var(--g50);color:var(--g800)">LF</div></td><td>Luis Fernández Cruz</td><td>Senador</td><td><span class="bdg bact">Activo</span></td><td>—</td><td><button class="bsm gray"><i class="ti ti-edit"></i> Editar</button> <button class="bsm red" disabled style="opacity:.4;cursor:not-allowed">Inactivar</button></td></tr>
+            <tr><td><div class="cavat" style="width:32px;height:32px;font-size:11px;margin:0">AR</div></td><td>Ana Rodríguez Mejía</td><td>Sin asignar</td><td><span class="bdg binact">Inactivo</span></td><td>—</td><td><button class="bsm green">Activar</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:1rem">
+        <p class="sh">Formulario — Nuevo / Editar Candidato</p>
+        <div class="form-section">
+          <p class="form-section-title"><i class="ti ti-edit"></i> Datos del candidato <span style="font-size:11px;color:var(--gy400);font-weight:400">(se asocia automáticamente al partido del dirigente)</span></p>
+          <div class="row2">
+            <div class="fw"><label class="fl">Nombre <span class="req">*</span></label><input class="fi" type="text" placeholder="María"><p class="fhint">Bloqueado si participó en elección activa/finalizada.</p></div>
+            <div class="fw"><label class="fl">Apellido <span class="req">*</span></label><input class="fi" type="text" placeholder="García"><p class="fhint">Bloqueado si participó en elección activa/finalizada.</p></div>
+          </div>
+          <div class="fw"><label class="fl">Foto del candidato</label>
+            <div class="upz" style="padding:1rem;display:flex;align-items:center;gap:1rem;text-align:left">
+              <div class="cavat" style="width:56px;height:56px;font-size:18px;flex-shrink:0;margin:0"><i class="ti ti-user" style="font-size:22px;color:var(--gy400)"></i></div>
+              <div><p class="upm" style="font-size:13px">Foto profesional del candidato</p><p class="ups" style="font-size:11px;margin-bottom:.5rem">Formatos: .jpg, .png</p><button class="bo" style="font-size:12px;padding:5px 10px"><i class="ti ti-upload"></i> Subir foto</button></div>
+            </div>
+            <p class="fhint">La foto se muestra en la boleta electoral. Bloqueada si participó en elección.</p>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:.5rem"><button class="fbtn"><i class="ti ti-check"></i> Guardar</button><button class="bo">Cancelar</button></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S17 · ASIGNAR CANDIDATO A PUESTO -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s17">
+  <p class="sbadge"><i class="ti ti-star"></i> Portal del Dirigente</p>
+  <h1 class="stitle">Pantalla 17 — Asignar Candidato a Puesto Electivo</h1>
+  <p class="sdesc">Un candidato por puesto dentro del mismo partido. Un candidato no aspira a más de un puesto. Candidatos aliados solo al mismo puesto que en su partido de origen. Bloqueado si hay elección activa.</p>
+  <div class="ash">
+    <nav class="sb">
+      <div class="sbbrand"><p class="sbbname">eVote360 Pro</p><p class="sbbrole">Portal del dirigente</p></div>
+      <div class="sbnav">
+        <div class="sbi"><i class="ti ti-home"></i> Home</div>
+        <div class="sbi"><i class="ti ti-users"></i> Candidatos</div>
+        <div class="sbi active"><i class="ti ti-link"></i> Asignar candidato</div>
+        <div class="sbi"><i class="ti ti-handshake"></i> Alianzas políticas</div>
+      </div>
+      <div class="sbfoot"><i class="ti ti-logout"></i> Cerrar sesión</div>
+    </nav>
+    <main class="am">
+      <div class="atop">
+        <p class="aptitle"><i class="ti ti-link"></i> Asignaciones candidato — puesto</p>
+        <button class="bnew"><i class="ti ti-plus"></i> Nueva asignación</button>
+      </div>
+      <div class="tw">
+        <table class="dt">
+          <thead><tr><th style="width:30%">Candidato</th><th style="width:27%">Puesto</th><th style="width:18%">Tipo</th><th style="width:25%">Acciones</th></tr></thead>
+          <tbody>
+            <tr><td><strong>María García Torres</strong></td><td>Presidente</td><td><span class="chip"><i class="ti ti-user" style="font-size:10px"></i> Propio</span></td><td><button class="bsm red"><i class="ti ti-trash"></i> Eliminar</button></td></tr>
+            <tr><td>Luis Fernández Cruz</td><td>Senador</td><td><span class="chip"><i class="ti ti-user" style="font-size:10px"></i> Propio</span></td><td><button class="bsm red"><i class="ti ti-trash"></i> Eliminar</button></td></tr>
+            <tr><td>Laura Vásquez Gómez</td><td>Diputado</td><td><span class="chip" style="background:var(--a50);color:var(--a800);border-color:var(--a400)"><i class="ti ti-handshake" style="font-size:10px"></i> Aliado</span></td><td><button class="bsm red"><i class="ti ti-trash"></i> Eliminar</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tfoot">3 asignaciones activas</p>
+      <div style="margin-top:1rem">
+        <p class="sh">Nueva asignación</p>
+        <div class="form-section">
+          <p class="form-section-title"><i class="ti ti-link"></i> Asignar candidato a puesto</p>
+          <div class="row2">
+            <div class="fw">
+              <label class="fl">Candidato <span class="req">*</span></label>
+              <select class="fi"><option>Seleccione un candidato activo</option><option>── Propios ──</option><option>Pedro Montero Ruiz</option><option>── Aliados (Alianza Verde) ──</option><option>Carlos Reyes Díaz → puesto: Diputado</option></select>
+              <p class="fhint">Se listan candidatos propios activos y candidatos aliados activos. El candidato aliado solo puede aspirar al mismo puesto que en su partido de origen.</p>
+            </div>
+            <div class="fw">
+              <label class="fl">Puesto electivo <span class="req">*</span></label>
+              <select class="fi"><option>Seleccione un puesto activo</option><option>Alcalde</option></select>
+              <p class="fhint">Solo puestos sin candidato del partido en esa posición. Candidato aliado solo puede aspirar al mismo puesto de su partido.</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:.5rem"><button class="fbtn"><i class="ti ti-check"></i> Guardar asignación</button><button class="bo">Cancelar</button></div>
+          <div class="ae" style="margin-top:.875rem;margin-bottom:0"><i class="ti ti-alert-circle"></i> El candidato ya está asignado a otro puesto dentro del partido.</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S18 · ALIANZAS POLÍTICAS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s18">
+  <p class="sbadge"><i class="ti ti-star"></i> Portal del Dirigente</p>
+  <h1 class="stitle">Pantalla 18 — Alianzas Políticas</h1>
+  <p class="sdesc">Gestión completa de alianzas. Tres listas: pendientes a responder, solicitudes realizadas, alianzas vigentes. No solicitar alianza al mismo partido. No duplicar solicitudes pendientes. No eliminar alianza si hay candidatos aliados asignados.</p>
+  <div class="ash">
+    <nav class="sb">
+      <div class="sbbrand"><p class="sbbname">eVote360 Pro</p><p class="sbbrole">Portal del dirigente</p></div>
+      <div class="sbnav">
+        <div class="sbi"><i class="ti ti-home"></i> Home</div>
+        <div class="sbi"><i class="ti ti-users"></i> Candidatos</div>
+        <div class="sbi"><i class="ti ti-link"></i> Asignar candidato</div>
+        <div class="sbi active"><i class="ti ti-handshake"></i> Alianzas políticas</div>
+      </div>
+      <div class="sbfoot"><i class="ti ti-logout"></i> Cerrar sesión</div>
+    </nav>
+    <main class="am">
+      <div class="atop">
+        <p class="aptitle"><i class="ti ti-handshake"></i> Alianzas políticas</p>
+        <button class="bnew"><i class="ti ti-plus"></i> Solicitar alianza</button>
+      </div>
+
+      <!-- PENDIENTES A RESPONDER -->
+      <p class="sh"><i class="ti ti-bell" style="font-size:13px"></i> Solicitudes pendientes a responder (1)</p>
+      <div class="tw" style="margin-bottom:1rem">
+        <table class="dt">
+          <thead><tr><th style="width:35%">Partido solicitante</th><th style="width:25%">Fecha solicitud</th><th style="width:40%">Acciones</th></tr></thead>
+          <tbody>
+            <tr style="background:var(--a50)"><td><strong>Frente Popular</strong></td><td>08/06/2026</td><td><button class="bsm green" style="margin-right:6px"><i class="ti ti-check"></i> Aceptar</button><button class="bsm red"><i class="ti ti-x"></i> Rechazar</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- SOLICITUDES REALIZADAS -->
+      <p class="sh">Solicitudes realizadas por mi partido (2)</p>
+      <div class="tw" style="margin-bottom:1rem">
+        <table class="dt">
+          <thead><tr><th style="width:35%">Partido destino</th><th style="width:20%">Fecha</th><th style="width:15%">Estado</th><th style="width:30%">Acciones</th></tr></thead>
+          <tbody>
+            <tr><td>Alianza Verde</td><td>05/06/2026</td><td><span class="bdg bpend">Pendiente</span></td><td><button class="bsm red"><i class="ti ti-trash"></i> Eliminar</button></td></tr>
+            <tr><td>Unión Cívica</td><td>01/06/2026</td><td><span class="bdg bdone">Rechazada</span></td><td><button class="bsm red"><i class="ti ti-trash"></i> Eliminar</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ALIANZAS VIGENTES -->
+      <p class="sh">Alianzas vigentes (2)</p>
+      <div class="tw" style="margin-bottom:1rem">
+        <table class="dt">
+          <thead><tr><th style="width:35%">Partido aliado</th><th style="width:20%">Desde</th><th style="width:20%">Cand. asignados</th><th style="width:25%">Acciones</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Alianza Verde</strong></td><td>03/05/2026</td><td>1 candidato</td><td><button class="bsm red" disabled style="opacity:.4;cursor:not-allowed" title="Hay candidatos aliados asignados"><i class="ti ti-lock"></i> Eliminar</button></td></tr>
+            <tr><td>Partido Progresista</td><td>15/04/2026</td><td>0 candidatos</td><td><button class="bsm red"><i class="ti ti-trash"></i> Eliminar</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- NUEVA SOLICITUD -->
+      <p class="sh">Nueva solicitud de alianza</p>
+      <div class="form-section">
+        <p class="form-section-title"><i class="ti ti-handshake"></i> Solicitar alianza con otro partido</p>
+        <div class="fw"><label class="fl">Partido destino <span class="req">*</span></label><select class="fi"><option>Seleccione un partido activo</option><option>Unión Cívica</option><option>Frente Democrático</option></select><p class="fhint">No puede solicitar alianza con su propio partido ni duplicar solicitudes pendientes.</p></div>
+        <div style="display:flex;gap:8px;margin-top:.5rem"><button class="fbtn"><i class="ti ti-send"></i> Enviar solicitud</button><button class="bo">Cancelar</button></div>
+        <div class="ae" style="margin-top:.875rem;margin-bottom:0"><i class="ti ti-alert-circle"></i> Ya existe una solicitud pendiente con este partido.</div>
+      </div>
+    </main>
+  </div>
+</section>
+
+<script>
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const map={s1:0,s2:1,s3:2,s4:3,s5:4,s6:5,s7:6,s8:7,s9:8,s10:9,s11:10,s12:11,s13:12,s14:13,s15:14,s16:15,s17:16,s18:17,s19:18,s20:19,s21:20,s22:21};
+  document.querySelectorAll('.tb')[map[id]].classList.add('active');
+  window.scrollTo({top:58,behavior:'smooth'});
+}
+
+/* OTP auto-advance */
+const obs=document.querySelectorAll('.ob');
+obs.forEach((b,i)=>{
+  b.addEventListener('input',()=>{if(b.value&&i<obs.length-1)obs[i+1].focus()});
+  b.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!b.value&&i>0)obs[i-1].focus()});
+});
+
+/* Countdown timer */
+let secs=299;
+const tel=document.getElementById('otp-timer');
+function tick(){
+  if(!tel)return;
+  const m=Math.floor(secs/60),s=secs%60;
+  tel.textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+  if(secs>0)secs--;else{tel.textContent='00:00';tel.style.color='var(--r800)'}
+}
+setInterval(tick,1000);tick();
+
+/* Candidate selection */
+document.querySelectorAll('.ccard2').forEach(c=>{
+  c.addEventListener('click',function(){
+    const g=this.closest('.bgrid');
+    if(g)g.querySelectorAll('.ccard2').forEach(x=>x.classList.remove('sel2'));
+    this.classList.add('sel2');
+  });
+});
+
+/* Puesto cards */
+document.querySelectorAll('.pc').forEach(c=>{
+  c.addEventListener('click',function(){this.classList.toggle('sel')});
+});
+</script>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S19 · LOGIN -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s19">
+  <p class="sbadge"><i class="ti ti-lock"></i> Sistema</p>
+  <h1 class="stitle">Pantalla 19 — Inicio de Sesión (Staff)</h1>
+  <p class="sdesc">Acceso para Administradores y Dirigentes políticos. Tras autenticarse, el sistema redirige automáticamente según el rol: Administrador → Home admin, Dirigente → Home del partido. Valida que el usuario esté activo y, si es dirigente, que tenga partido asignado activo.</p>
+  <div class="mframe">
+    <div class="mtopbar"><div class="mdot r"></div><div class="mdot y"></div><div class="mdot g"></div><div class="murl">evote360.gob.do/acceder</div></div>
+    <div class="enav">
+      <span class="elogo">e<span>Vote</span>360 Pro</span>
+      <a class="navpill" href="#" onclick="show('s1');return false"><i class="ti ti-arrow-left"></i> Ir a votación</a>
+    </div>
+    <div class="ca" style="display:flex;align-items:center;justify-content:center;min-height:440px">
+      <div class="ccard" style="width:100%">
+        <div class="cicn" style="background:var(--b800)"><i class="ti ti-lock" style="color:#fff"></i></div>
+        <h2 class="ch">Acceso al sistema</h2>
+        <p class="cs">Solo para personal autorizado: Administradores y Dirigentes políticos.</p>
+
+        <div class="fw">
+          <label class="fl" for="login-user">Usuario <span class="req">*</span></label>
+          <input class="fi" type="text" id="login-user" placeholder="nombre de usuario" autocomplete="username">
+        </div>
+        <div class="fw">
+          <label class="fl" for="login-pass">Contraseña <span class="req">*</span></label>
+          <input class="fi" type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
+        </div>
+
+        <button class="bp"><i class="ti ti-login"></i> Iniciar sesión</button>
+
+        <!-- Estados de error -->
+        <div style="margin-top:1.25rem">
+          <p class="sh">Mensajes de validación</p>
+          <div class="ae" style="margin-bottom:6px"><i class="ti ti-alert-circle"></i> Usuario o contraseña incorrectos.</div>
+          <div class="ae" style="margin-bottom:6px"><i class="ti ti-alert-circle"></i> Su cuenta de usuario está inactiva. Contacte al administrador.</div>
+          <div class="ae"><i class="ti ti-alert-circle"></i> Su partido asignado está inactivo. No puede acceder en este momento.</div>
+        </div>
+
+        <!-- Redirección por rol -->
+        <div style="margin-top:1rem;background:var(--b50);border-radius:var(--rmd);padding:.875rem;border:1px solid var(--b100)">
+          <p style="font-size:11px;font-weight:700;color:var(--b800);margin-bottom:.5rem"><i class="ti ti-arrows-right"></i> Redirección automática por rol</p>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--b800)">
+              <span class="chip"><i class="ti ti-shield" style="font-size:10px"></i> Administrador</span>
+              <i class="ti ti-arrow-right" style="font-size:12px;color:var(--gy400)"></i>
+              <span>Home del administrador</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--g800)">
+              <span class="chip" style="background:var(--g50);color:var(--g800);border-color:var(--g200)"><i class="ti ti-star" style="font-size:10px"></i> Dirigente</span>
+              <i class="ti ti-arrow-right" style="font-size:12px;color:var(--gy400)"></i>
+              <span>Home del partido (portal dirigente)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fstrip"><i class="ti ti-shield"></i> Acceso restringido · Solo personal autorizado</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S20 · VOTO EXITOSO -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s20">
+  <p class="sbadge"><i class="ti ti-user"></i> Flujo del Elector · Final</p>
+  <h1 class="stitle">Pantalla 20 — Voto Registrado Exitosamente</h1>
+  <p class="sdesc">Pantalla final tras confirmar el voto. El sistema registra al ciudadano como "ya votó", invalida el código OTP, y envía un correo de comprobante. El elector no puede volver a votar en esta elección.</p>
+  <div class="mframe">
+    <div class="mtopbar"><div class="mdot r"></div><div class="mdot y"></div><div class="mdot g"></div><div class="murl">evote360.gob.do/gracias</div></div>
+    <div class="enav">
+      <span class="elogo">e<span>Vote</span>360 Pro</span>
+      <span class="navtxt"><i class="ti ti-circle-check"></i> Votación finalizada</span>
+    </div>
+    <div class="ca" style="display:flex;align-items:center;justify-content:center;min-height:440px">
+      <div class="ccard" style="width:100%;text-align:center">
+        <!-- Ícono de éxito animado -->
+        <div style="width:72px;height:72px;background:var(--g50);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;border:3px solid #C0DD97">
+          <i class="ti ti-circle-check" style="font-size:38px;color:var(--g800)"></i>
+        </div>
+
+        <h2 class="ch" style="color:var(--g800);font-size:20px">¡Su voto fue registrado!</h2>
+        <p class="cs" style="font-size:14px;line-height:1.6">Ha participado exitosamente en la <strong>Elección General 2026</strong>.<br>Su voto es secreto y ha quedado registrado de forma segura.</p>
+
+        <!-- Resumen compacto -->
+        <div style="background:var(--g50);border:1px solid #C0DD97;border-radius:var(--rlg);padding:1rem;margin-bottom:1.25rem;text-align:left">
+          <p style="font-size:12px;font-weight:700;color:var(--g800);margin-bottom:.625rem"><i class="ti ti-clipboard-check"></i> Resumen de su participación</p>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--gy600)">Elección:</span><span style="font-weight:600;color:#1A202C">Elección General 2026</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--gy600)">Fecha y hora:</span><span style="font-weight:600;color:#1A202C">12/06/2026 · 10:34 AM</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--gy600)">Puestos votados:</span><span style="font-weight:600;color:#1A202C">4 de 4</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--gy600)">Estado:</span><span class="bdg bact" style="margin-top:0">Voto emitido</span></div>
+          </div>
+        </div>
+
+        <!-- Correo enviado -->
+        <div class="ai" style="text-align:left;margin-bottom:1.25rem">
+          <i class="ti ti-mail-check" style="flex-shrink:0;font-size:18px;color:var(--b600)"></i>
+          <span>Hemos enviado un <strong>correo de confirmación</strong> con el resumen de su votación a su dirección registrada.</span>
+        </div>
+
+        <p style="font-size:12px;color:var(--gy400);line-height:1.6">Puede cerrar esta ventana de forma segura.<br>Gracias por participar en el proceso democrático.</p>
+
+        <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid #F1F5F9">
+          <p style="font-size:11px;color:var(--gy400)"><i class="ti ti-lock" style="font-size:12px"></i> Proceso confidencial · La secuencia de su voto no puede ser rastreada</p>
+        </div>
+      </div>
+    </div>
+    <div class="fstrip"><i class="ti ti-shield"></i> eVote360 Pro · Voto registrado y protegido</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S21 · ACCESO DENEGADO / 403 -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s21">
+  <p class="sbadge"><i class="ti ti-lock"></i> Sistema</p>
+  <h1 class="stitle">Pantalla 21 — Acceso Denegado (403)</h1>
+  <p class="sdesc">Se muestra cuando un usuario intenta acceder directamente por URL a una ruta para la que no tiene permiso según su rol. Protege contra acceso no autorizado. Cada mensaje es específico al contexto del intento.</p>
+  <div class="mframe">
+    <div class="mtopbar"><div class="mdot r"></div><div class="mdot y"></div><div class="mdot g"></div><div class="murl">evote360.gob.do/admin/ciudadanos</div></div>
+    <div class="enav">
+      <span class="elogo">e<span>Vote</span>360 Pro</span>
+      <span class="navtxt"><i class="ti ti-shield-off"></i> Acceso restringido</span>
+    </div>
+    <div class="ca" style="display:flex;align-items:center;justify-content:center;min-height:440px">
+      <div class="ccard" style="width:100%;text-align:center">
+        <div style="width:72px;height:72px;background:var(--r50);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;border:3px solid #F7C1C1">
+          <i class="ti ti-lock" style="font-size:36px;color:var(--r800)"></i>
+        </div>
+        <h2 class="ch" style="color:var(--r800);font-size:20px">Acceso denegado</h2>
+        <p class="cs" style="font-size:14px">No tiene permiso para acceder a esta sección.</p>
+
+        <!-- Casos de acceso denegado -->
+        <div style="text-align:left;margin-bottom:1.25rem">
+          <p class="sh">Escenarios de acceso denegado</p>
+
+          <div style="border:1px solid #E2E8F0;border-radius:var(--rlg);overflow:hidden">
+            <div style="padding:.75rem 1rem;border-bottom:1px solid #F1F5F9;display:flex;gap:10px;align-items:flex-start">
+              <span class="chip" style="background:var(--r50);color:var(--r800);border-color:var(--r400);flex-shrink:0">403</span>
+              <div>
+                <p style="font-size:12px;font-weight:700;color:#1A202C">Elector intenta acceder al panel admin</p>
+                <p style="font-size:11px;color:var(--gy600)">Ruta: /admin/* sin autenticación → Redirige a /acceder</p>
+              </div>
+            </div>
+            <div style="padding:.75rem 1rem;border-bottom:1px solid #F1F5F9;display:flex;gap:10px;align-items:flex-start">
+              <span class="chip" style="background:var(--r50);color:var(--r800);border-color:var(--r400);flex-shrink:0">403</span>
+              <div>
+                <p style="font-size:12px;font-weight:700;color:#1A202C">Dirigente intenta acceder a módulos admin</p>
+                <p style="font-size:11px;color:var(--gy600)">Ruta: /admin/ciudadanos → Acceso denegado, redirige a home del dirigente</p>
+              </div>
+            </div>
+            <div style="padding:.75rem 1rem;border-bottom:1px solid #F1F5F9;display:flex;gap:10px;align-items:flex-start">
+              <span class="chip" style="background:var(--r50);color:var(--r800);border-color:var(--r400);flex-shrink:0">403</span>
+              <div>
+                <p style="font-size:12px;font-weight:700;color:#1A202C">Elector intenta saltarse el proceso OCR por URL</p>
+                <p style="font-size:11px;color:var(--gy600)">Ruta: /boleta/* sin completar pasos previos → Redirige al paso correspondiente</p>
+              </div>
+            </div>
+            <div style="padding:.75rem 1rem;display:flex;gap:10px;align-items:flex-start">
+              <span class="chip" style="background:var(--r50);color:var(--r800);border-color:var(--r400);flex-shrink:0">403</span>
+              <div>
+                <p style="font-size:12px;font-weight:700;color:#1A202C">Ciudadano que ya votó intenta votar de nuevo</p>
+                <p style="font-size:11px;color:var(--gy600)">Ruta: /votar → Muestra mensaje "Ya ejerció su voto" y bloquea el proceso</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <button class="bo" onclick="show('s19');return false"><i class="ti ti-login"></i> Ir al inicio de sesión</button>
+          <button class="bp" style="width:auto;margin-top:0" onclick="show('s1');return false"><i class="ti ti-home"></i> Ir al inicio</button>
+        </div>
+      </div>
+    </div>
+    <div class="fstrip"><i class="ti ti-shield"></i> Acceso controlado por rol · Protección contra acceso no autorizado por URL</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- S22 · BLOQUEO POR ELECCIÓN ACTIVA -->
+<!-- ═══════════════════════════════════════════════════ -->
+<section class="screen" id="s22">
+  <p class="sbadge"><i class="ti ti-lock"></i> Sistema</p>
+  <h1 class="stitle">Pantalla 22 — Bloqueo por Elección Activa</h1>
+  <p class="sdesc">Cuando existe una elección activa, múltiples módulos quedan bloqueados para edición. Las listas siguen siendo visibles pero los botones de crear, editar, activar e inactivar se deshabilitan con un aviso claro. Se muestra en: Puestos, Ciudadanos, Partidos, Usuarios y Asig. Dirigentes.</p>
+
+  <div class="ash">
+    <nav class="sb">
+      <div class="sbbrand"><p class="sbbname">eVote360 Pro</p><p class="sbbrole">Administrador</p></div>
+      <div class="sbnav">
+        <div class="sbi"><i class="ti ti-home"></i> Home</div>
+        <div class="sbi active"><i class="ti ti-users"></i> Ciudadanos</div>
+        <div class="sbi"><i class="ti ti-flag"></i> Partidos Políticos</div>
+        <div class="sbi"><i class="ti ti-briefcase"></i> Puesto Electivo</div>
+        <div class="sbi"><i class="ti ti-user-cog"></i> Usuarios</div>
+        <div class="sbi"><i class="ti ti-link"></i> Asig. Dirigentes</div>
+        <div class="sbi"><i class="ti ti-calendar-event"></i> Elecciones</div>
+      </div>
+      <div class="sbfoot"><i class="ti ti-logout"></i> Cerrar sesión</div>
+    </nav>
+    <main class="am">
+      <div class="atop">
+        <p class="aptitle"><i class="ti ti-users"></i> Ciudadanos</p>
+        <!-- Botón deshabilitado -->
+        <button disabled style="padding:7px 14px;background:var(--gy100);color:var(--gy400);border:none;border-radius:var(--rmd);font-size:13px;font-weight:600;cursor:not-allowed;display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif">
+          <i class="ti ti-lock"></i> Nuevo ciudadano
+        </button>
+      </div>
+
+      <!-- BANNER DE BLOQUEO -->
+      <div style="background:var(--r50);border:1.5px solid var(--r400);border-radius:var(--rlg);padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:flex-start;gap:12px">
+        <div style="width:40px;height:40px;background:var(--r400);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i class="ti ti-lock" style="font-size:20px;color:#fff"></i>
+        </div>
+        <div>
+          <p style="font-size:14px;font-weight:700;color:var(--r800);margin-bottom:.25rem">Módulo bloqueado — Elección activa en curso</p>
+          <p style="font-size:12px;color:var(--r800);line-height:1.6">Existe una elección activa: <strong>Elección General 2026</strong>. No se pueden crear, editar ni cambiar el estado de los registros mientras haya un proceso electoral en curso.<br>Solo se permite la <strong>visualización</strong> de datos.</p>
+          <div style="margin-top:.625rem;display:flex;gap:8px;flex-wrap:wrap">
+            <span class="bdg bact" style="margin-top:0"><i class="ti ti-circle-check" style="font-size:10px"></i> Elección General 2026 — ACTIVA</span>
+            <span style="font-size:11px;color:var(--r800);display:flex;align-items:center;gap:4px"><i class="ti ti-calendar"></i> Inició: 15/05/2026</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla solo lectura -->
+      <p class="sh">Lista de ciudadanos (solo lectura)</p>
+      <div class="tw">
+        <table class="dt">
+          <thead><tr><th style="width:18%">Documento</th><th style="width:28%">Nombre completo</th><th style="width:25%">Correo</th><th style="width:12%">Estado</th><th style="width:17%">Acciones</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>00112345678</td><td>Ana López Martínez</td><td>ana@email.com</td><td><span class="bdg bact">Activo</span></td>
+              <td>
+                <button disabled style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:500;border:1px solid var(--gy100);background:var(--gy50);color:var(--gy400);cursor:not-allowed;display:inline-flex;align-items:center;gap:4px">
+                  <i class="ti ti-lock" style="font-size:10px"></i> Bloqueado
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>00198765432</td><td>Carlos Pérez Ruiz</td><td>carlos@email.com</td><td><span class="bdg bact">Activo</span></td>
+              <td>
+                <button disabled style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:500;border:1px solid var(--gy100);background:var(--gy50);color:var(--gy400);cursor:not-allowed;display:inline-flex;align-items:center;gap:4px">
+                  <i class="ti ti-lock" style="font-size:10px"></i> Bloqueado
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>00145678901</td><td>María Gómez Torres</td><td>maria@email.com</td><td><span class="bdg binact">Inactivo</span></td>
+              <td>
+                <button disabled style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:500;border:1px solid var(--gy100);background:var(--gy50);color:var(--gy400);cursor:not-allowed;display:inline-flex;align-items:center;gap:4px">
+                  <i class="ti ti-lock" style="font-size:10px"></i> Bloqueado
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tfoot">3 ciudadanos registrados · Edición deshabilitada durante elección activa</p>
+
+      <!-- Referencia de todos los módulos afectados -->
+      <div class="rule-box" style="margin-top:1rem">
+        <p><i class="ti ti-shield-lock"></i> Módulos bloqueados durante elección activa</p>
+        <ul>
+          <li><strong>Puestos Electivos</strong> — No crear, editar, activar ni inactivar.</li>
+          <li><strong>Ciudadanos</strong> — No crear, editar, activar ni inactivar.</li>
+          <li><strong>Partidos Políticos</strong> — No crear, editar, activar ni inactivar.</li>
+          <li><strong>Usuarios</strong> — No crear, editar, activar ni inactivar.</li>
+          <li><strong>Asignación de Dirigentes</strong> — No crear ni eliminar asignaciones.</li>
+          <li><strong>Candidatos (Dirigente)</strong> — No crear, editar, activar ni inactivar.</li>
+          <li><strong>Asignar candidato a puesto (Dirigente)</strong> — No crear ni eliminar.</li>
+          <li><strong>Alianzas (Dirigente)</strong> — No crear, aceptar, rechazar ni eliminar.</li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</section>
+
+</body>
+</html>

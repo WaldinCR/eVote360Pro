@@ -1,0 +1,48 @@
+:root {
+  /* Azul institucional */
+  --b900: #042C53;
+  --b800: #0C447C;   /* Color primario — navbar, botones principales */
+  --b600: #185FA5;
+  --b400: #378ADD;
+  --b200: #85B7EB;
+  --b100: #B5D4F4;
+  --b50:  #E6F1FB;
+
+  /* Verde esmeralda (acción positiva — "Guardar voto", "Confirmar") */
+  --g800: #27500A;
+  --g600: #3B6D11;
+  --g200: #97C459;
+  --g50:  #EAF3DE;
+
+  /* Gris slate (textos, jerarquía) */
+  --gy900: #1A202C;
+  --gy800: #444441;
+  --gy600: #5F5E5A;
+  --gy400: #888780;
+  --gy200: #B4B2A9;
+  --gy100: #D3D1C7;
+  --gy50:  #F1EFE8;
+
+  /* Ámbar (estados pendientes, advertencias) */
+  --a800: #633806;
+  --a400: #BA7517;
+  --a50:  #FAEEDA;
+
+  /* Rojo (errores, finalizar, inactivar) */
+  --r800: #791F1F;
+  --r400: #E24B4A;
+  --r50:  #FCEBEB;
+
+  /* Teal (seleccionado, éxito) */
+  --t800: #085041;
+  --t400: #1D9E75;
+  --t50:  #E1F5EE;
+
+  /* Radios */
+  --rmd: 8px;
+  --rlg: 12px;
+  --rxl: 16px;
+
+  /* Tipografía */
+  --font: 'Inter', sans-serif;
+}

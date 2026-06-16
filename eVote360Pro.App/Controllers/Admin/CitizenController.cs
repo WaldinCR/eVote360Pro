@@ -11,15 +11,21 @@ namespace eVote360Pro.App.Controllers.Admin
     {
         private readonly ICitizenService _citizenService;
         private readonly IMapper _mapper;
+        private readonly IUserSession _userSession;
 
-        public CitizenController(ICitizenService citizenService, IMapper mapper)
+        public CitizenController(ICitizenService citizenService, IMapper mapper,  IUserSession userSession)
         {
             _citizenService = citizenService;
             _mapper = mapper;
+            _userSession = userSession;
         }
 
         public async Task<IActionResult> Index()
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
             ViewBag.IsElectionActive = await _citizenService.IsElectionActiveAsync(); 
             var dtos = await _citizenService.GetAllAsync();
 
@@ -32,6 +38,11 @@ namespace eVote360Pro.App.Controllers.Admin
         [HttpGet]
         public async Task<IActionResult> Create()
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
             if (await _citizenService.IsElectionActiveAsync())
             {
                 TempData["Error"] = "No se puede acceder al formulario de creación mientras exista una elección activa.";
@@ -45,6 +56,11 @@ namespace eVote360Pro.App.Controllers.Admin
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SaveCitizenViewModel vm)
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
             if (await _citizenService.IsElectionActiveAsync())
             {
                 TempData["Error"] = "No se puede crear un ciudadano mientras exista una elección activa.";
@@ -70,6 +86,11 @@ namespace eVote360Pro.App.Controllers.Admin
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
             if (await _citizenService.IsElectionActiveAsync())
             {
                 TempData["Error"] = "No se pueden modificar ciudadanos mientras exista una elección activa.";
@@ -85,6 +106,12 @@ namespace eVote360Pro.App.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> Edit(SaveCitizenViewModel vm)
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
+
             if (!ModelState.IsValid) return View("Save", vm);
 
             var error = await _citizenService.UpdateAsync(vm);
@@ -101,6 +128,12 @@ namespace eVote360Pro.App.Controllers.Admin
         [HttpGet]
         public async Task<IActionResult> ToggleStatus(int id)
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
+
             if (await _citizenService.IsElectionActiveAsync())
             {
                 TempData["Error"] = "Acción bloqueada: Existe una elección activa.";
@@ -116,6 +149,11 @@ namespace eVote360Pro.App.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> ToggleStatusPost(int id)
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
             var error = await _citizenService.DeleteLogicalAsync(id);
             if (!string.IsNullOrEmpty(error))
             {

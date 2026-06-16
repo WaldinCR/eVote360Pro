@@ -11,15 +11,22 @@ namespace eVote360Pro.App.Controllers.Admin
     {
         private readonly IElectivePositionService _positionService;
         private readonly IMapper _mapper;
+        private readonly IUserSession _userSession;
 
-        public ElectivePositionController(IElectivePositionService positionService, IMapper mapper)
+        public ElectivePositionController(IElectivePositionService positionService, IMapper mapper, IUserSession userSession)
         {
             _positionService = positionService;
             _mapper = mapper;
+            _userSession = userSession;
         }
 
         public async Task<IActionResult> Index()
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
             var dtos = await _positionService.GetAllAsync();
             
             var list = _mapper.Map<List<ElectivePositionViewModel>>(dtos);
@@ -35,6 +42,12 @@ namespace eVote360Pro.App.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> Create(SaveElectivePositionViewModel vm)
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
+            
             if (!ModelState.IsValid) return View("Save", vm);
 
             var error = await _positionService.AddAsync(vm);
@@ -50,6 +63,11 @@ namespace eVote360Pro.App.Controllers.Admin
 
         public async Task<IActionResult> Edit(int id)
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
             var vm = await _positionService.GetByIdSaveViewModelAsync(id);
             if (vm == null) return RedirectToAction(nameof(Index));
             return View("Save", vm);
@@ -58,6 +76,12 @@ namespace eVote360Pro.App.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> Edit(SaveElectivePositionViewModel vm)
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
+
             if (!ModelState.IsValid) return View("Save", vm);
 
             var error = await _positionService.UpdateAsync(vm);
@@ -74,6 +98,12 @@ namespace eVote360Pro.App.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> ToggleStatus(int id)
         {
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsAdmin())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
+                
             var error = await _positionService.DeleteLogicalAsync(id);
             if (!string.IsNullOrEmpty(error))
             {

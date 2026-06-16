@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eVote360Pro.Infrastructure.Persistence.Contexts;
 
@@ -11,9 +12,11 @@ using eVote360Pro.Infrastructure.Persistence.Contexts;
 namespace eVote360Pro.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(eVote360ProDbContext))]
-    partial class eVote360ProDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260616180135_SeedAdmin")]
+    partial class SeedAdmin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

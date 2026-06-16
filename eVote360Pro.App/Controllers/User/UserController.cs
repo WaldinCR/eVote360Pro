@@ -77,6 +77,14 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             if (!_userSession.IsAdmin())
                 return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
+            if (await HasActiveElection())
+            {
+                TempData["Error"] =
+                    "No se puede crear un usuario mientras exista una elección activa.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
             if (!ModelState.IsValid) return View(vm);
 
             if (await _userService.ExistsUserNameAsync(vm.UserName.Trim()))
@@ -103,6 +111,14 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             if (!_userSession.IsAdmin())
                 return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
+            if (await HasActiveElection())
+            {
+                TempData["Error"] =
+                    "No se puede modificar un usuario mientras exista una elección activa.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
             var dto = await _userService.GetByIdSaveDtoAsync(id);
             if (dto == null)
                 return RedirectToRoute(new { area = "Admin", controller = "User", action = "Index" });
@@ -120,6 +136,14 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
                 return RedirectToRoute(new { controller = "Login", action = "Index" });
             if (!_userSession.IsAdmin())
                 return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+
+            if (await HasActiveElection())
+            {
+                TempData["Error"] =
+                    "No se puede modificar un usuario mientras exista una elección activa.";
+
+                return RedirectToAction(nameof(Index));
+            }
 
             if (string.IsNullOrEmpty(vm.Password))
             {
@@ -169,6 +193,14 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             if (!_userSession.IsAdmin())
                 return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
+            if (await HasActiveElection())
+            {
+                TempData["Error"] =
+                    "No se puede modificar el estado de un usuario mientras exista una elección activa.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
             var sessionUser = HttpContext.Session.Get<UserViewModel>("User");
 
             // No puede desactivarse a sí mismo
@@ -183,6 +215,11 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
                 TempData["Error"] = errorMsg;
 
             return RedirectToAction(nameof(Index));
+        }
+        private async Task<bool> HasActiveElection()
+        {
+            var elections = await _electionService.GetAllAsync();
+            return elections.Any(e => e.Status == ElectionStatus.Active);
         }
     }
 }

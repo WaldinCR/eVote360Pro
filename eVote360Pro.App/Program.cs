@@ -30,7 +30,6 @@ builder.Services.Configure<Microsoft.AspNetCore.Mvc.Razor.RazorViewEngineOptions
 
 var app = builder.Build();
 
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -46,6 +45,12 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+
+app.MapControllerRoute(
+    name: "login_route",
+    pattern: "Login/{action=Index}/{id?}",
+    defaults: new { area = "", controller = "Login" })
+    .WithStaticAssets();
 
 app.MapControllerRoute(
     name: "areas",

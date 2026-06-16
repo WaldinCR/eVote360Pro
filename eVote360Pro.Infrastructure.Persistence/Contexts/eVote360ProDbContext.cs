@@ -28,6 +28,7 @@ namespace eVote360Pro.Infrastructure.Persistence.Contexts
             base.OnModelCreating(modelBuilder); 
 
            modelBuilder.ApplyConfigurationsFromAssembly(typeof(eVote360ProDbContext).Assembly);
+           
         }
 
     }

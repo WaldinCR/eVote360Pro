@@ -127,6 +127,16 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             var assignedUserIds = allAssignments.Select(a => a.UserId).ToList();
             ViewBag.AvailableLeaders = allUsers
                 .Where(u => u.IsActive && u.Role == (int)eVote360Pro.Core.Domain.Common.Enums.UserRol.DirigentePolitico && !assignedUserIds.Contains(u.Id))
+                .Select(u => new eVote360Pro.Core.Application.ViewModels.User.UserViewModel
+                {
+                    Id = u.Id,
+                    Name = u.Name,
+                    LastName = u.LastName,
+                    Email = u.Email,
+                    UserName = u.UserName,
+                    Role = u.Role,
+                    IsActive = u.IsActive
+                })
                 .ToList();
         }
     }

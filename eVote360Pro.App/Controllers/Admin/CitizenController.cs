@@ -7,7 +7,6 @@ using AutoMapper;
 namespace eVote360Pro.App.Controllers.Admin
 {
     [Area("Admin")]
-    [Authorize(Roles = "Administrador")]
     public class CitizenController : Controller
     {
         private readonly ICitizenService _citizenService;

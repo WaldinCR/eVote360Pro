@@ -4,6 +4,8 @@ using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.Login;
 using eVote360Pro.Core.Application.ViewModels.User;
 using eVote360Pro.Core.Domain.Common.Enums;
+using eVote360Pro.Core.Domain.Interfaces.Repositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eVote360Pro.App.Controllers
@@ -12,11 +14,16 @@ namespace eVote360Pro.App.Controllers
     {
         private readonly IUserService _userService;
         private readonly IUserSession _userSession;
+        private readonly IPoliticalLeaderAssignmentRepository _leaderAssignmentRepository;
 
-        public LoginController(IUserService userService, IUserSession userSession)
+        public LoginController(
+            IUserService userService, 
+            IUserSession userSession,
+            IPoliticalLeaderAssignmentRepository leaderAssignmentRepository)
         {
             _userService = userService;
             _userSession = userSession;
+            _leaderAssignmentRepository = leaderAssignmentRepository;
         }
 
         public IActionResult Index()
@@ -77,12 +84,26 @@ namespace eVote360Pro.App.Controllers
             };
 
             HttpContext.Session.Set("User", sessionUser);
+            
+            // Establecer valores adicionales en la sesión para vistas/layouts
+            HttpContext.Session.SetString("UserRole", ((UserRol)user.Role).ToString());
+            HttpContext.Session.SetString("UserName", $"{user.Name} {user.LastName}");
+
+            if ((UserRol)user.Role == UserRol.DirigentePolitico)
+            {
+                var assignment = await _leaderAssignmentRepository.GetByUserIdAsync(user.Id);
+                if (assignment != null)
+                {
+                    HttpContext.Session.SetInt32("PartyId", assignment.PoliticalPartyId);
+                }
+            }
+
             return RedirectByRole(user.Role);
         }
 
         public IActionResult Logout()
         {
-            HttpContext.Session.Remove("User"); 
+            HttpContext.Session.Clear();
             return RedirectToRoute(new { controller = "Login", action = "Index" });
         }
 

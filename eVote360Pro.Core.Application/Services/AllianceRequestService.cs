@@ -92,7 +92,7 @@ namespace eVote360Pro.Core.Application.Services
             };
         }
 
-        public async Task AcceptRequestAsync(int id)
+        public async Task AcceptRequestAsync(int id, int receiverPartyId)
         {
             var elections = await _electionRepository.GetAllAsync();
             if (elections.Any(e => e.Status == ElectionStatus.Active))
@@ -100,6 +100,8 @@ namespace eVote360Pro.Core.Application.Services
 
             var request = await _requestRepository.GetByIdAsync(id);
             if (request == null) throw new Exception("Solicitud no encontrada.");
+            if (request.ReceiverPartyId != receiverPartyId)
+                throw new Exception("Solo el partido receptor puede aceptar esta solicitud.");
             if (request.Status != AllianceRequestStatus.Pending)
                 throw new Exception("Solo se pueden aceptar solicitudes pendientes.");
 
@@ -116,7 +118,7 @@ namespace eVote360Pro.Core.Application.Services
             await _allianceRepository.AddAsync(alliance);
         }
 
-        public async Task RejectRequestAsync(int id)
+        public async Task RejectRequestAsync(int id, int receiverPartyId)
         {
             var elections = await _electionRepository.GetAllAsync();
             if (elections.Any(e => e.Status == ElectionStatus.Active))
@@ -124,6 +126,8 @@ namespace eVote360Pro.Core.Application.Services
 
             var request = await _requestRepository.GetByIdAsync(id);
             if (request == null) throw new Exception("Solicitud no encontrada.");
+            if (request.ReceiverPartyId != receiverPartyId)
+                throw new Exception("Solo el partido receptor puede rechazar esta solicitud.");
             if (request.Status != AllianceRequestStatus.Pending)
                 throw new Exception("Solo se pueden rechazar solicitudes pendientes.");
 

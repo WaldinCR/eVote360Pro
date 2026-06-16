@@ -15,21 +15,21 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
         private readonly IAllianceService _allianceService;
         private readonly IAllianceRequestService _requestService;
         private readonly IHttpContextAccessor _httpContext;
+        private readonly IUserSession _userSession;
 
         public HomeController(
             ICandidateService candidateService,
             IAllianceService allianceService,
             IAllianceRequestService requestService,
-            IHttpContextAccessor httpContext)
+            IHttpContextAccessor httpContext,
+            IUserSession userSession)
         {
             _candidateService = candidateService;
             _allianceService = allianceService;
             _requestService = requestService;
             _httpContext = httpContext;
+            _userSession = userSession;
         }
-
-        private bool IsLeader() =>
-            _httpContext.HttpContext!.Session.GetString("UserRole") == "DirigentePolitico";
 
         private int GetPartyId() =>
             _httpContext.HttpContext!.Session.GetInt32("PartyId") ?? 0;
@@ -37,11 +37,10 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
         // GET: /Leader/Home
         public async Task<IActionResult> Index()
         {
-            if (!IsLeader())
-            {
-                TempData["Error"] = "Acceso denegado.";
-                return RedirectToAction("Index", "Home", new { area = "" });
-            }
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsDirigente())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             int partyId = GetPartyId();
 

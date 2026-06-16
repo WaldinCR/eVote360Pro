@@ -64,7 +64,7 @@ namespace eVote360Pro.Core.Application.Services
             }).ToList();
         }
 
-        public override async Task<bool> DeleteAsync(int id)
+        public async Task DeleteAsync(int id, int partyId)
         {
             var elections = await _electionRepository.GetAllAsync();
             if (elections.Any(e => e.Status == ElectionStatus.Active))
@@ -72,6 +72,8 @@ namespace eVote360Pro.Core.Application.Services
 
             var entity = await _allianceRepository.GetByIdAsync(id);
             if (entity == null) throw new Exception("Alianza no encontrada.");
+            if (entity.Party1Id != partyId && entity.Party2Id != partyId)
+                throw new Exception("Solo los partidos involucrados en la alianza pueden eliminarla.");
 
             // Check for allied candidates assigned between the two parties
             var assignments = await _candidatePositionRepository.GetAllAsync();
@@ -89,7 +91,6 @@ namespace eVote360Pro.Core.Application.Services
                 throw new Exception("No se puede eliminar la alianza porque existen candidatos aliados asignados entre ambos partidos.");
 
             await _allianceRepository.DeleteAsync(entity);
-            return true;
         }
 
         public async Task<bool> HasActiveAllianceAsync(int party1Id, int party2Id)

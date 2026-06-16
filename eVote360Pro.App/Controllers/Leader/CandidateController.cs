@@ -13,29 +13,25 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
     {
         private readonly ICandidateService _candidateService;
         private readonly IHttpContextAccessor _httpContext;
+        private readonly IUserSession _userSession;
 
-        public CandidateController(ICandidateService candidateService, IHttpContextAccessor httpContext)
+        public CandidateController(ICandidateService candidateService, IHttpContextAccessor httpContext, IUserSession userSession)
         {
             _candidateService = candidateService;
             _httpContext = httpContext;
+            _userSession = userSession;
         }
-
-        private bool IsLeader() =>
-            _httpContext.HttpContext!.Session.GetString("UserRole") == "DirigentePolitico";
 
         private int GetPartyId() =>
             _httpContext.HttpContext!.Session.GetInt32("PartyId") ?? 0;
 
-        private IActionResult AccessDenied()
-        {
-            TempData["Error"] = "No tiene permisos para acceder a esta sección.";
-            return RedirectToAction("Index", "Home", new { area = "Leader" });
-        }
-
         // GET: /Leader/Candidate
         public async Task<IActionResult> Index()
         {
-            if (!IsLeader()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsDirigente())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             var candidates = await _candidateService.GetAllByPartyIdViewModel(GetPartyId());
             return View(candidates);
@@ -44,7 +40,10 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
         // GET: /Leader/Candidate/Create
         public IActionResult Create()
         {
-            if (!IsLeader()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsDirigente())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             var vm = new SaveCandidateViewModel { PoliticalPartyId = GetPartyId() };
             return View(vm);
@@ -55,7 +54,10 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SaveCandidateViewModel vm)
         {
-            if (!IsLeader()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsDirigente())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             // Forzar siempre el partido del dirigente autenticado
             vm.PoliticalPartyId = GetPartyId();
@@ -91,13 +93,17 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
         // GET: /Leader/Candidate/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            if (!IsLeader()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsDirigente())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             var vm = await _candidateService.GetByIdSaveViewModel(id);
             if (vm == null) return NotFound();
 
             // Verificar que pertenece al partido del dirigente
-            if (vm.PoliticalPartyId != GetPartyId()) return AccessDenied();
+            if (vm.PoliticalPartyId != GetPartyId())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             return View(vm);
         }
@@ -107,7 +113,10 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(SaveCandidateViewModel vm)
         {
-            if (!IsLeader()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsDirigente())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             vm.PoliticalPartyId = GetPartyId();
 
@@ -116,11 +125,16 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
             try
             {
                 var originalCandidate = await _candidateService.GetByIdSaveViewModel(vm.Id);
-                if (originalCandidate != null && vm.PhotoFile != null && vm.PhotoFile.Length > 0)
+                if (originalCandidate == null || originalCandidate.PoliticalPartyId != GetPartyId())
+                {
+                    return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+                }
+
+                if (vm.PhotoFile != null && vm.PhotoFile.Length > 0)
                 {
                     vm.PhotoUrl = UploadFile.Upload(vm.PhotoFile, vm.Id, "candidates", true, originalCandidate.PhotoUrl);
                 }
-                else if (originalCandidate != null)
+                else
                 {
                     vm.PhotoUrl = originalCandidate.PhotoUrl;
                 }
@@ -141,10 +155,19 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangeStatus(int id, bool currentStatus)
         {
-            if (!IsLeader()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsDirigente())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             try
             {
+                var candidate = await _candidateService.GetByIdSaveViewModel(id);
+                if (candidate == null || candidate.PoliticalPartyId != GetPartyId())
+                {
+                    return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
+                }
+
                 await _candidateService.ChangeStatusAsync(id, !currentStatus);
                 TempData["Success"] = "Estado del candidato actualizado correctamente.";
             }

@@ -12,36 +12,33 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
         private readonly IAllianceRequestService _requestService;
         private readonly IPoliticalPartyService _partyService;
         private readonly IHttpContextAccessor _httpContext;
+        private readonly IUserSession _userSession;
 
         public AllianceController(
             IAllianceService allianceService,
             IAllianceRequestService requestService,
             IPoliticalPartyService partyService,
-            IHttpContextAccessor httpContext)
+            IHttpContextAccessor httpContext,
+            IUserSession userSession)
         {
             _allianceService = allianceService;
             _requestService = requestService;
             _partyService = partyService;
             _httpContext = httpContext;
+            _userSession = userSession;
         }
-
-        private bool IsLeader() =>
-            _httpContext.HttpContext!.Session.GetString("UserRole") == "DirigentePolitico";
 
         private int GetPartyId() =>
             _httpContext.HttpContext!.Session.GetInt32("PartyId") ?? 0;
-
-        private IActionResult AccessDenied()
-        {
-            TempData["Error"] = "No tiene permisos para acceder a esta sección.";
-            return RedirectToAction("Index", "Home", new { area = "Leader" });
-        }
 
         // GET: /Leader/Alliance
         // Muestra 3 secciones: pendientes recibidas, enviadas y alianzas vigentes
         public async Task<IActionResult> Index()
         {
-            if (!IsLeader()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsDirigente())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             int partyId = GetPartyId();
 
@@ -61,7 +58,10 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
         // GET: /Leader/Alliance/Create
         public async Task<IActionResult> Create()
         {
-            if (!IsLeader()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsDirigente())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             int partyId = GetPartyId();
 
@@ -79,7 +79,10 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateAllianceRequestViewModel vm)
         {
-            if (!IsLeader()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsDirigente())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             vm.ApplicantPartyId = GetPartyId();
 
@@ -114,11 +117,14 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Accept(int id)
         {
-            if (!IsLeader()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsDirigente())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             try
             {
-                await _requestService.AcceptRequestAsync(id);
+                await _requestService.AcceptRequestAsync(id, GetPartyId());
                 TempData["Success"] = "Solicitud de alianza aceptada. Alianza vigente creada.";
             }
             catch (Exception ex)
@@ -134,12 +140,15 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reject(int id)
         {
-            if (!IsLeader()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsDirigente())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             try
             {
-                await _requestService.RejectRequestAsync(id);
-                TempData["Success"] = "Solicitud de alianza rechazada.";
+                await _requestService.RejectRequestAsync(id, GetPartyId());
+                TempData["Success"] = "Solicitud de alianza personalizada rechazada.";
             }
             catch (Exception ex)
             {
@@ -154,7 +163,10 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteRequest(int id)
         {
-            if (!IsLeader()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsDirigente())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             try
             {
@@ -174,11 +186,14 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteAlliance(int id)
         {
-            if (!IsLeader()) return AccessDenied();
+            if (!_userSession.HasUser())
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            if (!_userSession.IsDirigente())
+                return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
             try
             {
-                await _allianceService.DeleteAsync(id);
+                await _allianceService.DeleteAsync(id, GetPartyId());
                 TempData["Success"] = "Alianza eliminada correctamente.";
             }
             catch (Exception ex)

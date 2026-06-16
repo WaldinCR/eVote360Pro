@@ -5,7 +5,7 @@ namespace eVote360Pro.Core.Application.Interfaces
     public interface IAllianceService
     {
         Task<List<AllianceViewModel>> GetAllViewModel();
-        Task<bool> DeleteAsync(int id);
+        Task DeleteAsync(int id, int partyId);
         Task<bool> HasActiveAllianceAsync(int party1Id, int party2Id);
     }
 }

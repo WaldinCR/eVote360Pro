@@ -1,7 +1,9 @@
 using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.Alliance;
+using eVote360Pro.Core.Application.ViewModels.PoliticalParty;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
 
 namespace eVote360Pro.App.Areas.Leader.Controllers
 {
@@ -13,19 +15,22 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
         private readonly IPoliticalPartyService _partyService;
         private readonly IHttpContextAccessor _httpContext;
         private readonly IUserSession _userSession;
+        private readonly IMapper _mapper;
 
         public AllianceController(
             IAllianceService allianceService,
             IAllianceRequestService requestService,
             IPoliticalPartyService partyService,
             IHttpContextAccessor httpContext,
-            IUserSession userSession)
+            IUserSession userSession,
+            IMapper mapper)
         {
             _allianceService = allianceService;
             _requestService = requestService;
             _partyService = partyService;
             _httpContext = httpContext;
             _userSession = userSession;
+            _mapper = mapper;
         }
 
         private int GetPartyId() =>
@@ -66,7 +71,8 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
             int partyId = GetPartyId();
 
             // Partidos activos disponibles para alianza (excluir propio)
-            var allParties = await _partyService.GetAllViewModel();
+            var partiesDto = await _partyService.GetAllAsync();
+            var allParties = _mapper.Map<List<PoliticalPartyViewModel>>(partiesDto);
             ViewBag.AvailableParties = allParties
                 .Where(p => p.IsActive && p.Id != partyId)
                 .ToList();
@@ -88,7 +94,8 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
 
             if (!ModelState.IsValid)
             {
-                var allParties = await _partyService.GetAllViewModel();
+                var partiesDto = await _partyService.GetAllAsync();
+                var allParties = _mapper.Map<List<PoliticalPartyViewModel>>(partiesDto);
                 ViewBag.AvailableParties = allParties
                     .Where(p => p.IsActive && p.Id != vm.ApplicantPartyId)
                     .ToList();
@@ -104,7 +111,8 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                var allParties = await _partyService.GetAllViewModel();
+                var partiesDto = await _partyService.GetAllAsync();
+                var allParties = _mapper.Map<List<PoliticalPartyViewModel>>(partiesDto);
                 ViewBag.AvailableParties = allParties
                     .Where(p => p.IsActive && p.Id != vm.ApplicantPartyId)
                     .ToList();

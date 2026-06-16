@@ -1,7 +1,9 @@
 using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.Admin;
+using eVote360Pro.Core.Application.ViewModels.PoliticalParty;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
 
 namespace eVote360Pro.App.Areas.Admin.Controllers
 {
@@ -12,17 +14,20 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
         private readonly ICandidateService _candidateService;
         private readonly IElectionService _electionService;
         private readonly IUserSession _userSession;
+        private readonly IMapper _mapper;
 
         public HomeController(
             IPoliticalPartyService partyService,
             ICandidateService candidateService,
             IElectionService electionService,
-            IUserSession userSession)
+            IUserSession userSession,
+            IMapper mapper)
         {
             _partyService = partyService;
             _candidateService = candidateService;
             _electionService = electionService;
             _userSession = userSession;
+            _mapper = mapper;
         }
 
         // GET: /Admin/Home
@@ -33,7 +38,8 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             if (!_userSession.IsAdmin())
                 return RedirectToRoute(new { controller = "Login", action = "AccessDenied" });
 
-            var parties = await _partyService.GetAllViewModel();
+            var partiesDto = await _partyService.GetAllAsync();
+            var parties = _mapper.Map<List<PoliticalPartyViewModel>>(partiesDto);
             var candidates = await _candidateService.GetAllViewModel();
             var electionsList = await _electionService.GetAllAsync();
 

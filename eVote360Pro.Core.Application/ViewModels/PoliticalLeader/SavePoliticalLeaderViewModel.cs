@@ -21,7 +21,7 @@ namespace eVote360Pro.Core.Application.ViewModels.PoliticalLeader
         public int PoliticalPartyId { get; set; }
 
         // Listas para los dropdowns pendiente 
-        //ublic List<PoliticalPartyViewModel>? AvailableParties { get; set; }
-        ///public List<UserViewModel>? AvailableUsers { get; set; }
+        public List<PoliticalPartyViewModel>? AvailableParties { get; set; }
+        //public List<UserViewModel>? AvailableUsers { get; set; }
     }
 }

@@ -165,6 +165,13 @@ namespace eVote360Pro.App.Areas.Leader.Controllers
             var allPositions = await _positionService.GetAllAsync();
             var availablePositions = allPositions
                 .Where(p => p.IsActive)
+                .Select(p => new eVote360Pro.Core.Application.ViewModels.ElectivePosition.ElectivePositionViewModel
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Description = p.Description,
+                    IsActive = p.IsActive
+                })
                 .ToList();
 
             ViewBag.Candidates = availableCandidates;

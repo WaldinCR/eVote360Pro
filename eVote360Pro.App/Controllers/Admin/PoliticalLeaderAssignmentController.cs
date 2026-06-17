@@ -30,7 +30,6 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             _mapper = mapper;
         }
 
-        // GET: /Admin/PoliticalLeaderAssignment
         public async Task<IActionResult> Index()
         {
             if (!_userSession.HasUser())
@@ -51,7 +50,6 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             return View(assignments);
         }
 
-        // GET: /Admin/PoliticalLeaderAssignment/Create
         public async Task<IActionResult> Create()
         {
             if (!_userSession.HasUser())
@@ -65,9 +63,7 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             return View(new SavePoliticalLeaderAssignmentViewModel());
         }
 
-        // POST: /Admin/PoliticalLeaderAssignment/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SavePoliticalLeaderAssignmentViewModel vm)
         {
             if (!_userSession.HasUser())
@@ -97,9 +93,7 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             }
         }
 
-        // POST: /Admin/PoliticalLeaderAssignment/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             if (!_userSession.HasUser())
@@ -133,6 +127,16 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             var assignedUserIds = allAssignments.Select(a => a.UserId).ToList();
             ViewBag.AvailableLeaders = allUsers
                 .Where(u => u.IsActive && u.Role == (int)eVote360Pro.Core.Domain.Common.Enums.UserRol.DirigentePolitico && !assignedUserIds.Contains(u.Id))
+                .Select(u => new eVote360Pro.Core.Application.ViewModels.User.UserViewModel
+                {
+                    Id = u.Id,
+                    Name = u.Name,
+                    LastName = u.LastName,
+                    Email = u.Email,
+                    UserName = u.UserName,
+                    Role = u.Role,
+                    IsActive = u.IsActive
+                })
                 .ToList();
         }
     }

@@ -24,7 +24,6 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             _mapper = mapper;
         }
 
-        // GET: /Admin/PoliticalParty
         public async Task<IActionResult> Index()
         {
             if (!_userSession.HasUser())
@@ -45,7 +44,6 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             return View(viewModels);
         }
 
-        // GET: /Admin/PoliticalParty/Create
         public IActionResult Create()
         {
             if (!_userSession.HasUser())
@@ -55,9 +53,7 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             return View(new SavePoliticalPartyViewModel());
         }
 
-        // POST: /Admin/PoliticalParty/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SavePoliticalPartyViewModel vm)
         {
             if (!_userSession.HasUser())
@@ -94,7 +90,6 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             }
         }
 
-        // GET: /Admin/PoliticalParty/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
             if (!_userSession.HasUser())
@@ -108,9 +103,7 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             return View(vm);
         }
 
-        // POST: /Admin/PoliticalParty/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(SavePoliticalPartyViewModel vm)
         {
             if (!_userSession.HasUser())
@@ -144,9 +137,7 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             }
         }
 
-        // POST: /Admin/PoliticalParty/ChangeStatus/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangeStatus(int id)
         {
             if (!_userSession.HasUser())

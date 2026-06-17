@@ -7,6 +7,7 @@ namespace eVote360Pro.Core.Application.ViewModels.Citizen
         public int Id { get; set; }
 
         [Required(ErrorMessage = "El número de documento es obligatorio.")]
+        [RegularExpression(@"^\d{11}$", ErrorMessage = "El documento debe tener exactamente 11 dígitos.")]
         [Display(Name = "Número de Documento")]
         public string Document { get; set; } = null!;
 

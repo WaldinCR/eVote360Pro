@@ -1,10 +1,7 @@
 ﻿using eVote360Pro.Core.Application.ViewModels.PoliticalParty;
-using System;
-using System.Collections.Generic;
+using eVote360Pro.Core.Application.ViewModels.User;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace eVote360Pro.Core.Application.ViewModels.PoliticalLeader
 {
@@ -20,8 +17,8 @@ namespace eVote360Pro.Core.Application.ViewModels.PoliticalLeader
         [Display(Name = "Partido Político")]
         public int PoliticalPartyId { get; set; }
 
-        // Listas para los dropdowns pendiente 
+        // Listas
         public List<PoliticalPartyViewModel>? AvailableParties { get; set; }
-        //public List<UserViewModel>? AvailableUsers { get; set; }
+        public List<UserViewModel>? AvailableUsers { get; set; }
     }
 }

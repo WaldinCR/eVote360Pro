@@ -270,7 +270,7 @@ namespace eVote360Pro.App.Areas.Elector.Controllers
             var email = HttpContext.Session.Get<string>("CitizenEmail");
             var selections = HttpContext.Session.Get<Dictionary<int, SaveVoteDto>>("VoteSelections");
 
-            var totalPositions = (await _electivePositionService.GetAllAsync()).Count;
+            var totalPositions = (await _electivePositionService.GetPositionsWithCandidatesForVotingAsync()).Count;
 
             if (selections == null || selections.Count != totalPositions)
             {

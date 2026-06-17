@@ -1,19 +1,15 @@
-using eVote360Pro.Core.Application.ViewModels.PoliticalParty;
-using System;
+using eVote360Pro.Core.Application.Dtos.PoliticalParty;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-
 
 namespace eVote360Pro.Core.Application.Interfaces
 {
     public interface IPoliticalPartyService
     {
-        Task<List<PoliticalPartyViewModel>> GetAllViewModel();
-        Task<SavePoliticalPartyViewModel?> GetByIdSaveViewModel(int id);
-        Task<SavePoliticalPartyViewModel?> AddAsync(SavePoliticalPartyViewModel vm);
-        Task UpdateAsync(SavePoliticalPartyViewModel vm);
+        Task<List<PoliticalPartyDto>> GetAllAsync();
+        Task<SavePoliticalPartyDto?> GetByIdSaveDtoAsync(int id);
+        Task<SavePoliticalPartyDto?> AddAsync(SavePoliticalPartyDto dto);
+        Task UpdateAsync(SavePoliticalPartyDto dto);
         Task ChangeStatusAsync(int id);
     }
 }

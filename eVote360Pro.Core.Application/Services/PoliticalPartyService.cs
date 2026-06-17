@@ -14,7 +14,7 @@ using AutoMapper;
 
 namespace eVote360Pro.Core.Application.Services
 {
-    public class PoliticalPartyService : GenericService<PoliticalParty, SavePoliticalPartyViewModel>, IPoliticalPartyService
+    public class PoliticalPartyService : GenericService<PoliticalParty, SavePoliticalPartyDto>, IPoliticalPartyService
     {
         private readonly IPoliticalPartyRepository _partyRepository;
         private readonly IGenericRepository<Election> _electionRepository;
@@ -36,58 +36,20 @@ namespace eVote360Pro.Core.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<List<PoliticalPartyViewModel>> GetAllViewModel()
+        public new async Task<List<PoliticalPartyDto>> GetAllAsync()
         {
             var parties = await _partyRepository.GetAllAsync();
-
-            var dtos = parties.Select(p => new PoliticalPartyDto
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                Acronym = p.Acronym,
-                LogoUrl = p.LogoUrl,
-                IsActive = p.IsActive
-            }).ToList();
-
-            return dtos.Select(d => new PoliticalPartyViewModel
-            {
-                Id = d.Id,
-                Name = d.Name,
-                Description = d.Description,
-                Acronym = d.Acronym,
-                LogoUrl = d.LogoUrl,
-                IsActive = d.IsActive
-            }).ToList();
+            return _mapper.Map<List<PoliticalPartyDto>>(parties);
         }
 
-        public async Task<SavePoliticalPartyViewModel?> GetByIdSaveViewModel(int id)
+        public async Task<SavePoliticalPartyDto?> GetByIdSaveDtoAsync(int id)
         {
             var party = await _partyRepository.GetByIdAsync(id);
             if (party == null) return null;
-
-            var dto = new SavePoliticalPartyDto
-            {
-                Id = party.Id,
-                Name = party.Name,
-                Description = party.Description,
-                Acronym = party.Acronym,
-                LogoUrl = party.LogoUrl,
-                IsActive = party.IsActive
-            };
-
-            return new SavePoliticalPartyViewModel
-            {
-                Id = dto.Id,
-                Name = dto.Name,
-                Description = dto.Description,
-                Acronym = dto.Acronym,
-                LogoUrl = dto.LogoUrl,
-                IsActive = dto.IsActive
-            };
+            return _mapper.Map<SavePoliticalPartyDto>(party);
         }
 
-        public override async Task<SavePoliticalPartyViewModel?> AddAsync(SavePoliticalPartyViewModel vm)
+        public override async Task<SavePoliticalPartyDto?> AddAsync(SavePoliticalPartyDto dto)
         {
             // Bloqueo por elección activa
             var elections = await _electionRepository.GetAllAsync();
@@ -97,52 +59,38 @@ namespace eVote360Pro.Core.Application.Services
             // Validar siglas únicas
             var all = await _partyRepository.GetAllAsync();
 
-            if (all.Any(p => p.Acronym.ToLower() == vm.Acronym.ToLower()))
-                throw new Exception($"Ya existe un partido con las siglas '{vm.Acronym}'.");
+            if (all.Any(p => p.Acronym.ToLower() == dto.Acronym.ToLower()))
+                throw new Exception($"Ya existe un partido con las siglas '{dto.Acronym}'.");
 
-            if (all.Any(p => p.Name.ToLower() == vm.Name.ToLower()))
-                throw new Exception($"Ya existe un partido con el nombre '{vm.Name}'.");
+            if (all.Any(p => p.Name.ToLower() == dto.Name.ToLower()))
+                throw new Exception($"Ya existe un partido con el nombre '{dto.Name}'.");
 
-            var entity = new PoliticalParty
-            {
-                Name = vm.Name,
-                Description = vm.Description,
-                Acronym = vm.Acronym,
-                LogoUrl = vm.LogoUrl ?? string.Empty,
-                IsActive = true
-            };
+            var entity = _mapper.Map<PoliticalParty>(dto);
+            entity.IsActive = dto.IsActive;
+            entity.Description = dto.Description;
 
             var savedEntity = await _partyRepository.AddAsync(entity);
-
-            return new SavePoliticalPartyViewModel
-            {
-                Id = savedEntity.Id,
-                Name = savedEntity.Name,
-                Description = savedEntity.Description,
-                Acronym = savedEntity.Acronym,
-                LogoUrl = savedEntity.LogoUrl,
-                IsActive = savedEntity.IsActive
-            };
+            return _mapper.Map<SavePoliticalPartyDto>(savedEntity);
         }
 
-        public async Task UpdateAsync(SavePoliticalPartyViewModel vm)
+        public async Task UpdateAsync(SavePoliticalPartyDto dto)
         {
             // Bloqueo por elección activa
             var elections = await _electionRepository.GetAllAsync();
             if (elections.Any(e => e.Status == ElectionStatus.Active))
                 throw new Exception("No se puede editar un partido político mientras haya una elección activa.");
 
-            var entity = await _partyRepository.GetByIdAsync(vm.Id);
+            var entity = await _partyRepository.GetByIdAsync(dto.Id);
             if (entity == null) throw new Exception("Partido no encontrado.");
 
             // Validación de edición por participación en elección activa o finalizada
             var candidates = await _candidateRepository.GetAllAsync();
-            var partyCandidates = candidates.Where(c => c.PoliticalPartyId == vm.Id).ToList();
+            var partyCandidates = candidates.Where(c => c.PoliticalPartyId == dto.Id).ToList();
             bool hasParticipated = partyCandidates.Any(c => c.ParticipatedInElection);
 
             if (hasParticipated)
             {
-                if (entity.Name != vm.Name || entity.Acronym != vm.Acronym || vm.LogoFile != null)
+                if (entity.Name != dto.Name || entity.Acronym != dto.Acronym || entity.LogoUrl != dto.LogoUrl)
                 {
                     throw new Exception("No se puede editar el nombre, siglas o logo de un partido que ha participado en una elección activa o finalizada.");
                 }
@@ -150,20 +98,15 @@ namespace eVote360Pro.Core.Application.Services
 
             var all = await _partyRepository.GetAllAsync();
 
-            if (all.Any(p => p.Acronym.ToLower() == vm.Acronym.ToLower() && p.Id != vm.Id))
-                throw new Exception($"Ya existe un partido con las siglas '{vm.Acronym}'.");
+            if (all.Any(p => p.Acronym.ToLower() == dto.Acronym.ToLower() && p.Id != dto.Id))
+                throw new Exception($"Ya existe un partido con las siglas '{dto.Acronym}'.");
 
-            if (all.Any(p => p.Name.ToLower() == vm.Name.ToLower() && p.Id != vm.Id))
-                throw new Exception($"Ya existe un partido con el nombre '{vm.Name}'.");
+            if (all.Any(p => p.Name.ToLower() == dto.Name.ToLower() && p.Id != dto.Id))
+                throw new Exception($"Ya existe un partido con el nombre '{dto.Name}'.");
 
-            entity.Name = vm.Name;
-            entity.Description = vm.Description;
-            entity.Acronym = vm.Acronym;
-
-            if (!string.IsNullOrWhiteSpace(vm.LogoUrl))
-            {
-                entity.LogoUrl = vm.LogoUrl;
-            }
+            _mapper.Map(dto, entity);
+            entity.IsActive = dto.IsActive;
+            entity.Description = dto.Description;
 
             await _partyRepository.UpdateAsync(entity);
         }

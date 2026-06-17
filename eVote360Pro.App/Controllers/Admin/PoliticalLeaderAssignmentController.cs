@@ -1,7 +1,9 @@
 using eVote360Pro.Core.Application.Interfaces;
 using eVote360Pro.Core.Application.ViewModels.PoliticalLeaderAssignment;
+using eVote360Pro.Core.Application.ViewModels.PoliticalParty;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
 
 namespace eVote360Pro.App.Areas.Admin.Controllers
 {
@@ -12,17 +14,20 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
         private readonly IPoliticalPartyService _partyService;
         private readonly IUserService _userService;
         private readonly IUserSession _userSession;
+        private readonly IMapper _mapper;
 
         public PoliticalLeaderAssignmentController(
             IPoliticalLeaderAssignmentService assignmentService,
             IPoliticalPartyService partyService,
             IUserService userService,
-            IUserSession userSession)
+            IUserSession userSession,
+            IMapper mapper)
         {
             _assignmentService = assignmentService;
             _partyService = partyService;
             _userService = userService;
             _userSession = userSession;
+            _mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
@@ -111,7 +116,8 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
 
         private async Task LoadCreateDropdownsAsync(List<PoliticalLeaderAssignmentViewModel> allAssignments)
         {
-            var allParties = await _partyService.GetAllViewModel();
+            var partiesDto = await _partyService.GetAllAsync();
+            var allParties = _mapper.Map<List<PoliticalPartyViewModel>>(partiesDto);
             var assignedPartyIds = allAssignments.Select(a => a.PoliticalPartyId).ToList();
             ViewBag.AvailableParties = allParties
                 .Where(p => p.IsActive && !assignedPartyIds.Contains(p.Id))

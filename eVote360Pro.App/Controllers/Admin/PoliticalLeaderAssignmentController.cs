@@ -25,7 +25,6 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             _userSession = userSession;
         }
 
-        // GET: /Admin/PoliticalLeaderAssignment
         public async Task<IActionResult> Index()
         {
             if (!_userSession.HasUser())
@@ -46,7 +45,6 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             return View(assignments);
         }
 
-        // GET: /Admin/PoliticalLeaderAssignment/Create
         public async Task<IActionResult> Create()
         {
             if (!_userSession.HasUser())
@@ -60,9 +58,7 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             return View(new SavePoliticalLeaderAssignmentViewModel());
         }
 
-        // POST: /Admin/PoliticalLeaderAssignment/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SavePoliticalLeaderAssignmentViewModel vm)
         {
             if (!_userSession.HasUser())
@@ -92,9 +88,7 @@ namespace eVote360Pro.App.Areas.Admin.Controllers
             }
         }
 
-        // POST: /Admin/PoliticalLeaderAssignment/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             if (!_userSession.HasUser())

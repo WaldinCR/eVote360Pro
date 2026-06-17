@@ -49,7 +49,10 @@
                 @foreach (var pos in Model.Positions)
                 {
                     bool isSelected = voteSelections.ContainsKey(pos.ElectivePositionId);
-                    <div class="pc @(isSelected ? "sel" : "")" data-position-id="@pos.ElectivePositionId">
+                    <div class="pc @(isSelected ? "sel" : "")"
+                         data-position-id="@pos.ElectivePositionId"
+                         style="cursor: pointer;"
+                         onclick="document.getElementById('section-puestos').style.display = 'none'; document.getElementById('section-boleta-@pos.ElectivePositionId').style.display = 'block';">
                         <div class="sdot @(isSelected ? "ok" : "pend")">
                             <i class="ti ti-@(isSelected ? "check" : "circle")"></i>
                         </div>
@@ -73,7 +76,10 @@
                 <span>Puede regresar a un puesto ya seleccionado para <strong>modificar su elección</strong> antes de finalizar el proceso.</span>
             </div>
 
-            <button id="btn-finalizar" class="bp" style="max-width:440px;margin:1rem auto 0; @(!allSelected ? "opacity:.5;cursor:not-allowed;" : "")" @(!allSelected ? "disabled" : "")>
+            <button id="btn-finalizar" class="bp"
+                    style="max-width:440px;margin:1rem auto 0; @(!allSelected ? "opacity:.5;cursor:not-allowed;" : "")"
+                @(!allSelected ? "disabled" : "")
+                    onclick="if(!this.disabled) { document.getElementById('section-puestos').style.display = 'none'; document.getElementById('section-confirmacion').style.display = 'block'; }">
                 <i class="ti ti-send"></i> Finalizar votación
                 @if (!allSelected)
                 {
@@ -117,7 +123,10 @@
                         <p class="btitle"><i class="ti ti-briefcase"></i> Puesto: @pos.PositionName</p>
                         <p class="bsub">Seleccione exactamente un candidato o la opción "Ninguno"</p>
                     </div>
-                    <a class="bback" href="#"><i class="ti ti-arrow-left"></i> Volver</a>
+                    <a class="bback" href="#"
+                       onclick="event.preventDefault(); this.closest('.section-ballot').style.display = 'none'; document.getElementById('section-puestos').style.display = 'block';">
+                        <i class="ti ti-arrow-left"></i> Volver
+                    </a>
                 </div>
 
                 <form action="@Url.Action("SavePositionVote", "Elector", new { area = "Elector" })" method="post">
@@ -144,7 +153,8 @@
                             <div class="ccard2 @(isCandSelected ? "sel2" : "")"
                                  data-id="@cand.Id"
                                  data-name="@cand.FullName"
-                                 data-party="@cand.PartyName">
+                                 data-party="@cand.PartyName"
+                                 style="cursor: pointer;">
                                 <input type="radio" name="selectedRadio" value="@cand.Id" style="display:none;" @(isCandSelected ? "checked" : "") required>
                                 <div class="cavat" style="background:var(--b50);color:var(--b800)">@initials</div>
                                 <p class="cnam">@cand.FullName</p>
@@ -156,7 +166,8 @@
                         <div class="ccard2 ning @(isNingunoSelected ? "sel2" : "")"
                              data-id=""
                              data-name="Ninguno"
-                             data-party="—">
+                             data-party="—"
+                             style="cursor: pointer;">
                             <input type="radio" name="selectedRadio" value="" style="display:none;" @(isNingunoSelected ? "checked" : "") required>
                             <div class="cavat" style="background:var(--gy50);color:var(--gy400)"><i class="ti ti-ban" style="font-size:22px"></i></div>
                             <p class="cnam" style="color:var(--gy600)">Ninguno</p>
@@ -240,7 +251,11 @@
                 </div>
 
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:1rem">
-                    <button type="button" class="bo btn-back-to-puestos" style="justify-content:center;width:100%"><i class="ti ti-arrow-left"></i> Modificar selección</button>
+                    <button type="button" class="bo btn-back-to-puestos"
+                            style="justify-content:center;width:100%"
+                            onclick="document.getElementById('section-confirmacion').style.display = 'none'; document.getElementById('section-puestos').style.display = 'block';">
+                        <i class="ti ti-arrow-left"></i> Modificar selección
+                    </button>
 
                     <form action="@Url.Action("FinishVoting", "Elector", new { area = "Elector" })" method="post">
                         <button type="submit" class="bp" style="margin-top:0;width:100%;background:var(--g800)"><i class="ti ti-send"></i> Confirmar y votar</button>
@@ -259,75 +274,33 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Click on a position card in S4 to show its ballot screen S5
-        document.querySelectorAll('.pc').forEach(card => {
+        // Selecting a candidate/ninguno card inside ballot S5
+        document.querySelectorAll('.ccard2').forEach(card => {
             card.addEventListener('click', function () {
-                const positionId = this.dataset.positionId;
-                if (positionId) {
-                    document.getElementById('section-puestos').style.display = 'none';
-                    document.getElementById('section-boleta-' + positionId).style.display = 'block';
-                }
+                const form = this.closest('form');
+                if (!form) return;
+
+                // Quitar clase de selección y desmarcar radios del mismo formulario
+                form.querySelectorAll('.ccard2').forEach(c => {
+                    c.classList.remove('sel2');
+                    const radio = c.querySelector('input[type="radio"]');
+                    if (radio) radio.checked = false;
+                });
+
+                // Seleccionar y resaltar la tarjeta actual
+                this.classList.add('sel2');
+                const currentRadio = this.querySelector('input[type="radio"]');
+                if (currentRadio) currentRadio.checked = true;
+
+                const id = this.dataset.id || '';
+                const name = this.dataset.name || '';
+                const party = this.dataset.party || '';
+
+                form.querySelector('.val-cand-id').value = id;
+                form.querySelector('.val-cand-name').value = name;
+                form.querySelector('.val-party-name').value = party;
             });
         });
-
-        // Go back from ballot S5 to positions panel S4
-        document.querySelectorAll('.bback').forEach(btn => {
-            btn.addEventListener('click', function (e) {
-                e.preventDefault();
-                const ballotSec = this.closest('.section-ballot');
-                if (ballotSec) {
-                    ballotSec.style.display = 'none';
-                    document.getElementById('section-puestos').style.display = 'block';
-                }
-            });
-        });
-
-        // Finalize voting (click button in S4 to show S6)
-        const btnFinalizar = document.getElementById('btn-finalizar');
-        if (btnFinalizar) {
-            btnFinalizar.addEventListener('click', function () {
-                if (!this.disabled) {
-                    document.getElementById('section-puestos').style.display = 'none';
-                    document.getElementById('section-confirmacion').style.display = 'block';
-                }
-            });
-        });
-
-    // Back from confirmation screen S6 to positions panel S4
-    document.querySelectorAll('.btn-back-to-puestos').forEach(btn => {
-        btn.addEventListener('click', function () {
-            document.getElementById('section-confirmacion').style.display = 'none';
-            document.getElementById('section-puestos').style.display = 'block';
-        });
-    });
-
-    // Selecting a candidate/ninguno card inside ballot S5
-    document.querySelectorAll('.ccard2').forEach(card => {
-        card.addEventListener('click', function () {
-            const form = this.closest('form');
-            if (!form) return;
-
-            // Quitar clase de selección y desmarcar radios del mismo formulario
-            form.querySelectorAll('.ccard2').forEach(c => {
-                c.classList.remove('sel2');
-                const radio = c.querySelector('input[type="radio"]');
-                if (radio) radio.checked = false;
-            });
-
-            // Seleccionar y resaltar la tarjeta actual
-            this.classList.add('sel2');
-            const currentRadio = this.querySelector('input[type="radio"]');
-            if (currentRadio) currentRadio.checked = true;
-
-            const id = this.dataset.id || '';
-            const name = this.dataset.name || '';
-            const party = this.dataset.party || '';
-
-            form.querySelector('.val-cand-id').value = id;
-            form.querySelector('.val-cand-name').value = name;
-            form.querySelector('.val-party-name').value = party;
-        });
-    });
     });
 </script>
 ```
